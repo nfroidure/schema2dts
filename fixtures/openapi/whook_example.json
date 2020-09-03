@@ -1,0 +1,288 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "version": "4.1.1",
+    "title": "@whook/example",
+    "description": "A basic Whook server"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/v4"
+    }
+  ],
+  "paths": {
+    "/delay": {
+      "get": {
+        "operationId": "getDelay",
+        "summary": "Answer after a given delay.",
+        "tags": ["example"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/duration"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delay expired"
+          }
+        }
+      }
+    },
+    "/diag": {
+      "get": {
+        "operationId": "getDiagnostic",
+        "summary": "Returns current API's transactions.",
+        "security": [
+          {
+            "bearerAuth": ["admin"]
+          }
+        ],
+        "tags": ["system"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Diagnostic",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["transactions"],
+                  "properties": {
+                    "transactions": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openAPI": {
+      "get": {
+        "operationId": "getOpenAPI",
+        "summary": "Get API documentation.",
+        "tags": ["system"],
+        "x-whook": {
+          "private": false
+        },
+        "responses": {
+          "200": {
+            "description": "Provides the private Open API documentation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {},
+          {
+            "bearerAuth": ["admin"]
+          }
+        ],
+        "parameters": []
+      }
+    },
+    "/{pathParam1}/{pathParam2}": {
+      "get": {
+        "operationId": "getParameters",
+        "summary": "An handler intended to test parameters.",
+        "tags": ["example"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pathParam1"
+          },
+          {
+            "$ref": "#/components/parameters/pathParam2"
+          },
+          {
+            "in": "header",
+            "name": "aHeader",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delay expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "aHeader": {
+                      "type": "boolean"
+                    },
+                    "pathParam1": {
+                      "type": "number"
+                    },
+                    "pathParam2": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/time": {
+      "get": {
+        "operationId": "getTime",
+        "summary": "Get API internal clock date.",
+        "tags": ["system"],
+        "responses": {
+          "200": {
+            "description": "Server current date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/echo": {
+      "put": {
+        "operationId": "putEcho",
+        "summary": "Echoes what it takes.",
+        "tags": ["example"],
+        "requestBody": {
+          "description": "The input sentence",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Echo"
+              },
+              "example": {
+                "echo": "Repeat this!"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The actual echo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Echo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "operationId": "getPing",
+        "summary": "Checks API's availability.",
+        "tags": ["system"],
+        "responses": {
+          "200": {
+            "description": "Pong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "pong": {
+                      "type": "string",
+                      "enum": ["pong"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TimeSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "currentDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Echo": {
+        "type": "object",
+        "required": ["echo"],
+        "additionalProperties": false,
+        "properties": {
+          "echo": {
+            "type": "string"
+          }
+        }
+      },
+      "strings": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "parameters": {
+      "duration": {
+        "in": "query",
+        "name": "duration",
+        "required": true,
+        "description": "Duration in milliseconds",
+        "schema": {
+          "type": "number"
+        }
+      },
+      "pathParam1": {
+        "in": "path",
+        "name": "pathParam1",
+        "required": true,
+        "description": "Duration in milliseconds",
+        "schema": {
+          "type": "number"
+        }
+      },
+      "pathParam2": {
+        "in": "path",
+        "name": "pathParam2",
+        "required": true,
+        "description": "Duration in milliseconds",
+        "schema": { "$ref": "#/components/schemas/strings" }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Bearer authentication with a user API token",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "system"
+    }
+  ]
+}

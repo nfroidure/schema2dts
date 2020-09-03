@@ -1,0 +1,242 @@
+{
+  "name": "schema2dts",
+  "version": "0.0.0",
+  "description": "A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator",
+  "main": "dist/index",
+  "types": "dist/index.d.js",
+  "tags": [
+    "jsonschema",
+    "openapi",
+    "openapi3",
+    "typescript",
+    "dts",
+    "types"
+  ],
+  "metapak": {
+    "configs": [
+      "main",
+      "typescript",
+      "jest",
+      "readme",
+      "eslint",
+      "babel"
+    ],
+    "data": {
+      "files": "'src/**/*.ts'",
+      "eslintConfigType": "backend",
+      "testFiles": "'src/**/*.test.ts'",
+      "ignore": [
+        "dist"
+      ],
+      "jestRoots": [
+        "<rootDir>/src"
+      ],
+      "bundleFiles": [
+        "dist",
+        "src"
+      ]
+    }
+  },
+  "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
+    "cli": "env NODE_ENV=${NODE_ENV:-cli}",
+    "compile": "rimraf -f 'dist' && npm run compile:cjs && npm run compile:mjs",
+    "compile:cjs": "babel --env-name=cjs --out-dir=dist --extensions '.ts,.js' --source-maps=true src",
+    "compile:mjs": "babel --env-name=mjs --out-file-extension=.mjs --out-dir=dist --extensions '.ts,.js' --source-maps=true src",
+    "cover": "npm run jest -- --coverage",
+    "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
+    "jest": "NODE_ENV=test jest",
+    "lint": "eslint 'src/**/*.ts'",
+    "metapak": "metapak",
+    "precz": "npm run lint && npm run metapak -- -s && npm run compile && npm run types && npm t",
+    "prettier": "prettier --write 'src/**/*.ts'",
+    "preversion": "npm run lint && npm run metapak -- -s && npm run compile && npm run types && npm t",
+    "test": "npm run jest",
+    "types": "rimraf -f 'dist/**/*.d.ts' && tsc --project . --declaration --emitDeclarationOnly --outDir dist",
+    "version": "npm run changelog"
+  },
+  "author": {
+    "name": "Nicolas Froidure",
+    "email": "nicolas.froidure@insertafter.com",
+    "url": "https://insertafter.com/en/index.html"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@types/json-schema": "^7.0.5",
+    "camelcase": "^6.0.0",
+    "openapi-types": "^7.0.1",
+    "typescript": "^4.0.2",
+    "yerror": "^5.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-typescript": "^7.10.4",
+    "@babel/register": "^7.10.5",
+    "@types/jest": "^26.0.10",
+    "@typescript-eslint/eslint-plugin": "^3.9.1",
+    "@typescript-eslint/parser": "^3.9.1",
+    "babel-eslint": "^10.1.0",
+    "commitizen": "^4.1.2",
+    "conventional-changelog-cli": "^2.1.0",
+    "coveralls": "^3.1.0",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.7.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.4.0",
+    "metapak": "^3.1.10",
+    "metapak-nfroidure": "10.2.5",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.0.2"
+  },
+  "contributors": [],
+  "engines": {
+    "node": ">=10.19.0"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "greenkeeper": {
+    "ignore": [
+      "commitizen",
+      "cz-conventional-changelog",
+      "conventional-changelog-cli",
+      "typescript",
+      "jest",
+      "coveralls",
+      "eslint",
+      "eslint-config-prettier",
+      "prettier",
+      "@typescript-eslint/parser",
+      "@babel/cli",
+      "@babel/core",
+      "@babel/register",
+      "@babel/preset-env",
+      "@babel/plugin-proposal-object-rest-spread",
+      "@babel/preset-typescript",
+      "@babel/plugin-proposal-class-properties",
+      "babel-eslint",
+      "babel-core"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "modules": true
+    },
+    "env": {
+      "es6": true,
+      "node": true,
+      "jest": true,
+      "mocha": true
+    },
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": "error"
+    },
+    "parser": "@typescript-eslint/parser",
+    "ignorePatterns": [
+      "*.d.ts"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.ts"
+        ],
+        "rules": {
+          "no-unused-vars": [
+            1,
+            {
+              "args": "none"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "prettier": {
+    "semi": true,
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "proseWrap": "always"
+  },
+  "module": "dist/index.mjs",
+  "babel": {
+    "plugins": [
+      "@babel/proposal-class-properties",
+      "@babel/plugin-proposal-object-rest-spread"
+    ],
+    "presets": [
+      "@babel/typescript",
+      [
+        "@babel/env",
+        {
+          "targets": {
+            "node": "10.19.0"
+          }
+        }
+      ]
+    ],
+    "env": {
+      "cjs": {
+        "presets": [
+          [
+            "@babel/env",
+            {
+              "targets": {
+                "node": "10"
+              },
+              "modules": "commonjs"
+            }
+          ]
+        ],
+        "comments": true
+      },
+      "mjs": {
+        "presets": [
+          [
+            "@babel/env",
+            {
+              "targets": {
+                "node": "12"
+              },
+              "modules": false
+            }
+          ]
+        ],
+        "comments": false
+      }
+    },
+    "sourceMaps": true
+  },
+  "jest": {
+    "coverageReporters": [
+      "lcov"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ]
+  }
+}

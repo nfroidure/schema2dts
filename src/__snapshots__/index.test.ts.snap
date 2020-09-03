@@ -1,0 +1,1283 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateJSONSchemaTypes() with JSONSchema samples should work with array_of_things.json 1`] = `
+"declare type Main = NonNullable<{
+    fruits?: NonNullable<NonNullable<string>[]>;
+    vegetables?: NonNullable<Definitions.Veggie[]>;
+}>;
+declare namespace Definitions {
+    export type Veggie = NonNullable<{
+        veggieName: NonNullable<string>;
+        veggieLike: NonNullable<boolean>;
+    }>;
+}"
+`;
+
+exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json 1`] = `
+"declare namespace API {
+    export namespace GetAnomaly {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+            readonly anomalyId?: Parameters.AnomalyId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetAnomaly.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+            export type AnomalyId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetFactory {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+            readonly factoryId?: Parameters.FactoryId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetFactory.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+            export type FactoryId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetLine {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+            readonly lineId?: Parameters.LineId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetLine.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+            export type LineId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetMachine {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+            readonly machineId?: Parameters.MachineId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetMachine.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+            export type MachineId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetMySelf {
+        export type Input = {};
+        export type Output = any;
+    }
+    export namespace GetOpenAPI {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetOpenAPI.Response200.Schema0;
+        }
+    }
+    export namespace GetOrganisation {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetOrganisation.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetPredictionDataset {
+        export type Input = {
+            readonly mlProject?: Parameters.MlProject;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetPredictionDataset.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type MlProject = Components.Schemas.ApiParameters.MlProject;
+        }
+    }
+    export namespace GetSensor {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+            readonly sensorId?: Parameters.SensorId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetSensor.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+            export type SensorId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetSource {
+        export type Input = {
+            readonly organisationId?: Parameters.OrganisationId;
+            readonly sourceId?: Parameters.SourceId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetSource.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type OrganisationId = Components.Schemas.UUID;
+            export type SourceId = Components.Schemas.UUID;
+        }
+    }
+    export namespace GetTrainingDataset {
+        export type Input = {
+            readonly mlProject?: Parameters.MlProject;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetTrainingDataset.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type MlProject = Components.Schemas.ApiParameters.MlProject;
+        }
+    }
+    export namespace GetUser {
+        export type Input = {
+            readonly userId?: Parameters.UserId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetUser.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type UserId = Components.Schemas.UUID;
+        }
+    }
+    export namespace PutUser {
+        export type Body = Components.Schemas.ApiRequestBodies.PutUser.Body0;
+        export type Input = {
+            readonly body?: Body;
+            readonly userId?: Parameters.UserId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.PutUser.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type UserId = Components.Schemas.UUID;
+        }
+    }
+    export namespace HandleApplicationEvents {
+        export type Input = {};
+        export type Output = any;
+    }
+    export namespace HandleClockifyReminder {
+        export type Input = {
+            readonly date?: Parameters.Date;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type Date = NonNullable<string>;
+        }
+    }
+    export namespace HandleExpiredRefreshTokens {
+        export type Input = {};
+        export type Output = any;
+    }
+    export namespace PostOAuth2Acknowledge {
+        export type Body = Components.Schemas.ApiRequestBodies.PostOAuth2Acknowledge.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = {
+            readonly status: 201;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$201;
+        };
+        export namespace Responses {
+            export type $201 = Components.Schemas.ApiResponses.PostOAuth2Acknowledge.Response201.Schema0;
+        }
+    }
+    export namespace PostOAuth2Token {
+        export type Body = Components.Schemas.ApiRequestBodies.PostOAuth2Token.Body0 | Components.Schemas.ApiRequestBodies.PostOAuth2Token.Body1;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        } | {
+            readonly status: 400;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$400;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.PostOAuth2Token.Response200.Schema0;
+            export type $400 = Components.Schemas.ApiResponses.PostOAuth2Token.Response400.Schema0;
+        }
+    }
+    export namespace PostPasswordChangeRequest {
+        export type Body = Components.Schemas.ApiRequestBodies.PostPasswordChangeRequest.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = any;
+    }
+    export namespace PostUser {
+        export type Body = Components.Schemas.ApiRequestBodies.PostUser.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.PostUser.Response200.Schema0;
+        }
+    }
+    export namespace PutPredictionsData {
+        export type Body = Components.Schemas.ApiRequestBodies.PutPredictionsData.Body0;
+        export type Input = {
+            readonly body?: Body;
+            readonly mlProject?: Parameters.MlProject;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type MlProject = Components.Schemas.ApiParameters.MlProject;
+        }
+    }
+    export namespace GetOAuth2Authorize {
+        export type Input = {
+            readonly responseType?: Parameters.ResponseType;
+            readonly clientId?: Parameters.ClientId;
+            readonly redirectUri: Parameters.RedirectUri;
+            readonly scope: Parameters.Scope;
+            readonly state?: Parameters.State;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type ResponseType = Components.Schemas.ApiParameters.ResponseType;
+            export type ClientId = Components.Schemas.ApiParameters.ClientId;
+            export type RedirectUri = Components.Schemas.ApiParameters.RedirectURI;
+            export type Scope = Components.Schemas.ApiParameters.Scope;
+            export type State = Components.Schemas.ApiParameters.State;
+        }
+    }
+    export namespace GetPing {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetPing.Response200.Schema0;
+        }
+    }
+}
+declare namespace Components {
+    export namespace Schemas {
+        export type UUID = NonNullable<string>;
+        export type AnomalyItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            anomalies: Components.Schemas.AnomalyModelHash;
+        }>;
+        export type FactoryItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            factories: Components.Schemas.FactoryModelHash;
+        }>;
+        export type LineItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            lines: Components.Schemas.LineModelHash;
+        }>;
+        export type MachineItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            machines: Components.Schemas.MachineModelHash;
+        }>;
+        export type OrganisationItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            organisations: Components.Schemas.OrganisationModelHash;
+        }>;
+        export type SensorItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            sensors: Components.Schemas.SensorModelHash;
+        }>;
+        export type SourceItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            sources: Components.Schemas.SourceModelHash;
+        }>;
+        export type UserItem = NonNullable<{
+            item: Components.Schemas.UUID;
+            users: Components.Schemas.UserModelHash;
+        }>;
+        export type UserModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            roles?: NonNullable<Components.Schemas.Role[]>;
+            password?: NonNullable<string>;
+            organisationsIds?: NonNullable<Components.Schemas.UUID[]>;
+            data: Components.Schemas.UserData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type UsersItems = NonNullable<{
+            items: NonNullable<Components.Schemas.UUID[]>;
+            users: Components.Schemas.UserModelHash;
+        }>;
+        export type TokenRequestBody = Components.Schemas.PasswordRequestBody | Components.Schemas.AuthorizationCodeRequestBody | Components.Schemas.ClientCredentialsRequestBody | Components.Schemas.RefreshTokenRequestBody | Components.Schemas.VerifyTokenRequestBody | Components.Schemas.PasswordChangeBody;
+        export type AnomalyModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.AnomalyModel;
+        }>;
+        export type FactoryModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.FactoryModel;
+        }>;
+        export type LineModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.LineModel;
+        }>;
+        export type MachineModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.MachineModel;
+        }>;
+        export type OrganisationModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.OrganisationModel;
+        }>;
+        export type SensorModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.SensorModel;
+        }>;
+        export type SourceModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.SourceModel;
+        }>;
+        export type UserModelHash = NonNullable<{
+            [pattern: string]: Components.Schemas.UserModel;
+        }>;
+        export type Role = \\"admin\\" | \\"user\\" | \\"candidate\\";
+        export type UserData = NonNullable<{
+            email: NonNullable<string>;
+            name: NonNullable<string>;
+            givenName?: NonNullable<string>;
+            familyName?: NonNullable<string>;
+            phone?: NonNullable<string>;
+            birthDay?: NonNullable<string>;
+            locale: Components.Schemas.Locale;
+            timeZone: Components.Schemas.TimeZone;
+        }>;
+        export type Date = NonNullable<string>;
+        export type PasswordRequestBody = NonNullable<{
+            grant_type: \\"password\\";
+            username: NonNullable<string>;
+            password: NonNullable<string>;
+            scope?: NonNullable<string>;
+        }>;
+        export type AuthorizationCodeRequestBody = NonNullable<{
+            grant_type: \\"authorization_code\\";
+            code?: NonNullable<string>;
+            client_id?: NonNullable<string>;
+            redirect_uri?: NonNullable<string>;
+        }>;
+        export type ClientCredentialsRequestBody = NonNullable<{
+            grant_type: \\"client_credentials\\";
+            scope?: NonNullable<string>;
+        }>;
+        export type RefreshTokenRequestBody = NonNullable<{
+            grant_type: \\"refresh_token\\";
+            refresh_token: NonNullable<string>;
+            scope?: NonNullable<string>;
+        }>;
+        export type VerifyTokenRequestBody = NonNullable<{
+            grant_type: \\"verify_token\\";
+            verify_token: NonNullable<string>;
+        }>;
+        export type PasswordChangeBody = NonNullable<{
+            grant_type: \\"password_change\\";
+            token: NonNullable<string>;
+            new_password: NonNullable<string>;
+        }>;
+        export type AnomalyModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            organisationId?: Components.Schemas.UUID;
+            linesIds?: NonNullable<Components.Schemas.UUID[]>;
+            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
+            sensorsIds?: NonNullable<Components.Schemas.UUID[]>;
+            data: Components.Schemas.AnomalyData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+            archivedAt?: Components.Schemas.Date;
+        }>;
+        export type FactoryModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            organisationId?: Components.Schemas.UUID;
+            data: Components.Schemas.FactoryData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type LineModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            data: Components.Schemas.LineData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type MachineModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            data: Components.Schemas.MachineData;
+            powerState: \\"unknown\\" | \\"on\\" | \\"off\\";
+            operatingState: \\"unknown\\" | \\"normal\\" | \\"stopped\\" | \\"idle\\";
+            healthState: \\"unknown\\" | \\"good\\" | \\"faulty\\" | \\"erroring\\";
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type OrganisationModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            factoriesIds?: NonNullable<Components.Schemas.UUID[]>;
+            data: Components.Schemas.OrganisationData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type SensorModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            data: Components.Schemas.SensorData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type SourceModel = NonNullable<{
+            id?: Components.Schemas.UUID;
+            data: Components.Schemas.SourceData;
+            creation?: Components.Schemas.Date;
+            lastModification?: Components.Schemas.Date;
+        }>;
+        export type Locale = NonNullable<string>;
+        export type TimeZone = NonNullable<string>;
+        export type AnomalyData = NonNullable<{
+            assignedUser?: Components.Schemas.UUID;
+            status: \\"open\\" | \\"discarded\\" | \\"assigned\\" | \\"fixed\\" | \\"closed\\";
+            archived: NonNullable<boolean>;
+            priority: \\"not_set\\" | \\"urgent\\" | \\"important\\" | \\"secondary\\";
+            severity: \\"not_set\\" | \\"critical\\" | \\"major\\" | \\"moderate\\" | \\"minor\\" | \\"cosmetic\\";
+        }>;
+        export type FactoryData = NonNullable<{
+            externalId?: NonNullable<string>;
+            name: NonNullable<string>;
+        }>;
+        export type LineData = NonNullable<{
+            name: NonNullable<string>;
+            externalId?: NonNullable<string>;
+            factoryId: Components.Schemas.UUID;
+            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
+            machinesTree?: NonNullable<{}>;
+        }>;
+        export type MachineData = NonNullable<{
+            name: NonNullable<string>;
+            externalId?: NonNullable<string>;
+            factoryId: Components.Schemas.UUID;
+        }>;
+        export type OrganisationData = NonNullable<{
+            name: NonNullable<string>;
+            locale: Components.Schemas.Locale;
+            timeZone: Components.Schemas.TimeZone;
+        }>;
+        export type SensorData = NonNullable<{
+            name: NonNullable<string>;
+            externalId?: NonNullable<string>;
+            factoryId: Components.Schemas.UUID;
+            machineId: Components.Schemas.UUID;
+            settings: NonNullable<{
+                type?: \\"opc-ua\\";
+                uri?: NonNullable<string>;
+            }>;
+        }>;
+        export type SourceData = NonNullable<{
+            name: NonNullable<string>;
+            externalId?: NonNullable<string>;
+            settings: NonNullable<{
+                type?: \\"opc-ua\\";
+                uri?: NonNullable<string>;
+            }>;
+        }>;
+        export namespace ApiResponses {
+            export namespace GetAnomaly {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.AnomalyItem;
+                }
+            }
+            export namespace GetFactory {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.FactoryItem;
+                }
+            }
+            export namespace GetLine {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.LineItem;
+                }
+            }
+            export namespace GetMachine {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.MachineItem;
+                }
+            }
+            export namespace GetOpenAPI {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{}>;
+                }
+            }
+            export namespace GetOrganisation {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.OrganisationItem;
+                }
+            }
+            export namespace GetPredictionDataset {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<string>;
+                }
+            }
+            export namespace GetSensor {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.SensorItem;
+                }
+            }
+            export namespace GetSource {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.SourceItem;
+                }
+            }
+            export namespace GetTrainingDataset {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<string>;
+                }
+            }
+            export namespace GetUser {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.UserItem;
+                }
+            }
+            export namespace PutUser {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.UsersItems;
+                }
+            }
+            export namespace PostOAuth2Acknowledge {
+                export namespace Response201 {
+                    export type Schema0 = NonNullable<{
+                        redirectURI: NonNullable<string>;
+                    }>;
+                }
+            }
+            export namespace PostOAuth2Token {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{
+                        access_token: NonNullable<string>;
+                        token_type: \\"bearer\\" | \\"mac\\";
+                        expires_in?: NonNullable<number>;
+                        refresh_token?: NonNullable<string>;
+                    }>;
+                }
+                export namespace Response400 {
+                    export type Schema0 = NonNullable<{
+                        error: \\"invalid_request\\" | \\"invalid_client\\" | \\"invalid_grant\\" | \\"unauthorized_client\\" | \\"unsupported_grant_type\\" | \\"invalid_scope\\";
+                        error_description?: NonNullable<string>;
+                        error_uri?: NonNullable<string>;
+                    }>;
+                }
+            }
+            export namespace PostUser {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.UserItem;
+                }
+            }
+            export namespace GetPing {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{
+                        pong?: \\"pong\\";
+                    }>;
+                }
+            }
+        }
+        export namespace ApiParameters {
+            export type MlProject = \\"dalkia\\";
+            export type ResponseType = \\"code\\" | \\"token\\";
+            export type ClientId = NonNullable<string>;
+            export type RedirectURI = NonNullable<string>;
+            export type Scope = NonNullable<string>;
+            export type State = NonNullable<string>;
+        }
+        export namespace ApiRequestBodies {
+            export namespace PutUser {
+                export type Body0 = Components.Schemas.UserModel;
+            }
+            export namespace PostOAuth2Acknowledge {
+                export type Body0 = NonNullable<{
+                    responseType: NonNullable<string>;
+                    clientId: NonNullable<string>;
+                    redirectURI: NonNullable<string>;
+                    scope: NonNullable<string>;
+                    state: NonNullable<string>;
+                    acknowledged: NonNullable<boolean>;
+                }>;
+            }
+            export namespace PostOAuth2Token {
+                export type Body0 = Components.Schemas.TokenRequestBody;
+                export type Body1 = Components.Schemas.TokenRequestBody;
+            }
+            export namespace PostPasswordChangeRequest {
+                export type Body0 = NonNullable<{
+                    email: NonNullable<string>;
+                }>;
+            }
+            export namespace PostUser {
+                export type Body0 = Components.Schemas.UserModel;
+            }
+            export namespace PutPredictionsData {
+                export type Body0 = NonNullable<{
+                    [pattern: string]: any;
+                }>;
+            }
+        }
+    }
+}"
+`;
+
+exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.json 1`] = `
+"declare namespace API {
+    export namespace UpdatePet {
+        export type Body = Components.Schemas.ApiRequestBodies.UpdatePet.Body0 | Components.Schemas.ApiRequestBodies.UpdatePet.Body1;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = any;
+    }
+    export namespace AddPet {
+        export type Body = Components.Schemas.ApiRequestBodies.AddPet.Body0 | Components.Schemas.ApiRequestBodies.AddPet.Body1;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = any;
+    }
+    export namespace FindPetsByStatus {
+        export type Input = {
+            readonly status?: Parameters.Status;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.FindPetsByStatus.Response200.Schema0 | Components.Schemas.ApiResponses.FindPetsByStatus.Response200.Schema1;
+        }
+        export namespace Parameters {
+            export type Status = NonNullable<(\\"available\\" | \\"pending\\" | \\"sold\\")[]>;
+        }
+    }
+    export namespace FindPetsByTags {
+        export type Input = {
+            readonly tags?: Parameters.Tags;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.FindPetsByTags.Response200.Schema0 | Components.Schemas.ApiResponses.FindPetsByTags.Response200.Schema1;
+        }
+        export namespace Parameters {
+            export type Tags = NonNullable<NonNullable<string>[]>;
+        }
+    }
+    export namespace GetPetById {
+        export type Input = {
+            readonly petId?: Parameters.PetId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetPetById.Response200.Schema0 | Components.Schemas.ApiResponses.GetPetById.Response200.Schema1;
+        }
+        export namespace Parameters {
+            export type PetId = NonNullable<number>;
+        }
+    }
+    export namespace UpdatePetWithForm {
+        export type Body = Components.Schemas.ApiRequestBodies.UpdatePetWithForm.Body0;
+        export type Input = {
+            readonly body: Body;
+            readonly petId?: Parameters.PetId;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type PetId = NonNullable<number>;
+        }
+    }
+    export namespace DeletePet {
+        export type Input = {
+            readonly apiKey: Parameters.ApiKey;
+            readonly petId?: Parameters.PetId;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type ApiKey = NonNullable<string>;
+            export type PetId = NonNullable<number>;
+        }
+    }
+    export namespace UploadFile {
+        export type Body = Components.Schemas.ApiRequestBodies.UploadFile.Body0;
+        export type Input = {
+            readonly body: Body;
+            readonly petId?: Parameters.PetId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.UploadFile.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type PetId = NonNullable<number>;
+        }
+    }
+    export namespace GetInventory {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetInventory.Response200.Schema0;
+        }
+    }
+    export namespace PlaceOrder {
+        export type Body = Components.Schemas.ApiRequestBodies.PlaceOrder.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.PlaceOrder.Response200.Schema0 | Components.Schemas.ApiResponses.PlaceOrder.Response200.Schema1;
+        }
+    }
+    export namespace GetOrderById {
+        export type Input = {
+            readonly orderId?: Parameters.OrderId;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetOrderById.Response200.Schema0 | Components.Schemas.ApiResponses.GetOrderById.Response200.Schema1;
+        }
+        export namespace Parameters {
+            export type OrderId = NonNullable<number>;
+        }
+    }
+    export namespace DeleteOrder {
+        export type Input = {
+            readonly orderId?: Parameters.OrderId;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type OrderId = NonNullable<string>;
+        }
+    }
+    export namespace CreateUser {
+        export type Body = Components.Schemas.ApiRequestBodies.CreateUser.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = any;
+    }
+    export namespace CreateUsersWithArrayInput {
+        export type Body = Components.Schemas.ApiRequestBodies.CreateUsersWithArrayInput.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = any;
+    }
+    export namespace CreateUsersWithListInput {
+        export type Body = Components.Schemas.ApiRequestBodies.CreateUsersWithListInput.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = any;
+    }
+    export namespace LoginUser {
+        export type Input = {
+            readonly username?: Parameters.Username;
+            readonly password?: Parameters.Password;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers: NonNullable<{
+                xRateLimit: NonNullable<number>;
+                xExpiresAfter?: NonNullable<string>;
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.LoginUser.Response200.Schema0 | Components.Schemas.ApiResponses.LoginUser.Response200.Schema1;
+        }
+        export namespace Parameters {
+            export type Username = NonNullable<string>;
+            export type Password = NonNullable<string>;
+        }
+    }
+    export namespace LogoutUser {
+        export type Input = {};
+        export type Output = any;
+    }
+    export namespace GetUserByName {
+        export type Input = {
+            readonly username?: Parameters.Username;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetUserByName.Response200.Schema0 | Components.Schemas.ApiResponses.GetUserByName.Response200.Schema1;
+        }
+        export namespace Parameters {
+            export type Username = NonNullable<string>;
+        }
+    }
+    export namespace UpdateUser {
+        export type Body = Components.Schemas.ApiRequestBodies.UpdateUser.Body0;
+        export type Input = {
+            readonly body?: Body;
+            readonly username?: Parameters.Username;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type Username = NonNullable<string>;
+        }
+    }
+    export namespace DeleteUser {
+        export type Input = {
+            readonly username?: Parameters.Username;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type Username = NonNullable<string>;
+        }
+    }
+}
+declare namespace Components {
+    export namespace Schemas {
+        export type Pet = NonNullable<{
+            id?: NonNullable<number>;
+            category?: Components.Schemas.Category;
+            name: NonNullable<string>;
+            photoUrls: NonNullable<NonNullable<string>[]>;
+            tags?: NonNullable<Components.Schemas.Tag[]>;
+            status?: \\"available\\" | \\"pending\\" | \\"sold\\";
+        }>;
+        export type Body = NonNullable<{
+            name?: NonNullable<string>;
+            status?: NonNullable<string>;
+        }>;
+        export type Body_1 = NonNullable<{
+            additionalMetadata?: NonNullable<string>;
+            file?: NonNullable<string>;
+        }>;
+        export type ApiResponse = NonNullable<{
+            code?: NonNullable<number>;
+            type?: NonNullable<string>;
+            message?: NonNullable<string>;
+        }>;
+        export type Order = NonNullable<{
+            id?: NonNullable<number>;
+            petId?: NonNullable<number>;
+            quantity?: NonNullable<number>;
+            shipDate?: NonNullable<string>;
+            status?: \\"placed\\" | \\"approved\\" | \\"delivered\\";
+            complete?: NonNullable<boolean>;
+        }>;
+        export type User = NonNullable<{
+            id?: NonNullable<number>;
+            username?: NonNullable<string>;
+            firstName?: NonNullable<string>;
+            lastName?: NonNullable<string>;
+            email?: NonNullable<string>;
+            password?: NonNullable<string>;
+            phone?: NonNullable<string>;
+            userStatus?: NonNullable<number>;
+        }>;
+        export type Category = NonNullable<{
+            id?: NonNullable<number>;
+            name?: NonNullable<string>;
+        }>;
+        export type Tag = NonNullable<{
+            id?: NonNullable<number>;
+            name?: NonNullable<string>;
+        }>;
+        export namespace ApiRequestBodies {
+            export namespace UpdatePet {
+                export type Body0 = Components.Schemas.Pet;
+                export type Body1 = Components.Schemas.Pet;
+            }
+            export namespace AddPet {
+                export type Body0 = Components.Schemas.Pet;
+                export type Body1 = Components.Schemas.Pet;
+            }
+            export namespace UpdatePetWithForm {
+                export type Body0 = Components.Schemas.Body;
+            }
+            export namespace UploadFile {
+                export type Body0 = Components.Schemas.Body_1;
+            }
+            export namespace PlaceOrder {
+                export type Body0 = Components.Schemas.Order;
+            }
+            export namespace CreateUser {
+                export type Body0 = Components.Schemas.User;
+            }
+            export namespace CreateUsersWithArrayInput {
+                export type Body0 = NonNullable<Components.Schemas.User[]>;
+            }
+            export namespace CreateUsersWithListInput {
+                export type Body0 = NonNullable<Components.Schemas.User[]>;
+            }
+            export namespace UpdateUser {
+                export type Body0 = Components.Schemas.User;
+            }
+        }
+        export namespace ApiResponses {
+            export namespace FindPetsByStatus {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<Components.Schemas.Pet[]>;
+                    export type Schema1 = NonNullable<Components.Schemas.Pet[]>;
+                }
+            }
+            export namespace FindPetsByTags {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<Components.Schemas.Pet[]>;
+                    export type Schema1 = NonNullable<Components.Schemas.Pet[]>;
+                }
+            }
+            export namespace GetPetById {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.Pet;
+                    export type Schema1 = Components.Schemas.Pet;
+                }
+            }
+            export namespace UploadFile {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.ApiResponse;
+                }
+            }
+            export namespace GetInventory {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{
+                        [pattern: string]: any;
+                    }>;
+                }
+            }
+            export namespace PlaceOrder {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.Order;
+                    export type Schema1 = Components.Schemas.Order;
+                }
+            }
+            export namespace GetOrderById {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.Order;
+                    export type Schema1 = Components.Schemas.Order;
+                }
+            }
+            export namespace LoginUser {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<string>;
+                    export type Schema1 = NonNullable<string>;
+                }
+            }
+            export namespace GetUserByName {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.User;
+                    export type Schema1 = Components.Schemas.User;
+                }
+            }
+        }
+    }
+}"
+`;
+
+exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json 1`] = `
+"declare namespace API {
+    export namespace GetDelay {
+        export type Input = {
+            readonly duration?: Parameters.Duration;
+        };
+        export type Output = any;
+        export namespace Parameters {
+            export type Duration = Components.Schemas.ApiParameters.Duration;
+        }
+    }
+    export namespace GetDiagnostic {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetDiagnostic.Response200.Schema0;
+        }
+    }
+    export namespace GetOpenAPI {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetOpenAPI.Response200.Schema0;
+        }
+    }
+    export namespace GetParameters {
+        export type Input = {
+            readonly aHeader: Parameters.AHeader;
+            readonly pathParam1?: Parameters.PathParam1;
+            readonly pathParam2?: Parameters.PathParam2;
+        };
+        export type Output = {
+            readonly status: 204;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$204;
+        };
+        export namespace Responses {
+            export type $204 = Components.Schemas.ApiResponses.GetParameters.Response204.Schema0;
+        }
+        export namespace Parameters {
+            export type PathParam1 = Components.Schemas.ApiParameters.PathParam1;
+            export type PathParam2 = Components.Schemas.Strings;
+            export type AHeader = NonNullable<boolean>;
+        }
+    }
+    export namespace GetTime {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetTime.Response200.Schema0;
+        }
+    }
+    export namespace PutEcho {
+        export type Body = Components.Schemas.ApiRequestBodies.PutEcho.Body0;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.PutEcho.Response200.Schema0;
+        }
+    }
+    export namespace GetPing {
+        export type Input = {};
+        export type Output = {
+            readonly status: 200;
+            readonly headers?: NonNullable<{
+                [pattern: string]: NonNullable<string>;
+            }>;
+            readonly body: Responses.$200;
+        };
+        export namespace Responses {
+            export type $200 = Components.Schemas.ApiResponses.GetPing.Response200.Schema0;
+        }
+    }
+}
+declare namespace Components {
+    export namespace Schemas {
+        export type Strings = NonNullable<NonNullable<string>[]>;
+        export type TimeSchema = NonNullable<{
+            currentDate?: NonNullable<string>;
+        }>;
+        export type Echo = NonNullable<{
+            echo: NonNullable<string>;
+        }>;
+        export namespace ApiParameters {
+            export type Duration = NonNullable<number>;
+            export type PathParam1 = NonNullable<number>;
+        }
+        export namespace ApiResponses {
+            export namespace GetDiagnostic {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{
+                        transactions: NonNullable<{
+                            [pattern: string]: any;
+                        }>;
+                    }>;
+                }
+            }
+            export namespace GetOpenAPI {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{}>;
+                }
+            }
+            export namespace GetParameters {
+                export namespace Response204 {
+                    export type Schema0 = NonNullable<{
+                        aHeader?: NonNullable<boolean>;
+                        pathParam1?: NonNullable<number>;
+                        pathParam2?: NonNullable<NonNullable<string>[]>;
+                    }>;
+                }
+            }
+            export namespace GetTime {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.TimeSchema;
+                }
+            }
+            export namespace PutEcho {
+                export namespace Response200 {
+                    export type Schema0 = Components.Schemas.Echo;
+                }
+            }
+            export namespace GetPing {
+                export namespace Response200 {
+                    export type Schema0 = NonNullable<{
+                        pong?: \\"pong\\";
+                    }>;
+                }
+            }
+        }
+        export namespace ApiRequestBodies {
+            export namespace PutEcho {
+                export type Body0 = Components.Schemas.Echo;
+            }
+        }
+    }
+}"
+`;
