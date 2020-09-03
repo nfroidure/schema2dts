@@ -19,7 +19,9 @@
       "jest",
       "readme",
       "eslint",
-      "babel"
+      "babel",
+      "travis",
+      "coveralls"
     ],
     "data": {
       "files": "'src/**/*.ts'",
