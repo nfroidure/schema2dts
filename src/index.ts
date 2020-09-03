@@ -360,8 +360,8 @@ export async function generateOpenAPITypes(
                 [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                 camelCase(name),
                 required
-                  ? ts.createToken(ts.SyntaxKind.QuestionToken)
-                  : undefined,
+                  ? undefined
+                  : ts.createToken(ts.SyntaxKind.QuestionToken),
                 buildTypeReference(context, path),
                 undefined,
               );

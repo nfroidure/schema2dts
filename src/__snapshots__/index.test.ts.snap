@@ -17,8 +17,10 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
 "declare namespace API {
     export namespace GetAnomaly {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
-            readonly anomalyId?: Parameters.AnomalyId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly anomalyId: Parameters.AnomalyId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -33,12 +35,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
             export type AnomalyId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetFactory {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
-            readonly factoryId?: Parameters.FactoryId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly factoryId: Parameters.FactoryId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -53,12 +59,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
             export type FactoryId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetLine {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
-            readonly lineId?: Parameters.LineId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly lineId: Parameters.LineId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -73,12 +83,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
             export type LineId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetMachine {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
-            readonly machineId?: Parameters.MachineId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly machineId: Parameters.MachineId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -93,14 +107,26 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
             export type MachineId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetMySelf {
-        export type Input = {};
+        export type Input = {
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
+        };
         export type Output = any;
+        export namespace Parameters {
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
+        }
     }
     export namespace GetOpenAPI {
-        export type Input = {};
+        export type Input = {
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
+        };
         export type Output = {
             readonly status: 200;
             readonly headers?: NonNullable<{
@@ -111,10 +137,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Responses {
             export type $200 = Components.Schemas.ApiResponses.GetOpenAPI.Response200.Schema0;
         }
+        export namespace Parameters {
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
+        }
     }
     export namespace GetOrganisation {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -128,11 +160,15 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         }
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetPredictionDataset {
         export type Input = {
-            readonly mlProject?: Parameters.MlProject;
+            readonly mlProject: Parameters.MlProject;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -146,12 +182,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         }
         export namespace Parameters {
             export type MlProject = Components.Schemas.ApiParameters.MlProject;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetSensor {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
-            readonly sensorId?: Parameters.SensorId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly sensorId: Parameters.SensorId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -166,12 +206,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
             export type SensorId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetSource {
         export type Input = {
-            readonly organisationId?: Parameters.OrganisationId;
-            readonly sourceId?: Parameters.SourceId;
+            readonly organisationId: Parameters.OrganisationId;
+            readonly sourceId: Parameters.SourceId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -186,11 +230,15 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         export namespace Parameters {
             export type OrganisationId = Components.Schemas.UUID;
             export type SourceId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetTrainingDataset {
         export type Input = {
-            readonly mlProject?: Parameters.MlProject;
+            readonly mlProject: Parameters.MlProject;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -204,11 +252,15 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         }
         export namespace Parameters {
             export type MlProject = Components.Schemas.ApiParameters.MlProject;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetUser {
         export type Input = {
-            readonly userId?: Parameters.UserId;
+            readonly userId: Parameters.UserId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -222,49 +274,17 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         }
         export namespace Parameters {
             export type UserId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace PutUser {
         export type Body = Components.Schemas.ApiRequestBodies.PutUser.Body0;
         export type Input = {
-            readonly body?: Body;
-            readonly userId?: Parameters.UserId;
-        };
-        export type Output = {
-            readonly status: 200;
-            readonly headers?: NonNullable<{
-                [pattern: string]: NonNullable<string>;
-            }>;
-            readonly body: Responses.$200;
-        };
-        export namespace Responses {
-            export type $200 = Components.Schemas.ApiResponses.PutUser.Response200.Schema0;
-        }
-        export namespace Parameters {
-            export type UserId = Components.Schemas.UUID;
-        }
-    }
-    export namespace HandleApplicationEvents {
-        export type Input = {};
-        export type Output = any;
-    }
-    export namespace HandleClockifyReminder {
-        export type Input = {
-            readonly date?: Parameters.Date;
-        };
-        export type Output = any;
-        export namespace Parameters {
-            export type Date = NonNullable<string>;
-        }
-    }
-    export namespace HandleExpiredRefreshTokens {
-        export type Input = {};
-        export type Output = any;
-    }
-    export namespace PostOAuth2Acknowledge {
-        export type Body = Components.Schemas.ApiRequestBodies.PostOAuth2Acknowledge.Body0;
-        export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
+            readonly userId: Parameters.UserId;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 201;
@@ -274,13 +294,20 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
             readonly body: Responses.$201;
         };
         export namespace Responses {
-            export type $201 = Components.Schemas.ApiResponses.PostOAuth2Acknowledge.Response201.Schema0;
+            export type $201 = Components.Schemas.ApiResponses.PutUser.Response201.Schema0;
+        }
+        export namespace Parameters {
+            export type UserId = Components.Schemas.UUID;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace PostOAuth2Token {
         export type Body = Components.Schemas.ApiRequestBodies.PostOAuth2Token.Body0 | Components.Schemas.ApiRequestBodies.PostOAuth2Token.Body1;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
             readonly status: 200;
@@ -299,48 +326,70 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
             export type $200 = Components.Schemas.ApiResponses.PostOAuth2Token.Response200.Schema0;
             export type $400 = Components.Schemas.ApiResponses.PostOAuth2Token.Response400.Schema0;
         }
+        export namespace Parameters {
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
+        }
     }
     export namespace PostPasswordChangeRequest {
         export type Body = Components.Schemas.ApiRequestBodies.PostPasswordChangeRequest.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = any;
+        export namespace Parameters {
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
+        }
     }
     export namespace PostUser {
         export type Body = Components.Schemas.ApiRequestBodies.PostUser.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = {
-            readonly status: 200;
+            readonly status: 201;
             readonly headers?: NonNullable<{
                 [pattern: string]: NonNullable<string>;
             }>;
-            readonly body: Responses.$200;
+            readonly body: Responses.$201;
         };
         export namespace Responses {
-            export type $200 = Components.Schemas.ApiResponses.PostUser.Response200.Schema0;
+            export type $201 = Components.Schemas.ApiResponses.PostUser.Response201.Schema0;
+        }
+        export namespace Parameters {
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace PutPredictionsData {
         export type Body = Components.Schemas.ApiRequestBodies.PutPredictionsData.Body0;
         export type Input = {
-            readonly body?: Body;
-            readonly mlProject?: Parameters.MlProject;
+            readonly body: Body;
+            readonly mlProject: Parameters.MlProject;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = any;
         export namespace Parameters {
             export type MlProject = Components.Schemas.ApiParameters.MlProject;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetOAuth2Authorize {
         export type Input = {
-            readonly responseType?: Parameters.ResponseType;
-            readonly clientId?: Parameters.ClientId;
-            readonly redirectUri: Parameters.RedirectUri;
-            readonly scope: Parameters.Scope;
-            readonly state?: Parameters.State;
+            readonly responseType: Parameters.ResponseType;
+            readonly clientId: Parameters.ClientId;
+            readonly redirectUri?: Parameters.RedirectUri;
+            readonly scope?: Parameters.Scope;
+            readonly state: Parameters.State;
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
         };
         export type Output = any;
         export namespace Parameters {
@@ -349,10 +398,15 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
             export type RedirectUri = Components.Schemas.ApiParameters.RedirectURI;
             export type Scope = Components.Schemas.ApiParameters.Scope;
             export type State = Components.Schemas.ApiParameters.State;
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
     export namespace GetPing {
-        export type Input = {};
+        export type Input = {
+            readonly xSdkVersion?: Parameters.XSDKVersion;
+            readonly xApplicationVersion?: Parameters.XApplicationVersion;
+        };
         export type Output = {
             readonly status: 200;
             readonly headers?: NonNullable<{
@@ -362,6 +416,10 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         };
         export namespace Responses {
             export type $200 = Components.Schemas.ApiResponses.GetPing.Response200.Schema0;
+        }
+        export namespace Parameters {
+            export type XSDKVersion = Components.Schemas.ApiParameters.XSdkVersion;
+            export type XApplicationVersion = Components.Schemas.ApiParameters.XApplicationVersion;
         }
     }
 }
@@ -408,10 +466,6 @@ declare namespace Components {
             data: Components.Schemas.UserData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type UsersItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
-            users: Components.Schemas.UserModelHash;
         }>;
         export type TokenRequestBody = Components.Schemas.PasswordRequestBody | Components.Schemas.AuthorizationCodeRequestBody | Components.Schemas.ClientCredentialsRequestBody | Components.Schemas.RefreshTokenRequestBody | Components.Schemas.VerifyTokenRequestBody | Components.Schemas.PasswordChangeBody;
         export type AnomalyModelHash = NonNullable<{
@@ -637,15 +691,8 @@ declare namespace Components {
                 }
             }
             export namespace PutUser {
-                export namespace Response200 {
-                    export type Schema0 = Components.Schemas.UsersItems;
-                }
-            }
-            export namespace PostOAuth2Acknowledge {
                 export namespace Response201 {
-                    export type Schema0 = NonNullable<{
-                        redirectURI: NonNullable<string>;
-                    }>;
+                    export type Schema0 = Components.Schemas.UserItem;
                 }
             }
             export namespace PostOAuth2Token {
@@ -666,7 +713,7 @@ declare namespace Components {
                 }
             }
             export namespace PostUser {
-                export namespace Response200 {
+                export namespace Response201 {
                     export type Schema0 = Components.Schemas.UserItem;
                 }
             }
@@ -679,6 +726,8 @@ declare namespace Components {
             }
         }
         export namespace ApiParameters {
+            export type XSdkVersion = NonNullable<string>;
+            export type XApplicationVersion = NonNullable<string>;
             export type MlProject = \\"dalkia\\";
             export type ResponseType = \\"code\\" | \\"token\\";
             export type ClientId = NonNullable<string>;
@@ -689,16 +738,6 @@ declare namespace Components {
         export namespace ApiRequestBodies {
             export namespace PutUser {
                 export type Body0 = Components.Schemas.UserModel;
-            }
-            export namespace PostOAuth2Acknowledge {
-                export type Body0 = NonNullable<{
-                    responseType: NonNullable<string>;
-                    clientId: NonNullable<string>;
-                    redirectURI: NonNullable<string>;
-                    scope: NonNullable<string>;
-                    state: NonNullable<string>;
-                    acknowledged: NonNullable<boolean>;
-                }>;
             }
             export namespace PostOAuth2Token {
                 export type Body0 = Components.Schemas.TokenRequestBody;
@@ -727,20 +766,20 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     export namespace UpdatePet {
         export type Body = Components.Schemas.ApiRequestBodies.UpdatePet.Body0 | Components.Schemas.ApiRequestBodies.UpdatePet.Body1;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = any;
     }
     export namespace AddPet {
         export type Body = Components.Schemas.ApiRequestBodies.AddPet.Body0 | Components.Schemas.ApiRequestBodies.AddPet.Body1;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = any;
     }
     export namespace FindPetsByStatus {
         export type Input = {
-            readonly status?: Parameters.Status;
+            readonly status: Parameters.Status;
         };
         export type Output = {
             readonly status: 200;
@@ -758,7 +797,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace FindPetsByTags {
         export type Input = {
-            readonly tags?: Parameters.Tags;
+            readonly tags: Parameters.Tags;
         };
         export type Output = {
             readonly status: 200;
@@ -776,7 +815,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace GetPetById {
         export type Input = {
-            readonly petId?: Parameters.PetId;
+            readonly petId: Parameters.PetId;
         };
         export type Output = {
             readonly status: 200;
@@ -795,8 +834,8 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     export namespace UpdatePetWithForm {
         export type Body = Components.Schemas.ApiRequestBodies.UpdatePetWithForm.Body0;
         export type Input = {
-            readonly body: Body;
-            readonly petId?: Parameters.PetId;
+            readonly body?: Body;
+            readonly petId: Parameters.PetId;
         };
         export type Output = any;
         export namespace Parameters {
@@ -805,8 +844,8 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace DeletePet {
         export type Input = {
-            readonly apiKey: Parameters.ApiKey;
-            readonly petId?: Parameters.PetId;
+            readonly apiKey?: Parameters.ApiKey;
+            readonly petId: Parameters.PetId;
         };
         export type Output = any;
         export namespace Parameters {
@@ -817,8 +856,8 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     export namespace UploadFile {
         export type Body = Components.Schemas.ApiRequestBodies.UploadFile.Body0;
         export type Input = {
-            readonly body: Body;
-            readonly petId?: Parameters.PetId;
+            readonly body?: Body;
+            readonly petId: Parameters.PetId;
         };
         export type Output = {
             readonly status: 200;
@@ -850,7 +889,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     export namespace PlaceOrder {
         export type Body = Components.Schemas.ApiRequestBodies.PlaceOrder.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = {
             readonly status: 200;
@@ -865,7 +904,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace GetOrderById {
         export type Input = {
-            readonly orderId?: Parameters.OrderId;
+            readonly orderId: Parameters.OrderId;
         };
         export type Output = {
             readonly status: 200;
@@ -883,7 +922,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace DeleteOrder {
         export type Input = {
-            readonly orderId?: Parameters.OrderId;
+            readonly orderId: Parameters.OrderId;
         };
         export type Output = any;
         export namespace Parameters {
@@ -893,28 +932,28 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     export namespace CreateUser {
         export type Body = Components.Schemas.ApiRequestBodies.CreateUser.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = any;
     }
     export namespace CreateUsersWithArrayInput {
         export type Body = Components.Schemas.ApiRequestBodies.CreateUsersWithArrayInput.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = any;
     }
     export namespace CreateUsersWithListInput {
         export type Body = Components.Schemas.ApiRequestBodies.CreateUsersWithListInput.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = any;
     }
     export namespace LoginUser {
         export type Input = {
-            readonly username?: Parameters.Username;
-            readonly password?: Parameters.Password;
+            readonly username: Parameters.Username;
+            readonly password: Parameters.Password;
         };
         export type Output = {
             readonly status: 200;
@@ -939,7 +978,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace GetUserByName {
         export type Input = {
-            readonly username?: Parameters.Username;
+            readonly username: Parameters.Username;
         };
         export type Output = {
             readonly status: 200;
@@ -958,8 +997,8 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     export namespace UpdateUser {
         export type Body = Components.Schemas.ApiRequestBodies.UpdateUser.Body0;
         export type Input = {
-            readonly body?: Body;
-            readonly username?: Parameters.Username;
+            readonly body: Body;
+            readonly username: Parameters.Username;
         };
         export type Output = any;
         export namespace Parameters {
@@ -968,7 +1007,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace DeleteUser {
         export type Input = {
-            readonly username?: Parameters.Username;
+            readonly username: Parameters.Username;
         };
         export type Output = any;
         export namespace Parameters {
@@ -1120,7 +1159,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_exam
 "declare namespace API {
     export namespace GetDelay {
         export type Input = {
-            readonly duration?: Parameters.Duration;
+            readonly duration: Parameters.Duration;
         };
         export type Output = any;
         export namespace Parameters {
@@ -1155,9 +1194,9 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_exam
     }
     export namespace GetParameters {
         export type Input = {
-            readonly aHeader: Parameters.AHeader;
-            readonly pathParam1?: Parameters.PathParam1;
-            readonly pathParam2?: Parameters.PathParam2;
+            readonly aHeader?: Parameters.AHeader;
+            readonly pathParam1: Parameters.PathParam1;
+            readonly pathParam2: Parameters.PathParam2;
         };
         export type Output = {
             readonly status: 204;
@@ -1191,7 +1230,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_exam
     export namespace PutEcho {
         export type Body = Components.Schemas.ApiRequestBodies.PutEcho.Body0;
         export type Input = {
-            readonly body?: Body;
+            readonly body: Body;
         };
         export type Output = {
             readonly status: 200;
