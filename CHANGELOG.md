@@ -1,3 +1,13 @@
+## [1.0.2](https://github.com/nfroidure/schema2dts/compare/v1.0.1...v1.0.2) (2020-09-04)
+
+
+### Bug Fixes
+
+* **docs:** add repo url ([5c81332](https://github.com/nfroidure/schema2dts/commit/5c8133297aaf1820648bf0faf26bfb779590ef8d))
+* **docs:** fix the readme example ([9f65022](https://github.com/nfroidure/schema2dts/commit/9f65022f519c738cfe8f1dcb3bf6e955dfde9fc6))
+
+
+
 ## [1.0.1](https://github.com/nfroidure/schema2dts/compare/v1.0.0...v1.0.1) (2020-09-03)
 
 
