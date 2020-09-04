@@ -33,6 +33,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import {
   generateJSONSchemaTypes,
   generateOpenAPITypes,
+  toSource,
 } from 'schema2dts';
 
 // Open API
