@@ -12,6 +12,10 @@
     "dts",
     "types"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nfroidure/schema2dts.git"
+  },
   "metapak": {
     "configs": [
       "main",
@@ -240,5 +244,9 @@
     "roots": [
       "<rootDir>/src"
     ]
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/nfroidure/schema2dts/issues"
+  },
+  "homepage": "https://github.com/nfroidure/schema2dts#readme"
 }
