@@ -33,9 +33,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import {
   generateJSONSchemaTypes,
   generateOpenAPITypes,
-  buildIdentifier,
-  toSource,
-} from '.';
+} from 'schema2dts';
 
 // Open API
 const openAPISchema = JSON.parse(readFileSync('openapi.json').toString());
