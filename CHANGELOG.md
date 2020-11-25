@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/nfroidure/schema2dts/compare/v1.0.2...v2.0.0) (2020-11-25)
+
+
+### Bug Fixes
+
+* **docs:** fix the readme example ([c72258c](https://github.com/nfroidure/schema2dts/commit/c72258c8d6b1f5ddebfcf2096338a3d5039c13cd))
+* **openapi:** allow headers to also be string arrays ([bbfc04e](https://github.com/nfroidure/schema2dts/commit/bbfc04ebf293d0faea62ee8589791904b73cd836))
+
+
+
 ## [1.0.2](https://github.com/nfroidure/schema2dts/compare/v1.0.1...v1.0.2) (2020-09-04)
 
 
