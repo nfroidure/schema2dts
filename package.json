@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator",
   "main": "dist/index",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.js",
   "tags": [
     "jsonschema",
@@ -69,40 +70,40 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@types/json-schema": "^7.0.5",
-    "camelcase": "^6.0.0",
+    "@types/json-schema": "^7.0.6",
+    "camelcase": "^6.2.0",
     "openapi-types": "^7.0.1",
-    "typescript": "^4.0.2",
+    "typescript": "^4.1.2",
     "yerror": "^5.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.1",
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
-    "@babel/preset-env": "^7.11.0",
-    "@babel/preset-typescript": "^7.10.4",
-    "@babel/register": "^7.10.5",
-    "@types/jest": "^26.0.10",
-    "@typescript-eslint/eslint-plugin": "^3.9.1",
-    "@typescript-eslint/parser": "^3.9.1",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "@types/jest": "^26.0.15",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
     "babel-eslint": "^10.1.0",
     "commitizen": "^4.1.2",
-    "conventional-changelog-cli": "^2.1.0",
+    "conventional-changelog-cli": "^2.1.1",
     "coveralls": "^3.1.0",
-    "cz-conventional-changelog": "^3.2.0",
-    "eslint": "^7.7.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.13.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "jest": "^26.4.0",
+    "jest": "^26.6.3",
     "metapak": "^3.1.10",
-    "metapak-nfroidure": "10.2.5",
-    "prettier": "^2.0.5",
+    "metapak-nfroidure": "11.0.3",
+    "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.5"
   },
   "contributors": [],
   "engines": {
-    "node": ">=10.19.0"
+    "node": ">=12.19.0"
   },
   "files": [
     "dist",
@@ -139,8 +140,27 @@
       "babel-core"
     ]
   },
+  "bugs": {
+    "url": "https://github.com/nfroidure/schema2dts/issues"
+  },
+  "homepage": "https://github.com/nfroidure/schema2dts#readme",
+  "jest": {
+    "coverageReporters": [
+      "lcov"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ]
+  },
   "eslintConfig": {
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
     "parserOptions": {
       "ecmaVersion": 2018,
       "sourceType": "module",
@@ -161,21 +181,6 @@
     "parser": "@typescript-eslint/parser",
     "ignorePatterns": [
       "*.d.ts"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "*.ts"
-        ],
-        "rules": {
-          "no-unused-vars": [
-            1,
-            {
-              "args": "none"
-            }
-          ]
-        }
-      }
     ]
   },
   "prettier": {
@@ -185,7 +190,6 @@
     "trailingComma": "all",
     "proseWrap": "always"
   },
-  "module": "dist/index.mjs",
   "babel": {
     "plugins": [
       "@babel/proposal-class-properties",
@@ -197,7 +201,7 @@
         "@babel/env",
         {
           "targets": {
-            "node": "10.19.0"
+            "node": "12.19.0"
           }
         }
       ]
@@ -233,20 +237,5 @@
       }
     },
     "sourceMaps": true
-  },
-  "jest": {
-    "coverageReporters": [
-      "lcov"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "roots": [
-      "<rootDir>/src"
-    ]
-  },
-  "bugs": {
-    "url": "https://github.com/nfroidure/schema2dts/issues"
-  },
-  "homepage": "https://github.com/nfroidure/schema2dts#readme"
+  }
 }

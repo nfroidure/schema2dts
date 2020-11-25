@@ -47,7 +47,7 @@ async function resolve<T, U>(root: T, parts: string[]): Promise<U> {
 
 export async function generateOpenAPITypes(
   schema: OpenAPIV3.Document,
-  baseName: string = 'API',
+  baseName = 'API',
 ): Promise<ts.NodeArray<ts.Statement>> {
   let sideTypes: { type: ts.Statement; parts: string[] }[] = [];
   const seenRefs: { [refName: string]: boolean } = {};
@@ -434,7 +434,12 @@ export async function generateOpenAPITypes(
                               {},
                             ),
                             patternProperties: {
-                              '/a-z0-9/': { type: 'string' },
+                              '/a-z0-9/': {
+                                oneOf: [
+                                  { type: 'string' },
+                                  { type: 'array', items: { type: 'string' } },
+                                ],
+                              },
                             },
                           })
                         )[0],
@@ -500,7 +505,7 @@ export async function generateOpenAPITypes(
  */
 export async function generateJSONSchemaTypes(
   schema: Schema,
-  name: string = 'Main',
+  name = 'Main',
 ): Promise<ts.NodeArray<ts.Statement>> {
   const seenRefs: { [refName: string]: boolean } = {};
   const builtRefs: { [refName: string]: boolean } = {};
@@ -673,7 +678,6 @@ async function schemaToTypes(
       return [ts.createIntersectionTypeNode(types)];
     }
   } else {
-    console.log(JSON.stringify(schema));
     throw new YError('E_UNSUPPORTED_SCHEMA', schema);
   }
 }
@@ -780,7 +784,7 @@ async function buildArrayTypeNode(
     ? schema.items
     : [schema.items]
   ).filter((s): s is Schema => typeof s !== 'boolean');
-  let types = (
+  const types = (
     await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
   ).reduce((allTypes, types) => [...allTypes, ...types], []);
   const type = types.length > 1 ? ts.createUnionTypeNode(types) : types[0];
@@ -823,7 +827,7 @@ function buildLiteralType(value: number | string | boolean): ts.TypeNode {
  * @param {TypedPropertyDescriptor.NodeArray} nodes
  * @returns string
  */
-export function toSource(nodes: ts.Node | ts.NodeArray<ts.Node>) {
+export function toSource(nodes: ts.Node | ts.NodeArray<ts.Node>): string {
   const resultFile = ts.createSourceFile(
     'someFileName.ts',
     '',

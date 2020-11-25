@@ -112,6 +112,14 @@
         "responses": {
           "204": {
             "description": "Delay expired",
+            "headers": {
+              "x-delay-precision": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ns", "ms", "s"]
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
