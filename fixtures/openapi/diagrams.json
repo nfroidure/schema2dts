@@ -896,6 +896,13 @@
                 "type": "object",
                 "additionalProperties": true
               }
+            },
+            "text/csv": {
+              "example": "some,csv,data",
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
             }
           }
         },

@@ -367,7 +367,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         }
     }
     export namespace PutPredictionsData {
-        export type Body = Components.Schemas.ApiRequestBodies.PutPredictionsData.Body0;
+        export type Body = Components.Schemas.ApiRequestBodies.PutPredictionsData.Body0 | Components.Schemas.ApiRequestBodies.PutPredictionsData.Body1;
         export type Input = {
             readonly body: Body;
             readonly mlProject: Parameters.MlProject;
@@ -755,6 +755,7 @@ declare namespace Components {
                 export type Body0 = NonNullable<{
                     [pattern: string]: any;
                 }>;
+                export type Body1 = NonNullable<string>;
             }
         }
     }
