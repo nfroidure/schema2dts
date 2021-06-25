@@ -22,6 +22,18 @@ describe('generateOpenAPITypes()', () => {
 
         expect(toSource(await generateOpenAPITypes(schema))).toMatchSnapshot();
       });
+
+      it(`should work with ${file} and filterStatuses 200/201/202/300`, async () => {
+        const schema = JSON.parse(
+          readFileSync(path.join(fixturesDir, file)).toString(),
+        ) as OpenAPIV3.Document;
+
+        expect(
+          toSource(
+            await generateOpenAPITypes(schema, 'API', [200, 201, 202, 300]),
+          ),
+        ).toMatchSnapshot();
+      });
     });
   });
 });
