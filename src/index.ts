@@ -48,6 +48,7 @@ async function resolve<T, U>(root: T, parts: string[]): Promise<U> {
 export async function generateOpenAPITypes(
   schema: OpenAPIV3.Document,
   baseName = 'API',
+  { filterStatuses }: { filterStatuses?: number[] } = {},
 ): Promise<ts.NodeArray<ts.Statement>> {
   let sideTypes: { type: ts.Statement; parts: string[] }[] = [];
   const seenRefs: { [refName: string]: boolean } = {};
@@ -151,7 +152,14 @@ export async function generateOpenAPITypes(
       }
 
       if (operation.responses) {
-        const responsesCodes = Object.keys(operation.responses);
+        let responsesCodes = Object.keys(operation.responses);
+
+        // We filter only if filterStatuses got at least one status code
+        if (filterStatuses?.length) {
+          responsesCodes = responsesCodes.filter((code) =>
+            filterStatuses.includes(parseInt(code)),
+          );
+        }
 
         await Promise.all(
           responsesCodes.map(async (code) => {
