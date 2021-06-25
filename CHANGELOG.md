@@ -1,3 +1,12 @@
+# [2.1.0](https://github.com/nfroidure/schema2dts/compare/v2.0.1...v2.1.0) (2021-06-25)
+
+
+### Features
+
+* **api:** allow to filter statuses to only generate subpart of responses ([fa3bb7a](https://github.com/nfroidure/schema2dts/commit/fa3bb7a62fac1f709338001a06433e0a519e3cd8))
+
+
+
 ## [2.0.1](https://github.com/nfroidure/schema2dts/compare/v2.0.0...v2.0.1) (2021-04-10)
 
 
