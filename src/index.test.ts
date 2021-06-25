@@ -30,7 +30,9 @@ describe('generateOpenAPITypes()', () => {
 
         expect(
           toSource(
-            await generateOpenAPITypes(schema, 'API', [200, 201, 202, 300]),
+            await generateOpenAPITypes(schema, 'API', {
+              filterStatuses: [200, 201, 202, 300],
+            }),
           ),
         ).toMatchSnapshot();
       });
