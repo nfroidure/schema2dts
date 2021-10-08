@@ -1,3 +1,12 @@
+## [2.2.1](https://github.com/nfroidure/schema2dts/compare/v2.2.0...v2.2.1) (2021-10-08)
+
+
+### Bug Fixes
+
+* **types:** fix allOf edge case for required properties ([9318cac](https://github.com/nfroidure/schema2dts/commit/9318cacf66226259c380345b0c73b92400f36523))
+
+
+
 # [2.2.0](https://github.com/nfroidure/schema2dts/compare/v2.1.1...v2.2.0) (2021-10-08)
 
 
