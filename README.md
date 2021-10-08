@@ -50,6 +50,21 @@ writeFileSync('API.d.ts', toSource(await generateJSONSchemaTypes(jsonSchema)));
 If you find some case with unexpected results, please add the fixtures to this
 repository in a pull request and describe the problem you encounter.
 
+## Options
+
+You can change the API main namespace in order to be able to use several
+generated types in the same repository. Just provide its namespace a the second
+argument to `generateOpenAPITypes`.
+
+The third argument is for options:
+
+- you can generate the unused schemas (especially useful when in development
+  mode) to be able to use them in your code despite the fact they ain't used in
+  you API at that moment. Just set `generateUnusedSchemas` to `true`.
+- you can also filter the statuses you wish to generate by setting
+  `filterStatuses` to `[200, 201, 202, 300]` for example so that the 500 errors
+  responses ain't taken in count.
+
 ## Known issues
 
 There is some differences between the JSONSchema `anyOf`, `allOf` and `oneOf`

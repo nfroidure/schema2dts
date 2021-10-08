@@ -48,7 +48,13 @@ async function resolve<T, U>(root: T, parts: string[]): Promise<U> {
 export async function generateOpenAPITypes(
   schema: OpenAPIV3.Document,
   baseName = 'API',
-  { filterStatuses }: { filterStatuses?: number[] } = {},
+  {
+    filterStatuses,
+    generateUnusedSchemas,
+  }: {
+    filterStatuses?: number[];
+    generateUnusedSchemas?: boolean;
+  } = {},
 ): Promise<ts.NodeArray<ts.Statement>> {
   let sideTypes: { type: ts.Statement; parts: string[] }[] = [];
   const seenRefs: { [refName: string]: boolean } = {};
@@ -61,6 +67,24 @@ export async function generateOpenAPITypes(
     },
     buildIdentifier,
   };
+
+  if (generateUnusedSchemas) {
+    Object.keys(schema.components?.schemas || {}).forEach((schemaName) => {
+      if (
+        typeof (schema.components.schemas[
+          schemaName
+        ] as OpenAPIV3.ReferenceObject).$ref !== 'undefined'
+      ) {
+        seenRefs[
+          (schema.components.schemas[
+            schemaName
+          ] as OpenAPIV3.ReferenceObject).$ref
+        ] = true;
+      } else {
+        seenRefs[`#/components/schemas/${schemaName}`] = true;
+      }
+    });
+  }
 
   await Object.keys(schema.paths).reduce(async (promise, path) => {
     await Object.keys(schema.paths[path]).reduce(async (promise, method) => {

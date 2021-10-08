@@ -1839,6 +1839,19 @@
             "$ref": "#/components/schemas/PasswordChangeBody"
           }
         ]
+      },
+      "UnusedSchema": {
+        "type": "object",
+        "description": "An unused schema.",
+        "required": ["foo"],
+        "properties": {
+          "foo": {
+            "type": "string"
+          },
+          "bar": {
+            "type": "string"
+          }
+        }
       }
     },
     "parameters": {

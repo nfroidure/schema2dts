@@ -36,6 +36,20 @@ describe('generateOpenAPITypes()', () => {
           ),
         ).toMatchSnapshot();
       });
+
+      it(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
+        const schema = JSON.parse(
+          readFileSync(path.join(fixturesDir, file)).toString(),
+        ) as OpenAPIV3.Document;
+
+        expect(
+          toSource(
+            await generateOpenAPITypes(schema, 'API', {
+              generateUnusedSchemas: true,
+            }),
+          ),
+        ).toMatchSnapshot();
+      });
     });
   });
 });
