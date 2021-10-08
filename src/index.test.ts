@@ -330,6 +330,7 @@ describe('generateTypeDeclaration()', () => {
         }> & NonNullable<(NonNullable<number> | NonNullable<string>)[]>;"
       `);
     });
+
     test('should work with simple literal type schema', async () => {
       const schema: JSONSchema7 = {
         title: 'Limit',
@@ -345,6 +346,105 @@ describe('generateTypeDeclaration()', () => {
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
       ).toMatchInlineSnapshot(`"export type Limit = Components.Schemas.User;"`);
+    });
+
+    test('should work with anyOf/array special test case schemas', async () => {
+      const schema: JSONSchema7 = {
+        title: 'TrickyThing',
+        type: 'object',
+        additionalProperties: true,
+        required: [
+          'name',
+          'labels',
+          'timestamp',
+          'data',
+          'start',
+          'end',
+          'duration',
+          'context',
+        ],
+        properties: {
+          name: { type: 'string' },
+          duration: { type: 'number' },
+          start: {
+            $ref: '#/components/schemas/Date',
+          },
+          end: {
+            $ref: '#/components/schemas/Date',
+          },
+          labels: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: ['value', 'peaks', 'startTime', 'endTime', 'peakTime'],
+            },
+          },
+          timestamp: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: ['startTime', 'endTime', 'peakTime'],
+            },
+          },
+          data: {
+            type: 'array',
+            items: {
+              type: 'array',
+              maxItems: 5,
+              minItems: 5,
+              items: {
+                anyOf: [
+                  {
+                    $ref: '#/components/schemas/Date',
+                  },
+                  { type: 'number' },
+                  { type: 'string', enum: ['first', 'bosse', 'last'] },
+                  { type: 'string', pattern: '[0-9]+' },
+                ],
+              },
+            },
+          },
+          context: {
+            $ref: '#/components/schemas/Data',
+          },
+        },
+      };
+
+      context.nameResolver.mockResolvedValueOnce([
+        'Components',
+        'Schemas',
+        'Date',
+      ]);
+      context.nameResolver.mockResolvedValueOnce([
+        'Components',
+        'Schemas',
+        'Date',
+      ]);
+      context.nameResolver.mockResolvedValueOnce([
+        'Components',
+        'Schemas',
+        'Date',
+      ]);
+      context.nameResolver.mockResolvedValueOnce([
+        'Components',
+        'Schemas',
+        'Data',
+      ]);
+
+      expect(toSource(await generateTypeDeclaration(context, schema)))
+        .toMatchInlineSnapshot(`
+        "export type TrickyThing = NonNullable<{
+            name: NonNullable<string>;
+            duration: NonNullable<number>;
+            start: Components.Schemas.Date;
+            end: Components.Schemas.Date;
+            labels: NonNullable<(\\"value\\" | \\"peaks\\" | \\"startTime\\" | \\"endTime\\" | \\"peakTime\\")[]>;
+            timestamp: NonNullable<(\\"startTime\\" | \\"endTime\\" | \\"peakTime\\")[]>;
+            data: NonNullable<NonNullable<(Components.Schemas.Date | NonNullable<number> | (\\"first\\" | \\"bosse\\" | \\"last\\") | NonNullable<string>)[]>[]>;
+            context: Components.Schemas.Data;
+            [pattern: string]: any;
+        }>;"
+      `);
     });
   });
 });

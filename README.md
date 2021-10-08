@@ -50,6 +50,28 @@ writeFileSync('API.d.ts', toSource(await generateJSONSchemaTypes(jsonSchema)));
 If you find some case with unexpected results, please add the fixtures to this
 repository in a pull request and describe the problem you encounter.
 
+## Known issues
+
+There is some differences between the JSONSchema `anyOf`, `allOf` and `oneOf`
+keywords (learn
+[more here on combining schemas](https://json-schema.org/understanding-json-schema/reference/combining.html)).
+
+The current way to handle this in this library is to:
+
+- convert `oneOf` to a
+  [union type](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#union-types)
+  which is valid
+- convert `anyOf` to a union type too which is not really what it means in JSON
+  Schema
+- convert `allOf` to an
+  [intersection type](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#intersection-types)
+  which is completly wrong and will work only with JSON Schemas meant to be used
+  that way. By example, combining and existing object schema with another object
+  to make some properties required won't work at all (eg
+  `{ "allOf": [{ "$ref": "#/definitions/User"}, { "required": ["id"] }]}`).
+
+We will update this behavior as soon as we can.
+
 [//]: # (::contents:end)
 
 # Authors
