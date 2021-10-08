@@ -684,10 +684,6 @@ async function schemaToTypes(
       ts.createTypeReferenceNode('NonNullable', [typeParameter]),
     );
   } else if (schema.anyOf || schema.allOf || schema.oneOf) {
-    // In fact, anyOf/allOf/oneOf properties add validation to
-    // the actual schema but we only generate types if they
-    // are the sole definitions for the schema as a fallback
-    // See https://json-schema.org/understanding-json-schema/reference/combining.html
     const types = (
       await Promise.all(
         ((schema.anyOf || schema.allOf || schema.oneOf) as Schema[]).map(
@@ -707,6 +703,8 @@ async function schemaToTypes(
       // this in TypeScript atm 🤷
       return [ts.createUnionTypeNode(types)];
     } else if (schema.allOf) {
+      // Fallback to intersection type which will only work
+      // in some situations (see the README)
       return [ts.createIntersectionTypeNode(types)];
     }
   } else {
@@ -737,6 +735,29 @@ async function buildObjectTypeNode(
             undefined,
           );
         }),
+      ),
+    );
+  }
+
+  // We need to handle empty required properties in order to be able
+  // to generate objects with only required properties
+  if (schema.required) {
+    elements = elements.concat(
+      await Promise.all(
+        schema.required
+          .filter(
+            (propertyName) =>
+              'undefined' === typeof schema.properties?.[propertyName],
+          )
+          .map(async (propertyName) => {
+            return ts.createPropertySignature(
+              [],
+              propertyName,
+              undefined,
+              ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+              undefined,
+            );
+          }),
       ),
     );
   }
