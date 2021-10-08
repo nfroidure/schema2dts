@@ -605,6 +605,8 @@ declare namespace Components {
             factoryId: Components.Schemas.UUID;
             machinesIds?: NonNullable<Components.Schemas.UUID[]>;
             machinesTree?: NonNullable<{}>;
+            machineId: unknown;
+            settings: unknown;
         }>;
         export type MachineData = NonNullable<{
             name: NonNullable<string>;
@@ -1347,6 +1349,8 @@ declare namespace Components {
             factoryId: Components.Schemas.UUID;
             machinesIds?: NonNullable<Components.Schemas.UUID[]>;
             machinesTree?: NonNullable<{}>;
+            machineId: unknown;
+            settings: unknown;
         }>;
         export type MachineData = NonNullable<{
             name: NonNullable<string>;
@@ -1966,6 +1970,8 @@ declare namespace Components {
             factoryId: Components.Schemas.UUID;
             machinesIds?: NonNullable<Components.Schemas.UUID[]>;
             machinesTree?: NonNullable<{}>;
+            machineId: unknown;
+            settings: unknown;
         }>;
         export type LineModel = NonNullable<{
             id?: Components.Schemas.UUID;

@@ -345,6 +345,42 @@ describe('generateTypeDeclaration()', () => {
       `);
     });
 
+    test('should work with allOf schemas and required properties added', async () => {
+      const schema: JSONSchema7 = {
+        title: 'Limit',
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              min: { type: 'integer' },
+              max: { type: 'integer' },
+              minIncluded: { type: 'boolean' },
+              maxIncluded: { type: 'boolean' },
+              pace: { type: 'number', readOnly: true },
+            },
+          },
+          {
+            type: 'object',
+            required: ['min', 'max'],
+          },
+        ],
+      };
+
+      expect(toSource(await generateTypeDeclaration(context, schema)))
+        .toMatchInlineSnapshot(`
+        "export type Limit = NonNullable<{
+            min?: NonNullable<number>;
+            max?: NonNullable<number>;
+            minIncluded?: NonNullable<boolean>;
+            maxIncluded?: NonNullable<boolean>;
+            readonly pace?: NonNullable<number>;
+        }> & NonNullable<{
+            min: unknown;
+            max: unknown;
+        }>;"
+      `);
+    });
+
     test('should work with simple literal type schema', async () => {
       const schema: JSONSchema7 = {
         title: 'Limit',
