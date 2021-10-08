@@ -1,3 +1,12 @@
+# [2.2.0](https://github.com/nfroidure/schema2dts/compare/v2.1.1...v2.2.0) (2021-10-08)
+
+
+### Features
+
+* **types:** allow to generate unused schemas types ([5ef6a1c](https://github.com/nfroidure/schema2dts/commit/5ef6a1c0e874013c9c578ae647ba144637647c37)), closes [#4](https://github.com/nfroidure/schema2dts/issues/4)
+
+
+
 ## [2.1.1](https://github.com/nfroidure/schema2dts/compare/v2.1.0...v2.1.1) (2021-10-08)
 
 
