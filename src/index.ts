@@ -7,6 +7,7 @@ import type {
 } from 'json-schema';
 import type { OpenAPIV3 } from 'openapi-types';
 import * as ts from 'typescript';
+import { factory } from 'typescript';
 import YError from 'yerror';
 import camelCase from 'camelcase';
 
@@ -381,21 +382,20 @@ export async function generateOpenAPITypes(
 
       sideTypes.push({
         parts: [baseName, operation.operationId, 'Input'],
-        type: ts.createTypeAliasDeclaration(
+        type: factory.createTypeAliasDeclaration(
           undefined,
-          [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           'Input',
           undefined,
-          ts.createTypeLiteralNode(
+          factory.createTypeLiteralNode(
             allInputs.map(({ name, path, required }) => {
-              return ts.createPropertySignature(
-                [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              return factory.createPropertySignature(
+                [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                 camelCase(name),
                 required
                   ? undefined
-                  : ts.createToken(ts.SyntaxKind.QuestionToken),
+                  : factory.createToken(ts.SyntaxKind.QuestionToken),
                 buildTypeReference(context, path),
-                undefined,
               );
             }),
           ),
@@ -404,18 +404,18 @@ export async function generateOpenAPITypes(
 
       sideTypes.push({
         parts: [baseName, operation.operationId, 'Output'],
-        type: ts.createTypeAliasDeclaration(
+        type: factory.createTypeAliasDeclaration(
           undefined,
-          [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
+          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           'Output',
           undefined,
           allOutputs.length
-            ? ts.createUnionTypeNode(
+            ? factory.createUnionTypeNode(
                 await Promise.all(
                   allOutputs.map(async ({ status, path, headersSchemas }) => {
-                    return ts.createTypeLiteralNode([
-                      ts.createPropertySignature(
-                        [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                    return factory.createTypeLiteralNode([
+                      factory.createPropertySignature(
+                        [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                         'status',
                         undefined,
                         status === 'default'
@@ -429,10 +429,9 @@ export async function generateOpenAPITypes(
                                 const: parseInt(status, 10),
                               })
                             )[0],
-                        undefined,
                       ),
-                      ts.createPropertySignature(
-                        [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                      factory.createPropertySignature(
+                        [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                         'headers',
                         Object.keys(headersSchemas).reduce(
                           (somerequired, propertyName) =>
@@ -441,7 +440,7 @@ export async function generateOpenAPITypes(
                           false,
                         )
                           ? undefined
-                          : ts.createToken(ts.SyntaxKind.QuestionToken),
+                          : factory.createToken(ts.SyntaxKind.QuestionToken),
                         (
                           await schemaToTypes(context, {
                             type: 'object',
@@ -475,20 +474,18 @@ export async function generateOpenAPITypes(
                             },
                           })
                         )[0],
-                        undefined,
                       ),
-                      ts.createPropertySignature(
-                        [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                      factory.createPropertySignature(
+                        [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                         'body',
                         undefined,
                         buildTypeReference(context, path),
-                        undefined,
                       ),
                     ]);
                   }),
                 ),
               )
-            : ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
+            : factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
         ),
       });
     }, promise);
@@ -525,7 +522,9 @@ export async function generateOpenAPITypes(
     buildTree(packageTree, parts, type);
   }, []);
 
-  return ts.createNodeArray([...buildModuleDeclarations(context, packageTree)]);
+  return factory.createNodeArray([
+    ...buildModuleDeclarations(context, packageTree),
+  ]);
 }
 
 // Could use https://apitools.dev/json-schema-ref-parser/
@@ -587,7 +586,7 @@ export async function generateJSONSchemaTypes(
     buildTree(packageTree, parts, type);
   }, []);
 
-  return ts.createNodeArray([
+  return factory.createNodeArray([
     mainType,
     ...buildModuleDeclarations(context, packageTree),
   ]);
@@ -604,16 +603,16 @@ export async function generateTypeDeclaration(
     name || (schema && (schema as Schema).title) || 'Unknown',
   );
 
-  return ts.createTypeAliasDeclaration(
+  return factory.createTypeAliasDeclaration(
     undefined,
     [
       context.root
-        ? ts.createModifier(ts.SyntaxKind.DeclareKeyword)
-        : ts.createModifier(ts.SyntaxKind.ExportKeyword),
+        ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
+        : factory.createModifier(ts.SyntaxKind.ExportKeyword),
     ],
     name,
     undefined,
-    types.length > 1 ? ts.createUnionTypeNode(types) : types[0],
+    types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
   );
 }
 
@@ -623,9 +622,9 @@ async function schemaToTypes(
 ): Promise<ts.TypeNode[]> {
   if (typeof schema === 'boolean') {
     if (schema) {
-      return [ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)];
+      return [factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)];
     } else {
-      return [ts.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)];
+      return [factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)];
     }
   }
 
@@ -657,15 +656,17 @@ async function schemaToTypes(
         .map(async (type) => {
           switch (type) {
             case 'any':
-              return ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
+              return factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
             case 'boolean':
-              return ts.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+              return factory.createKeywordTypeNode(
+                ts.SyntaxKind.BooleanKeyword,
+              );
             case 'integer':
-              return ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+              return factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
             case 'number':
-              return ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+              return factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
             case 'string':
-              return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+              return factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
             case 'object':
               return await buildObjectTypeNode(context, schema);
             case 'array':
@@ -681,7 +682,7 @@ async function schemaToTypes(
     }
 
     return typesParameters.map((typeParameter) =>
-      ts.createTypeReferenceNode('NonNullable', [typeParameter]),
+      factory.createTypeReferenceNode('NonNullable', [typeParameter]),
     );
   } else if (schema.anyOf || schema.allOf || schema.oneOf) {
     const types = (
@@ -692,20 +693,20 @@ async function schemaToTypes(
       )
     ).map((innerTypes) =>
       innerTypes.length > 1
-        ? ts.createUnionTypeNode(innerTypes)
+        ? factory.createUnionTypeNode(innerTypes)
         : innerTypes[0],
     );
 
     if (schema.oneOf) {
-      return [ts.createUnionTypeNode(types)];
+      return [factory.createUnionTypeNode(types)];
     } else if (schema.anyOf) {
       // Not really a union types but no way to express
       // this in TypeScript atm 🤷
-      return [ts.createUnionTypeNode(types)];
+      return [factory.createUnionTypeNode(types)];
     } else if (schema.allOf) {
       // Fallback to intersection type which will only work
       // in some situations (see the README)
-      return [ts.createIntersectionTypeNode(types)];
+      return [factory.createIntersectionTypeNode(types)];
     }
   } else {
     throw new YError('E_UNSUPPORTED_SCHEMA', schema);
@@ -727,12 +728,15 @@ async function buildObjectTypeNode(
           const readOnly = (property as JSONSchema7).readOnly;
           const types = await schemaToTypes(context, property as Schema);
 
-          return ts.createPropertySignature(
-            readOnly ? [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)] : [],
+          return factory.createPropertySignature(
+            readOnly
+              ? [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
+              : [],
             propertyName,
-            required ? undefined : ts.createToken(ts.SyntaxKind.QuestionToken),
-            types.length > 1 ? ts.createUnionTypeNode(types) : types[0],
-            undefined,
+            required
+              ? undefined
+              : factory.createToken(ts.SyntaxKind.QuestionToken),
+            types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
           );
         }),
       ),
@@ -750,12 +754,11 @@ async function buildObjectTypeNode(
               'undefined' === typeof schema.properties?.[propertyName],
           )
           .map(async (propertyName) => {
-            return ts.createPropertySignature(
+            return factory.createPropertySignature(
               [],
               propertyName,
               undefined,
-              ts.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
-              undefined,
+              factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
             );
           }),
       ),
@@ -777,7 +780,10 @@ async function buildObjectTypeNode(
             return {
               readOnly,
               required,
-              type: types.length > 1 ? ts.createUnionTypeNode(types) : types[0],
+              type:
+                types.length > 1
+                  ? factory.createUnionTypeNode(types)
+                  : types[0],
             };
           },
         ),
@@ -787,7 +793,7 @@ async function buildObjectTypeNode(
         schema.additionalProperties
           ? [
               {
-                type: ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
+                type: factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
                 required: false,
                 readOnly: false,
               },
@@ -807,26 +813,28 @@ async function buildObjectTypeNode(
       );
 
     elements = elements.concat(
-      ts.createIndexSignature(
+      factory.createIndexSignature(
         undefined,
-        readOnly ? [ts.createModifier(ts.SyntaxKind.ReadonlyKeyword)] : [],
+        readOnly ? [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)] : [],
         [
-          ts.createParameter(
+          factory.createParameterDeclaration(
             [],
             [],
             undefined,
-            ts.createIdentifier('pattern'),
-            required ? ts.createToken(ts.SyntaxKind.QuestionToken) : undefined,
-            ts.createTypeReferenceNode('string', []),
+            factory.createIdentifier('pattern'),
+            required
+              ? factory.createToken(ts.SyntaxKind.QuestionToken)
+              : undefined,
+            factory.createTypeReferenceNode('string', []),
             undefined,
           ),
         ],
-        ts.createUnionTypeNode(types),
+        factory.createUnionTypeNode(types),
       ),
     );
   }
 
-  return ts.createTypeLiteralNode(elements);
+  return factory.createTypeLiteralNode(elements);
 }
 
 async function buildArrayTypeNode(
@@ -840,14 +848,14 @@ async function buildArrayTypeNode(
   const types = (
     await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
   ).reduce((allTypes, types) => [...allTypes, ...types], []);
-  const type = types.length > 1 ? ts.createUnionTypeNode(types) : types[0];
+  const type = types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
 
   if (
     typeof schema.minItems === 'number' &&
     typeof schema.maxItems === 'number'
   ) {
     if (schema.minItems > schema.maxItems) {
-      return ts.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
+      return factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
     }
 
     // Avoid having heavy results
@@ -857,21 +865,21 @@ async function buildArrayTypeNode(
     // }
   }
 
-  return ts.createArrayTypeNode(type);
+  return factory.createArrayTypeNode(type);
 }
 
 function buildLiteralType(value: number | string | boolean): ts.TypeNode {
   switch (typeof value) {
     case 'number':
-      return ts.createLiteralTypeNode(ts.createNumericLiteral(value));
+      return factory.createLiteralTypeNode(factory.createNumericLiteral(value));
     case 'string':
-      return ts.createLiteralTypeNode(ts.createStringLiteral(value));
+      return factory.createLiteralTypeNode(factory.createStringLiteral(value));
     case 'boolean':
-      return ts.createLiteralTypeNode(
-        value ? ts.createTrue() : ts.createFalse(),
+      return factory.createLiteralTypeNode(
+        value ? factory.createTrue() : factory.createFalse(),
       );
     case 'object':
-      return ts.createLiteralTypeNode(ts.createNull());
+      return factory.createLiteralTypeNode(factory.createNull());
   }
 }
 
@@ -893,7 +901,9 @@ export function toSource(nodes: ts.Node | ts.NodeArray<ts.Node>): string {
   });
   return printer.printList(
     ts.ListFormat.SourceFileStatements,
-    nodes instanceof Array ? nodes : ts.createNodeArray([nodes as ts.Node]),
+    nodes instanceof Array
+      ? nodes
+      : factory.createNodeArray([nodes as ts.Node]),
     resultFile,
   );
 }
@@ -904,15 +914,15 @@ function buildModuleDeclarations(
   level = 0,
 ): ts.Statement[] {
   return currentTree.map((treeNode) => {
-    return ts.createModuleDeclaration(
+    return factory.createModuleDeclaration(
       undefined,
       [
         level === 0
-          ? ts.createModifier(ts.SyntaxKind.DeclareKeyword)
-          : ts.createModifier(ts.SyntaxKind.ExportKeyword),
+          ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
+          : factory.createModifier(ts.SyntaxKind.ExportKeyword),
       ],
-      ts.createIdentifier(context.buildIdentifier(treeNode.name)),
-      ts.createModuleBlock([
+      factory.createIdentifier(context.buildIdentifier(treeNode.name)),
+      factory.createModuleBlock([
         ...treeNode.types,
         ...(treeNode.childs
           ? buildModuleDeclarations(context, treeNode.childs, level + 1)
@@ -950,13 +960,15 @@ function buildTree(
 }
 
 function buildTypeReference(context: Context, parts: string[]) {
-  return ts.createTypeReferenceNode(
+  return factory.createTypeReferenceNode(
     parts.reduce((curNode: ts.EntityName, referencePart: string) => {
-      const identifier = ts.createIdentifier(
+      const identifier = factory.createIdentifier(
         context.buildIdentifier(referencePart),
       );
 
-      return curNode ? ts.createQualifiedName(curNode, identifier) : identifier;
+      return curNode
+        ? factory.createQualifiedName(curNode, identifier)
+        : identifier;
     }, null),
     undefined,
   );
