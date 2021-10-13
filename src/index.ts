@@ -46,6 +46,22 @@ async function resolve<T, U>(root: T, parts: string[]): Promise<U> {
   }, (root as unknown) as U) as U;
 }
 
+async function ensureResolved<T>(
+  root: OpenAPIV3.Document,
+  object: T | OpenAPIV3.ReferenceObject,
+): Promise<T> {
+  const ref = (object as OpenAPIV3.ReferenceObject).$ref;
+  let resolvedObject: T;
+
+  if (ref) {
+    resolvedObject = await resolve<OpenAPIV3.Document, T>(root, splitRef(ref));
+  } else {
+    resolvedObject = object as T;
+  }
+
+  return resolvedObject;
+}
+
 export async function generateOpenAPITypes(
   schema: OpenAPIV3.Document,
   baseName = 'API',
@@ -109,17 +125,10 @@ export async function generateOpenAPITypes(
       }[] = [];
 
       if (operation.requestBody) {
-        let requestBody: OpenAPIV3.RequestBodyObject;
-        const ref = (operation.requestBody as OpenAPIV3.ReferenceObject).$ref;
-
-        if (ref) {
-          requestBody = await resolve<
-            OpenAPIV3.Document,
-            OpenAPIV3.RequestBodyObject
-          >(schema, splitRef(ref));
-        } else {
-          requestBody = operation.requestBody as OpenAPIV3.RequestBodyObject;
-        }
+        const requestBody = await ensureResolved<OpenAPIV3.RequestBodyObject>(
+          schema,
+          operation.requestBody,
+        );
 
         const requestBodySchemas = requestBody
           ? Object.keys(requestBody.content)
@@ -188,18 +197,10 @@ export async function generateOpenAPITypes(
 
         await Promise.all(
           responsesCodes.map(async (code) => {
-            let response: OpenAPIV3.ResponseObject;
-            const ref = (operation.responses[code] as OpenAPIV3.ReferenceObject)
-              .$ref;
-
-            if (ref) {
-              response = await resolve<
-                OpenAPIV3.Document,
-                OpenAPIV3.ResponseObject
-              >(schema, splitRef(ref));
-            } else {
-              response = operation.responses[code] as OpenAPIV3.ResponseObject;
-            }
+            const response = await ensureResolved<OpenAPIV3.ResponseObject>(
+              schema,
+              operation.responses[code],
+            );
 
             const responseSchemas =
               response && response.content
@@ -222,26 +223,15 @@ export async function generateOpenAPITypes(
                       await Promise.all(
                         Object.keys(response.headers).map(
                           async (headerName) => {
-                            const ref = (response.headers[
-                              headerName
-                            ] as OpenAPIV3.ReferenceObject).$ref;
+                            const header = await ensureResolved<OpenAPIV3.HeaderObject>(
+                              schema,
+                              response.headers[headerName],
+                            );
 
-                            if (ref) {
-                              return {
-                                name: headerName,
-                                header: await resolve<
-                                  OpenAPIV3.Document,
-                                  OpenAPIV3.HeaderObject
-                                >(schema, splitRef(ref)),
-                              };
-                            } else {
-                              return {
-                                name: headerName,
-                                header: response.headers[
-                                  headerName
-                                ] as OpenAPIV3.HeaderObject,
-                              };
-                            }
+                            return {
+                              name: headerName,
+                              header,
+                            };
                           },
                         ),
                       )
@@ -315,17 +305,11 @@ export async function generateOpenAPITypes(
       if (operation.parameters && operation.parameters.length) {
         await Promise.all(
           operation.parameters.map(async (parameter) => {
+            const resolvedParameter = await ensureResolved<OpenAPIV3.ParameterObject>(
+              schema,
+              parameter,
+            );
             const ref = (parameter as OpenAPIV3.ReferenceObject).$ref;
-            let resolvedParameter: OpenAPIV3.ParameterObject;
-
-            if (ref) {
-              resolvedParameter = await resolve<
-                OpenAPIV3.Document,
-                OpenAPIV3.ParameterObject
-              >(schema, splitRef(ref));
-            } else {
-              resolvedParameter = parameter as OpenAPIV3.ParameterObject;
-            }
 
             allInputs.push({
               name: resolvedParameter.name,
