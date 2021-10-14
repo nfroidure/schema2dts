@@ -1,3 +1,7 @@
+import * as ts from 'typescript';
+import { factory } from 'typescript';
+import YError from 'yerror';
+import camelCase from 'camelcase';
 import type {
   JSONSchema4,
   JSONSchema6,
@@ -6,10 +10,6 @@ import type {
   JSONSchema7Definition,
 } from 'json-schema';
 import type { OpenAPIV3 } from 'openapi-types';
-import * as ts from 'typescript';
-import { factory } from 'typescript';
-import YError from 'yerror';
-import camelCase from 'camelcase';
 
 type Context = {
   nameResolver: (ref: string) => Promise<string[]>;
