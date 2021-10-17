@@ -11,6 +11,270 @@ import path from 'path';
 import { OpenAPIV3 } from 'openapi-types';
 
 describe('generateOpenAPITypes()', () => {
+  test('with a denormalized simple sample', async () => {
+    const schema = {
+      openapi: '3.0.2',
+      info: {
+        version: '0.0.0',
+        title: 'diagrams-api',
+        description: 'The DiagRAMS API',
+      },
+      servers: [
+        {
+          url: 'http://localhost:8000/v0',
+        },
+      ],
+      paths: {
+        '/test': {
+          get: {
+            operationId: 'GetPing',
+            parameters: [
+              {
+                name: 'X-A-Header',
+                in: 'header',
+                schema: {
+                  type: 'number',
+                },
+              },
+              {
+                name: 'X-API-Version',
+                in: 'header',
+                schema: {
+                  type: 'string',
+                },
+              },
+            ],
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: { type: 'string' },
+                },
+              },
+            },
+            responses: {
+              '200': {
+                description: '',
+                headers: {
+                  'X-A-Header': {
+                    required: true,
+                    schema: {
+                      type: 'number',
+                    },
+                  },
+                  'X-SDK-Version': {
+                    schema: {
+                      type: 'string',
+                    },
+                  },
+                },
+                content: {
+                  'application/json': {
+                    schema: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    expect(toSource(await generateOpenAPITypes(schema))).toMatchInlineSnapshot(`
+      "declare namespace API {
+          export namespace GetPing {
+              export type Body = Components.RequestBodies.GetPingRequestBody;
+              export type Output = Responses.$200;
+              export type Input = {
+                  readonly body?: Body;
+                  readonly xAHeader?: Parameters.XAHeader;
+                  readonly xApiVersion?: Parameters.XAPIVersion;
+              };
+              export namespace Responses {
+                  export type $200 = Components.Responses.GetPingResponse200<200>;
+              }
+              export namespace Parameters {
+                  export type XAHeader = Components.Parameters.GetPing0;
+                  export type XAPIVersion = Components.Parameters.GetPing1;
+              }
+          }
+      }
+      declare namespace Components {
+          export namespace RequestBodies {
+              export type GetPingRequestBody = Components.Schemas.RequestBodiesGetPingRequestBodyBody0;
+          }
+          export namespace Parameters {
+              export type GetPing0 = NonNullable<number>;
+              export type GetPing1 = NonNullable<string>;
+          }
+          export namespace Responses {
+              type GetPingResponse200<S extends number> = {
+                  readonly status: S;
+                  readonly headers: {
+                      readonly \\"x-a-header\\": Components.Headers.GetPingResponse200HeadersXAHeader;
+                      readonly \\"x-sdk-version\\"?: Components.Headers.GetPingResponse200HeadersXSDKVersion;
+                      readonly [name: string]: unknown;
+                  };
+                  readonly body: Components.Schemas.ResponsesGetPingResponse200Body0;
+              };
+          }
+          export namespace Headers {
+              export type GetPingResponse200HeadersXAHeader = NonNullable<number>;
+              export type GetPingResponse200HeadersXSDKVersion = NonNullable<string>;
+          }
+      }
+      declare namespace Components {
+          export namespace Schemas {
+              export type RequestBodiesGetPingRequestBodyBody0 = NonNullable<string>;
+              export type ResponsesGetPingResponse200Body0 = NonNullable<string>;
+          }
+      }"
+    `);
+  });
+
+  test('with a normalized simple sample', async () => {
+    const schema = {
+      openapi: '3.0.2',
+      info: {
+        version: '0.0.0',
+        title: 'diagrams-api',
+        description: 'The DiagRAMS API',
+      },
+      servers: [
+        {
+          url: 'http://localhost:8000/v0',
+        },
+      ],
+      components: {
+        parameters: {
+          TheTestParamClone: {
+            $ref: '#/components/parameters/TheTestParam',
+          },
+          TheTestParam: {
+            name: 'TestParam',
+            in: 'query',
+            schema: { $ref: '#/components/schemas/TheSchema' },
+          },
+        },
+        headers: {
+          TheXAHeader: {
+            schema: {
+              type: 'number',
+            },
+          },
+        },
+        schemas: {
+          TheSchemaClone: {
+            $ref: '#/components/schemas/TheSchema',
+          },
+          TheSchema: { type: 'string' },
+        },
+        responses: {
+          TheResponseClone: {
+            $ref: '#/components/responses/TheResponse',
+          },
+          TheResponse: {
+            description: '',
+            headers: {
+              'X-A-Header': {
+                $ref: '#/components/headers/TheXAHeader',
+              },
+            },
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/TheSchema',
+                },
+              },
+            },
+          },
+        },
+        requestBodies: {
+          TheBodyClone: {
+            $ref: '#/components/requestBodies/TheBody',
+          },
+          TheBody: {
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/TheSchemaClone',
+                },
+              },
+            },
+          },
+        },
+      },
+      paths: {
+        '/test': {
+          get: {
+            operationId: 'GetTest',
+            parameters: [
+              {
+                $ref: '#/components/parameters/TheTestParam',
+              },
+            ],
+            requestBody: {
+              $ref: '#/components/requestBodies/TheBody',
+            },
+            responses: {
+              '200': {
+                $ref: '#/components/responses/TheResponse',
+              },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    expect(toSource(await generateOpenAPITypes(schema))).toMatchInlineSnapshot(`
+      "declare namespace API {
+          export namespace GetTest {
+              export type Body = Components.RequestBodies.TheBody;
+              export type Output = Responses.$200;
+              export type Input = {
+                  readonly body?: Body;
+                  readonly testParam?: Parameters.TestParam;
+              };
+              export namespace Responses {
+                  export type $200 = Components.Responses.TheResponse<200>;
+              }
+              export namespace Parameters {
+                  export type TestParam = Components.Parameters.TheTestParam;
+              }
+          }
+      }
+      declare namespace Components {
+          export namespace RequestBodies {
+              export type TheBodyClone = Components.RequestBodies.TheBody;
+              export type TheBody = Components.Schemas.TheSchemaClone;
+          }
+          export namespace Parameters {
+              export type TheTestParamClone = Components.Parameters.TheTestParam;
+              export type TheTestParam = Components.Schemas.TheSchema;
+          }
+          export namespace Responses {
+              export type TheResponseClone = Components.Responses.TheResponse;
+              type TheResponse<S extends number> = {
+                  readonly status: S;
+                  readonly headers?: {
+                      readonly \\"x-a-header\\"?: Components.Headers.TheXAHeader;
+                      readonly [name: string]: unknown;
+                  };
+                  readonly body: Components.Schemas.TheSchema;
+              };
+          }
+          export namespace Headers {
+              export type TheXAHeader = NonNullable<number>;
+          }
+      }
+      declare namespace Components {
+          export namespace Schemas {
+              export type TheSchemaClone = Components.Schemas.TheSchema;
+              export type TheSchema = NonNullable<string>;
+          }
+      }"
+    `);
+  });
+
   describe('with OpenAPI samples', () => {
     const fixturesDir = path.join(__dirname, '..', 'fixtures', 'openapi');
 
@@ -30,7 +294,7 @@ describe('generateOpenAPITypes()', () => {
 
         expect(
           toSource(
-            await generateOpenAPITypes(schema, 'API', {
+            await generateOpenAPITypes(schema, {
               filterStatuses: [200, 201, 202, 300],
             }),
           ),
@@ -44,7 +308,8 @@ describe('generateOpenAPITypes()', () => {
 
         expect(
           toSource(
-            await generateOpenAPITypes(schema, 'API', {
+            await generateOpenAPITypes(schema, {
+              baseName: 'AnotherAPI',
               generateUnusedSchemas: true,
             }),
           ),
@@ -73,7 +338,10 @@ describe('generateJSONSchemaTypes()', () => {
 });
 
 describe('generateTypeDeclaration()', () => {
-  const context = { nameResolver: jest.fn(), buildIdentifier };
+  const context = {
+    nameResolver: jest.fn(),
+    buildIdentifier,
+  };
 
   beforeEach(() => {
     context.nameResolver.mockReset();
@@ -204,9 +472,9 @@ describe('generateTypeDeclaration()', () => {
             maxIncluded?: NonNullable<boolean>;
             pace?: NonNullable<number>;
             nothing?: never;
-            anything?: any;
+            anything?: unknown;
             aConst?: \\"test\\";
-            [pattern: string]: NonNullable<string> | any;
+            [pattern: string]: NonNullable<string> | unknown;
         };"
       `);
     });
@@ -398,6 +666,55 @@ describe('generateTypeDeclaration()', () => {
       ).toMatchInlineSnapshot(`"export type Limit = Components.Schemas.User;"`);
     });
 
+    test('should work with a belgian schema', async () => {
+      const schema: JSONSchema7 = {
+        allOf: [
+          {
+            type: 'object',
+            required: ['name'],
+            properties: {
+              name: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            oneOf: [
+              {
+                type: 'object',
+                required: ['email'],
+                properties: {
+                  email: {
+                    type: 'string',
+                  },
+                },
+              },
+              {
+                type: 'object',
+                required: ['phone'],
+                properties: {
+                  phone: {
+                    type: 'string',
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(toSource(await generateTypeDeclaration(context, schema)))
+        .toMatchInlineSnapshot(`
+        "export type Unknown = NonNullable<{
+            name: NonNullable<string>;
+        }> & (NonNullable<{
+            email: NonNullable<string>;
+        }> | NonNullable<{
+            phone: NonNullable<string>;
+        }>);"
+      `);
+    });
+
     test('should work with anyOf/array special test case schemas', async () => {
       const schema: JSONSchema7 = {
         title: 'TrickyThing',
@@ -492,7 +809,7 @@ describe('generateTypeDeclaration()', () => {
             timestamp: NonNullable<(\\"startTime\\" | \\"endTime\\" | \\"peakTime\\")[]>;
             data: NonNullable<NonNullable<(Components.Schemas.Date | NonNullable<number> | (\\"first\\" | \\"bosse\\" | \\"last\\") | NonNullable<string>)[]>[]>;
             context: Components.Schemas.Data;
-            [pattern: string]: any;
+            [pattern: string]: unknown;
         }>;"
       `);
     });
