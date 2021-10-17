@@ -1453,7 +1453,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace API {
+"declare namespace AnotherAPI {
     export namespace GetAnomaly {
         export type Output = Responses.$200;
         export type Input = {
@@ -3173,7 +3173,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace API {
+"declare namespace AnotherAPI {
     export namespace UpdatePet {
         export type Body = Components.RequestBodies.Pet;
         export type Output = Responses.$400 | Responses.$404 | Responses.$405;
@@ -4057,7 +4057,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace API {
+"declare namespace AnotherAPI {
     export namespace GetDelay {
         export type Output = Responses.$204;
         export type Input = {
@@ -4537,7 +4537,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example_components.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace API {
+"declare namespace AnotherAPI {
     export namespace GetDelay {
         export type Output = Responses.$204;
         export type Input = {

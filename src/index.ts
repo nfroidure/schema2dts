@@ -66,16 +66,21 @@ async function ensureResolved<T>(
   return resolvedObject as T;
 }
 
+export const DEFAULT_OPTIONS = {
+  baseName: 'API',
+};
+
 export async function generateOpenAPITypes(
   root: OpenAPIV3.Document,
-  baseName = 'API',
   {
+    baseName = DEFAULT_OPTIONS.baseName,
     filterStatuses,
     generateUnusedSchemas,
   }: {
     filterStatuses?: number[];
     generateUnusedSchemas?: boolean;
-  } = {},
+    baseName?: string;
+  } = DEFAULT_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
   const seenSchemas: SeenReferencesHash = {};
   let sideTypes: { type: ts.Statement; parts: string[] }[] = [];

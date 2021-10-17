@@ -294,7 +294,7 @@ describe('generateOpenAPITypes()', () => {
 
         expect(
           toSource(
-            await generateOpenAPITypes(schema, 'API', {
+            await generateOpenAPITypes(schema, {
               filterStatuses: [200, 201, 202, 300],
             }),
           ),
@@ -308,7 +308,8 @@ describe('generateOpenAPITypes()', () => {
 
         expect(
           toSource(
-            await generateOpenAPITypes(schema, 'API', {
+            await generateOpenAPITypes(schema, {
+              baseName: 'AnotherAPI',
               generateUnusedSchemas: true,
             }),
           ),
