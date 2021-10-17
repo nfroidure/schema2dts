@@ -1,3 +1,18 @@
+# [3.0.0](https://github.com/nfroidure/schema2dts/compare/v2.2.1...v3.0.0) (2021-10-17)
+
+
+### Code Refactoring
+
+* **types:** take benefit of components ([69c4cb7](https://github.com/nfroidure/schema2dts/commit/69c4cb73a8ee5d763f2eb5cee6320935ebb45337)), closes [#1](https://github.com/nfroidure/schema2dts/issues/1)
+
+
+### BREAKING CHANGES
+
+* **types:** This commit may break uses of anonymous types though it is not recommended, it may
+be the case in some situations where one is unable to change the Open API file to fit its needs.
+
+
+
 ## [2.2.1](https://github.com/nfroidure/schema2dts/compare/v2.2.0...v2.2.1) (2021-10-08)
 
 
