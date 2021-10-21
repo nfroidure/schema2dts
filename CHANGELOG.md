@@ -1,3 +1,12 @@
+## [3.0.1](https://github.com/nfroidure/schema2dts/compare/v3.0.0...v3.0.1) (2021-10-21)
+
+
+### Bug Fixes
+
+* **openapi:** fix support for the default status ([0e9b2ad](https://github.com/nfroidure/schema2dts/commit/0e9b2ad018ae55047e85d6691398b174810e178d)), closes [#11](https://github.com/nfroidure/schema2dts/issues/11)
+
+
+
 # [3.0.0](https://github.com/nfroidure/schema2dts/compare/v2.2.1...v3.0.0) (2021-10-17)
 
 
