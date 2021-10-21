@@ -2377,32 +2377,32 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace CreateUser {
         export type Body = Components.RequestBodies.CreateUserRequestBody;
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {
             readonly body: Body;
         };
         export namespace Responses {
-            export type $default = Components.Responses.createUserResponsedefault<default>;
+            export type $default = Components.Responses.createUserResponsedefault<number>;
         }
     }
     export namespace CreateUsersWithArrayInput {
         export type Body = Components.RequestBodies.UserArray;
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {
             readonly body: Body;
         };
         export namespace Responses {
-            export type $default = Components.Responses.createUsersWithArrayInputResponsedefault<default>;
+            export type $default = Components.Responses.createUsersWithArrayInputResponsedefault<number>;
         }
     }
     export namespace CreateUsersWithListInput {
         export type Body = Components.RequestBodies.UserArray;
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {
             readonly body: Body;
         };
         export namespace Responses {
-            export type $default = Components.Responses.createUsersWithListInputResponsedefault<default>;
+            export type $default = Components.Responses.createUsersWithListInputResponsedefault<number>;
         }
     }
     export namespace LoginUser {
@@ -2421,10 +2421,10 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         }
     }
     export namespace LogoutUser {
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {};
         export namespace Responses {
-            export type $default = Components.Responses.logoutUserResponsedefault<default>;
+            export type $default = Components.Responses.logoutUserResponsedefault<number>;
         }
     }
     export namespace GetUserByName {
@@ -3325,32 +3325,32 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
     }
     export namespace CreateUser {
         export type Body = Components.RequestBodies.CreateUserRequestBody;
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {
             readonly body: Body;
         };
         export namespace Responses {
-            export type $default = Components.Responses.createUserResponsedefault<default>;
+            export type $default = Components.Responses.createUserResponsedefault<number>;
         }
     }
     export namespace CreateUsersWithArrayInput {
         export type Body = Components.RequestBodies.UserArray;
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {
             readonly body: Body;
         };
         export namespace Responses {
-            export type $default = Components.Responses.createUsersWithArrayInputResponsedefault<default>;
+            export type $default = Components.Responses.createUsersWithArrayInputResponsedefault<number>;
         }
     }
     export namespace CreateUsersWithListInput {
         export type Body = Components.RequestBodies.UserArray;
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {
             readonly body: Body;
         };
         export namespace Responses {
-            export type $default = Components.Responses.createUsersWithListInputResponsedefault<default>;
+            export type $default = Components.Responses.createUsersWithListInputResponsedefault<number>;
         }
     }
     export namespace LoginUser {
@@ -3369,10 +3369,10 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         }
     }
     export namespace LogoutUser {
-        export type Output = Responses.Default;
+        export type Output = Responses.$default;
         export type Input = {};
         export namespace Responses {
-            export type $default = Components.Responses.logoutUserResponsedefault<default>;
+            export type $default = Components.Responses.logoutUserResponsedefault<number>;
         }
     }
     export namespace GetUserByName {

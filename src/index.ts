@@ -77,7 +77,7 @@ export async function generateOpenAPITypes(
     filterStatuses,
     generateUnusedSchemas,
   }: {
-    filterStatuses?: number[];
+    filterStatuses?: (number | 'default')[];
     generateUnusedSchemas?: boolean;
     baseName?: string;
   } = DEFAULT_OPTIONS,
@@ -167,7 +167,9 @@ export async function generateOpenAPITypes(
         // We filter only if filterStatuses got at least one status code
         if (filterStatuses?.length) {
           responsesCodes = responsesCodes.filter((code) =>
-            filterStatuses.includes(parseInt(code)),
+            filterStatuses.includes(
+              code === 'default' ? 'default' : parseInt(code),
+            ),
           );
         }
 
@@ -201,9 +203,13 @@ export async function generateOpenAPITypes(
                     ).pop(),
                   ),
                   [
-                    factory.createLiteralTypeNode(
-                      factory.createNumericLiteral(code),
-                    ),
+                    code === 'default'
+                      ? factory.createKeywordTypeNode(
+                          ts.SyntaxKind.NumberKeyword,
+                        )
+                      : factory.createLiteralTypeNode(
+                          factory.createNumericLiteral(code),
+                        ),
                   ],
                 ),
               ),
@@ -222,10 +228,13 @@ export async function generateOpenAPITypes(
             responsesCodes.length
               ? factory.createUnionTypeNode(
                   responsesCodes.map((responsesCode) =>
-                    buildTypeReference(context, [
-                      'Responses',
-                      `$${responsesCode}`,
-                    ]),
+                    factory.createTypeReferenceNode(
+                      factory.createQualifiedName(
+                        factory.createIdentifier('Responses'),
+                        `$${responsesCode}`,
+                      ),
+                      [],
+                    ),
                   ),
                 )
               : factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
