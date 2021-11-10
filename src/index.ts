@@ -168,7 +168,7 @@ export async function generateOpenAPITypes(
         if (filterStatuses?.length) {
           responsesCodes = responsesCodes.filter((code) =>
             filterStatuses.includes(
-              code === 'default' ? 'default' : parseInt(code),
+              code === 'default' ? 'default' : parseInt(code, 10),
             ),
           );
         }
