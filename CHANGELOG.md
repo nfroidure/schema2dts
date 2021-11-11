@@ -1,3 +1,13 @@
+## [3.0.2](https://github.com/nfroidure/schema2dts/compare/v3.0.1...v3.0.2) (2021-11-11)
+
+
+### Bug Fixes
+
+* **types:** better number parsing ([5da1e64](https://github.com/nfroidure/schema2dts/commit/5da1e64fba141c9150188f507d28271e3e5fa304))
+* **types:** fix the double components declaration ([18c5f9a](https://github.com/nfroidure/schema2dts/commit/18c5f9a5a0010866b9606b08059ad2cbc52d5832))
+
+
+
 ## [3.0.1](https://github.com/nfroidure/schema2dts/compare/v3.0.0...v3.0.1) (2021-10-21)
 
 
