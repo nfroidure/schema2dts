@@ -507,8 +507,6 @@ declare namespace Components {
             readonly body: Components.Schemas.ResponsesgetPingResponse200Body0;
         };
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type UserModel = NonNullable<{
             id?: Components.Schemas.UUID;
@@ -1215,8 +1213,6 @@ declare namespace Components {
             readonly body: Components.Schemas.ResponsesgetPingResponse200Body0;
         };
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type UserModel = NonNullable<{
             id?: Components.Schemas.UUID;
@@ -1946,8 +1942,6 @@ declare namespace Components {
             readonly body: Components.Schemas.ResponsesgetPingResponse200Body0;
         };
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type AnomalyData = NonNullable<{
             assignedUser?: Components.Schemas.UUID;
@@ -2749,8 +2743,6 @@ declare namespace Components {
         export type LoginUserResponse200HeadersXRateLimit = NonNullable<number>;
         export type LoginUserResponse200HeadersXExpiresAfter = NonNullable<string>;
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type RequestBodiesUserArrayBody0 = NonNullable<Components.Schemas.User[]>;
         export type Pet = NonNullable<{
@@ -3108,8 +3100,6 @@ declare namespace Components {
         export type LoginUserResponse200HeadersXRateLimit = NonNullable<number>;
         export type LoginUserResponse200HeadersXExpiresAfter = NonNullable<string>;
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type RequestBodiesUserArrayBody0 = NonNullable<Components.Schemas.User[]>;
         export type Pet = NonNullable<{
@@ -3697,8 +3687,6 @@ declare namespace Components {
         export type LoginUserResponse200HeadersXRateLimit = NonNullable<number>;
         export type LoginUserResponse200HeadersXExpiresAfter = NonNullable<string>;
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type Order = NonNullable<{
             id?: NonNullable<number>;
@@ -3895,8 +3883,6 @@ declare namespace Components {
     export namespace Headers {
         export type GetParametersResponse204HeadersXDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type Echo = NonNullable<{
             echo: NonNullable<string>;
@@ -4033,8 +4019,6 @@ declare namespace Components {
             readonly body: Components.Schemas.ResponsesgetPingResponse200Body0;
         };
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type Echo = NonNullable<{
             echo: NonNullable<string>;
@@ -4190,8 +4174,6 @@ declare namespace Components {
     export namespace Headers {
         export type GetParametersResponse204HeadersXDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type TimeSchema = NonNullable<{
             currentDate?: NonNullable<string>;
@@ -4352,8 +4334,6 @@ declare namespace Components {
     export namespace Headers {
         export type XDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type Echo = NonNullable<{
             echo: NonNullable<string>;
@@ -4508,8 +4488,6 @@ declare namespace Components {
     export namespace Headers {
         export type XDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type Echo = NonNullable<{
             echo: NonNullable<string>;
@@ -4670,8 +4648,6 @@ declare namespace Components {
     export namespace Headers {
         export type XDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
     }
-}
-declare namespace Components {
     export namespace Schemas {
         export type TimeSchema = NonNullable<{
             currentDate?: NonNullable<string>;

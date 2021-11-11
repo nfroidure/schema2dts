@@ -47,7 +47,7 @@ async function resolve<T, U>(root: T, parts: string[]): Promise<U> {
       throw new YError('E_RESOLVE', parts, part);
     }
     return curSchema[part];
-  }, (root as unknown) as U) as U;
+  }, root as unknown as U) as U;
 }
 
 async function ensureResolved<T>(
@@ -278,26 +278,33 @@ export async function generateOpenAPITypes(
 
               if (!('$ref' in parameter)) {
                 components.parameters[uniqueKey] = parameter;
-                (operation.parameters as (
-                  | OpenAPIV3.ReferenceObject
-                  | OpenAPIV3.ParameterObject
-                )[])[index] = {
+                (
+                  operation.parameters as (
+                    | OpenAPIV3.ReferenceObject
+                    | OpenAPIV3.ParameterObject
+                  )[]
+                )[index] = {
                   $ref: `#/components/parameters/${uniqueKey}`,
                 };
               }
 
               const parameterKey = context.buildIdentifier(
                 splitRef(
-                  ((operation.parameters as (
-                    | OpenAPIV3.ReferenceObject
-                    | OpenAPIV3.ParameterObject
-                  )[])[index] as OpenAPIV3.ReferenceObject).$ref,
+                  (
+                    (
+                      operation.parameters as (
+                        | OpenAPIV3.ReferenceObject
+                        | OpenAPIV3.ParameterObject
+                      )[]
+                    )[index] as OpenAPIV3.ReferenceObject
+                  ).$ref,
                 ).pop() as string,
               );
-              const resolvedParameter = await ensureResolved<OpenAPIV3.ParameterObject>(
-                root,
-                parameter,
-              );
+              const resolvedParameter =
+                await ensureResolved<OpenAPIV3.ParameterObject>(
+                  root,
+                  parameter,
+                );
 
               allInputs.push({
                 name: resolvedParameter.name,
@@ -378,11 +385,13 @@ export async function generateOpenAPITypes(
         if (!requestBodySchemas.length) {
           type = await generateTypeDeclaration(context, { type: 'any' }, name);
         } else {
-          const requestBodySchemasReferences: OpenAPIV3.ReferenceObject[] = (requestBodySchemas as (
-            | OpenAPIV3.ReferenceObject
-            | OpenAPIV3.ArraySchemaObject
-            | OpenAPIV3.NonArraySchemaObject
-          )[]).map((schema, index) => {
+          const requestBodySchemasReferences: OpenAPIV3.ReferenceObject[] = (
+            requestBodySchemas as (
+              | OpenAPIV3.ReferenceObject
+              | OpenAPIV3.ArraySchemaObject
+              | OpenAPIV3.NonArraySchemaObject
+            )[]
+          ).map((schema, index) => {
             let ref;
 
             if ('$ref' in schema) {
@@ -477,11 +486,13 @@ export async function generateOpenAPITypes(
         if (!responseSchemas.length) {
           schemasType = await schemaToTypeNode(context, { type: 'any' });
         } else {
-          const responseSchemasReferences: OpenAPIV3.ReferenceObject[] = (responseSchemas as (
-            | OpenAPIV3.ReferenceObject
-            | OpenAPIV3.ArraySchemaObject
-            | OpenAPIV3.NonArraySchemaObject
-          )[]).map((schema, index) => {
+          const responseSchemasReferences: OpenAPIV3.ReferenceObject[] = (
+            responseSchemas as (
+              | OpenAPIV3.ReferenceObject
+              | OpenAPIV3.ArraySchemaObject
+              | OpenAPIV3.NonArraySchemaObject
+            )[]
+          ).map((schema, index) => {
             let ref;
 
             if ('$ref' in schema) {
@@ -530,9 +541,11 @@ export async function generateOpenAPITypes(
                 'Headers',
                 context.buildIdentifier(
                   splitRef(
-                    ((response.headers || {})[
-                      headerName
-                    ] as OpenAPIV3.ReferenceObject).$ref,
+                    (
+                      (response.headers || {})[
+                        headerName
+                      ] as OpenAPIV3.ReferenceObject
+                    ).$ref,
                   ).pop() as string,
                 ),
               ]),
@@ -648,9 +661,9 @@ export async function generateOpenAPITypes(
             type: await generateTypeDeclaration(
               { ...context, root: parts.length === 1 },
               subSchema,
-              parts[parts.length - 1][0] + parts[parts.length - 1].slice(1),
+              buildIdentifier(parts[parts.length - 1]),
             ),
-            parts,
+            parts: parts.map((part) => buildIdentifier(part)),
           };
         }),
       ),
@@ -1002,9 +1015,8 @@ async function buildArrayTypeNode(
   context: Context,
   schema: Schema,
 ): Promise<ts.TypeNode> {
-  const schemas = (schema.items instanceof Array
-    ? schema.items
-    : [schema.items]
+  const schemas = (
+    schema.items instanceof Array ? schema.items : [schema.items]
   ).filter((s): s is Schema => typeof s !== 'boolean');
   const types = (
     await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
@@ -1132,7 +1144,7 @@ function buildTypeReference(context: Context, parts: string[]) {
           ? factory.createQualifiedName(curNode, identifier)
           : identifier;
       },
-      (null as unknown) as ts.EntityName,
+      null as unknown as ts.EntityName,
     ),
     undefined,
   );
