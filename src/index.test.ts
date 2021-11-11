@@ -121,8 +121,6 @@ describe('generateOpenAPITypes()', () => {
               export type GetPingResponse200HeadersXAHeader = NonNullable<number>;
               export type GetPingResponse200HeadersXSDKVersion = NonNullable<string>;
           }
-      }
-      declare namespace Components {
           export namespace Schemas {
               export type RequestBodiesGetPingRequestBodyBody0 = NonNullable<string>;
               export type ResponsesGetPingResponse200Body0 = NonNullable<string>;
@@ -265,8 +263,6 @@ describe('generateOpenAPITypes()', () => {
           export namespace Headers {
               export type TheXAHeader = NonNullable<number>;
           }
-      }
-      declare namespace Components {
           export namespace Schemas {
               export type TheSchemaClone = Components.Schemas.TheSchema;
               export type TheSchema = NonNullable<string>;
@@ -664,6 +660,55 @@ describe('generateTypeDeclaration()', () => {
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
       ).toMatchInlineSnapshot(`"export type Limit = Components.Schemas.User;"`);
+    });
+
+    test('should work with belgian example 2', async () => {
+      const schema: JSONSchema7 = {
+        title: 'User',
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            oneOf: [
+              {
+                type: 'object',
+                required: ['email'],
+                properties: {
+                  email: {
+                    type: 'string',
+                  },
+                },
+              },
+              {
+                type: 'object',
+                required: ['cellphone'],
+                properties: {
+                  cellphone: {
+                    type: 'string',
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(toSource(await generateTypeDeclaration(context, schema)))
+        .toMatchInlineSnapshot(`
+        "export type User = NonNullable<{
+            name?: NonNullable<string>;
+        }> & (NonNullable<{
+            email: NonNullable<string>;
+        }> | NonNullable<{
+            cellphone: NonNullable<string>;
+        }>);"
+      `);
     });
 
     test('should work with a belgian schema', async () => {

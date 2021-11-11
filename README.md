@@ -9,10 +9,6 @@
 
 [![Build status](https://travis-ci.com/nfroidure/schema2dts.svg?branch=master)](https://travis-ci.com/github/nfroidure/schema2dts)
 [![Coverage Status](https://coveralls.io/repos/github/nfroidure/schema2dts/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/schema2dts?branch=master)
-[![NPM version](https://badge.fury.io/js/schema2dts.svg)](https://npmjs.org/package/schema2dts)
-[![Dependency Status](https://david-dm.org/nfroidure/schema2dts.svg)](https://david-dm.org/nfroidure/schema2dts)
-[![devDependency Status](https://david-dm.org/nfroidure/schema2dts/dev-status.svg)](https://david-dm.org/nfroidure/schema2dts#info=devDependencies)
-[![Package Quality](https://npm.packagequality.com/shield/schema2dts.svg)](https://packagequality.com/#?package=schema2dts)
 
 
 [//]: # (::contents:start)
