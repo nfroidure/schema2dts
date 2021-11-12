@@ -746,56 +746,7 @@ describe('generateTypeDeclaration()', () => {
       ).toMatchInlineSnapshot(`"export type Limit = Components.Schemas.User;"`);
     });
 
-    test('should work with belgian example 2', async () => {
-      const schema: JSONSchema7 = {
-        title: 'User',
-        allOf: [
-          {
-            type: 'object',
-            properties: {
-              name: {
-                type: 'string',
-              },
-            },
-          },
-          {
-            oneOf: [
-              {
-                type: 'object',
-                required: ['email'],
-                properties: {
-                  email: {
-                    type: 'string',
-                  },
-                },
-              },
-              {
-                type: 'object',
-                required: ['cellphone'],
-                properties: {
-                  cellphone: {
-                    type: 'string',
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      };
-
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
-        "export type User = NonNullable<{
-            name?: NonNullable<string>;
-        }> & (NonNullable<{
-            email: NonNullable<string>;
-        }> | NonNullable<{
-            cellphone: NonNullable<string>;
-        }>);"
-      `);
-    });
-
-    test('should work with a belgian schema', async () => {
+    test('should work with a nested oneOf in allOf schemas', async () => {
       const schema: JSONSchema7 = {
         allOf: [
           {
