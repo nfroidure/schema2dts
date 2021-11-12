@@ -817,7 +817,7 @@ async function schemaToTypes(
   } else if (schema.anyOf || schema.allOf || schema.oneOf) {
     return handleComposedSchemas(context, schema);
   } else if (parentType) {
-    // Inject type from
+    // Inject type from parent
     schema.type = parentType;
     return handleTypedSchema(context, schema);
   }
