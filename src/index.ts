@@ -832,40 +832,62 @@ async function schemaToTypes(
         }),
     );
 
-    if (isNullable) {
-      return typesParameters;
-    }
+    const baseTypes = isNullable
+      ? typesParameters
+      : typesParameters.map((typeParameter) =>
+          factory.createTypeReferenceNode('NonNullable', [typeParameter]),
+        );
 
-    return typesParameters.map((typeParameter) =>
-      factory.createTypeReferenceNode('NonNullable', [typeParameter]),
-    );
-  } else if (schema.anyOf || schema.allOf || schema.oneOf) {
-    const types = (
-      await Promise.all(
-        ((schema.anyOf || schema.allOf || schema.oneOf) as Schema[]).map(
-          async (innerSchema) => await schemaToTypes(context, innerSchema),
-        ),
-      )
-    ).map((innerTypes) =>
-      innerTypes.length > 1
-        ? factory.createUnionTypeNode(innerTypes)
-        : innerTypes[0],
-    );
-
-    if (schema.oneOf) {
-      return [factory.createUnionTypeNode(types)];
-    } else if (schema.anyOf) {
-      // Not really a union types but no way to express
-      // this in TypeScript atm 🤷
-      return [factory.createUnionTypeNode(types)];
-    } else if (schema.allOf) {
-      // Fallback to intersection type which will only work
-      // in some situations (see the README)
-      return [factory.createIntersectionTypeNode(types)];
+    // Schema also contains a composed schema, handle it as well and do a intersection with base schema
+    if (hasComposedSchemas(schema)) {
+      const innerTypes = await handleComposedSchemas(context, schema);
+      return [
+        factory.createIntersectionTypeNode([...baseTypes, ...innerTypes]),
+      ];
+    } else {
+      return baseTypes;
     }
+  } else if (hasComposedSchemas(schema)) {
+    return handleComposedSchemas(context, schema);
   }
 
   throw new YError('E_UNSUPPORTED_SCHEMA', schema);
+}
+
+function hasComposedSchemas(schema: Schema) {
+  return schema.anyOf || schema.allOf || schema.oneOf;
+}
+
+// Handle oneOf / anyOf / allOf
+async function handleComposedSchemas(
+  context: Context,
+  schema: Schema,
+): Promise<ts.TypeNode[]> {
+  const types = (
+    await Promise.all(
+      ((schema.anyOf || schema.allOf || schema.oneOf) as Schema[]).map(
+        async (innerSchema) => await schemaToTypes(context, innerSchema),
+      ),
+    )
+  ).map((innerTypes) =>
+    innerTypes.length > 1
+      ? factory.createUnionTypeNode(innerTypes)
+      : innerTypes[0],
+  );
+
+  if (schema.oneOf) {
+    return [factory.createUnionTypeNode(types)];
+  } else if (schema.anyOf) {
+    // Not really a union types but no way to express
+    // this in TypeScript atm 🤷
+    return [factory.createUnionTypeNode(types)];
+  } else if (schema.allOf) {
+    // Fallback to intersection type which will only work
+    // in some situations (see the README)
+    return [factory.createIntersectionTypeNode(types)];
+  } else {
+    throw new YError('E_COMPOSED_SCHEMA_UNSUPPORTED', schema);
+  }
 }
 
 async function buildObjectTypeNode(

@@ -573,6 +573,49 @@ describe('generateTypeDeclaration()', () => {
       `);
     });
 
+    test('should work with base schema and nested oneof schemas', async () => {
+      const schema: JSONSchema7 = {
+        title: 'User',
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+          },
+        },
+        oneOf: [
+          {
+            type: 'object',
+            required: ['email'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            type: 'object',
+            required: ['cellphone'],
+            properties: {
+              cellphone: {
+                type: 'string',
+              },
+            },
+          },
+        ],
+      };
+
+      expect(toSource(await generateTypeDeclaration(context, schema)))
+        .toMatchInlineSnapshot(`
+        "export type User = NonNullable<{
+            name?: NonNullable<string>;
+        }> & (NonNullable<{
+            email: NonNullable<string>;
+        }> | NonNullable<{
+            cellphone: NonNullable<string>;
+        }>);"
+      `);
+    });
+
     test('should work with allOf schemas', async () => {
       const schema: JSONSchema7 = {
         title: 'Limit',
