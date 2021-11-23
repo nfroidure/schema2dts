@@ -1,3 +1,12 @@
+# [3.1.0](https://github.com/nfroidure/schema2dts/compare/v3.0.2...v3.1.0) (2021-11-23)
+
+
+### Features
+
+* **schema:** handle nested oneof schema ([bc4059d](https://github.com/nfroidure/schema2dts/commit/bc4059dc24a51b1ccc9d305b03695792a2d2a3bb))
+
+
+
 ## [3.0.2](https://github.com/nfroidure/schema2dts/compare/v3.0.1...v3.0.2) (2021-11-11)
 
 
