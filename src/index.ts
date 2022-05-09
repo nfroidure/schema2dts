@@ -69,6 +69,7 @@ async function ensureResolved<T>(
 
 export const DEFAULT_OPTIONS = {
   baseName: 'API',
+  camelizeInputs: true,
 };
 
 export async function generateOpenAPITypes(
@@ -77,10 +78,12 @@ export async function generateOpenAPITypes(
     baseName = DEFAULT_OPTIONS.baseName,
     filterStatuses,
     generateUnusedSchemas,
+    camelizeInputs = DEFAULT_OPTIONS.camelizeInputs,
   }: {
+    baseName?: string;
     filterStatuses?: (number | 'default')[];
     generateUnusedSchemas?: boolean;
-    baseName?: string;
+    camelizeInputs?: boolean;
   } = DEFAULT_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
   const seenSchemas: SeenReferencesHash = {};
@@ -341,7 +344,7 @@ export async function generateOpenAPITypes(
               allInputs.map(({ name, path, required }) => {
                 return factory.createPropertySignature(
                   [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-                  camelCase(name),
+                  camelizeInputs ? camelCase(name) : name,
                   required
                     ? undefined
                     : factory.createToken(ts.SyntaxKind.QuestionToken),

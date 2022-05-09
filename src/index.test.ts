@@ -904,4 +904,59 @@ describe('generateTypeDeclaration()', () => {
       `);
     });
   });
+  test('should work with snake case parameter in query', async () => {
+    const schema = {
+      openapi: '3.0.2',
+      info: {
+        version: '0.0.0',
+        title: 'foobar-api',
+        description: 'The FooBar API',
+      },
+      servers: [
+        {
+          url: 'http://localhost:8000/v0',
+        },
+      ],
+      paths: {
+        '/test': {
+          get: {
+            operationId: 'Test',
+            parameters: [
+              {
+                name: 'foo_bar',
+                in: 'query',
+                schema: {
+                  type: 'string',
+                },
+              },
+            ],
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    expect(
+      toSource(
+        await generateOpenAPITypes(schema, {
+          camelizeInputs: false,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+      "declare namespace API {
+          export namespace Test {
+              export type Input = {
+                  readonly foo_bar?: Parameters.FooBar;
+              };
+              export namespace Parameters {
+                  export type FooBar = Components.Parameters.Test0;
+              }
+          }
+      }
+      declare namespace Components {
+          export namespace Parameters {
+              export type Test0 = NonNullable<string>;
+          }
+      }"
+    `);
+  });
 });
