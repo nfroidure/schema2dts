@@ -1043,8 +1043,17 @@ async function buildArrayTypeNode(
   schema: Schema,
 ): Promise<ts.TypeNode> {
   const schemas = (
-    schema.items instanceof Array ? schema.items : [schema.items]
+    schema.items instanceof Array
+      ? schema.items
+      : 'undefined' !== typeof schema.items
+      ? [schema.items]
+      : []
   ).filter((s): s is Schema => typeof s !== 'boolean');
+
+  if (schemas.length === 0) {
+    return factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
+  }
+
   const types = (
     await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
   ).reduce((allTypes, types) => [...allTypes, ...types], []);

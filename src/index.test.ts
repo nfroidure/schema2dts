@@ -795,6 +795,16 @@ describe('generateTypeDeclaration()', () => {
       `);
     });
 
+    test('should work with no items array schemas', async () => {
+      const schema: JSONSchema7 = {
+        type: 'array',
+      };
+
+      expect(
+        toSource(await generateTypeDeclaration(context, schema)),
+      ).toMatchInlineSnapshot(`"export type Unknown = NonNullable<never>;"`);
+    });
+
     test('should work with anyOf/array special test case schemas', async () => {
       const schema: JSONSchema7 = {
         title: 'TrickyThing',
