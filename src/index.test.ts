@@ -223,7 +223,13 @@ describe('generateOpenAPITypes()', () => {
       },
     } as OpenAPIV3.Document;
 
-    expect(toSource(await generateOpenAPITypes(schema))).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateOpenAPITypes(schema, {
+          brandedTypes: ['TheSchema', 'TheSchemaClone'],
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
       "declare namespace API {
           export namespace GetTest {
               export type Body = Components.RequestBodies.TheBody;
@@ -264,8 +270,12 @@ describe('generateOpenAPITypes()', () => {
               export type TheXAHeader = NonNullable<number>;
           }
           export namespace Schemas {
-              export type TheSchemaClone = Components.Schemas.TheSchema;
-              export type TheSchema = NonNullable<string>;
+              export type TheSchemaClone = Components.Schemas.TheSchema & NonNullable<{
+                  _type?: \\"TheSchemaClone\\";
+              }>;
+              export type TheSchema = NonNullable<string> & NonNullable<{
+                  _type?: \\"TheSchema\\";
+              }>;
           }
       }"
     `);
@@ -292,6 +302,7 @@ describe('generateOpenAPITypes()', () => {
           toSource(
             await generateOpenAPITypes(schema, {
               filterStatuses: [200, 201, 202, 300],
+              brandedTypes: 'schemas',
             }),
           ),
         ).toMatchSnapshot();
@@ -357,7 +368,7 @@ describe('generateTypeDeclaration()', () => {
               root: true,
             },
             schema,
-            'Limit',
+            { name: 'Limit', brandedTypes: [] },
           ),
         ),
       ).toMatchInlineSnapshot(`"declare type Limit = NonNullable<number>;"`);
@@ -370,7 +381,9 @@ describe('generateTypeDeclaration()', () => {
       };
 
       expect(
-        toSource(await generateTypeDeclaration(context, schema)),
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
       ).toMatchInlineSnapshot(
         `"export type Limit = NonNullable<number> | NonNullable<string> | NonNullable<boolean>;"`,
       );
@@ -383,7 +396,9 @@ describe('generateTypeDeclaration()', () => {
       };
 
       expect(
-        toSource(await generateTypeDeclaration(context, schema)),
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
       ).toMatchInlineSnapshot(`"export type Limit = number;"`);
     });
 
@@ -394,7 +409,9 @@ describe('generateTypeDeclaration()', () => {
       };
 
       expect(
-        toSource(await generateTypeDeclaration(context, schema)),
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
       ).toMatchInlineSnapshot(`"export type Limit = number | string;"`);
     });
 
@@ -406,7 +423,9 @@ describe('generateTypeDeclaration()', () => {
       };
 
       expect(
-        toSource(await generateTypeDeclaration(context, schema)),
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
       ).toMatchInlineSnapshot(
         `"export type Limit = 1 | 2 | \\"hop\\" | \\"lol\\" | null;"`,
       );
@@ -426,8 +445,11 @@ describe('generateTypeDeclaration()', () => {
         },
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = NonNullable<{
             min: NonNullable<number>;
             max: NonNullable<number>;
@@ -459,8 +481,11 @@ describe('generateTypeDeclaration()', () => {
         additionalProperties: true,
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = {
             min?: NonNullable<number>;
             max?: NonNullable<number>;
@@ -489,8 +514,11 @@ describe('generateTypeDeclaration()', () => {
         items: [{ type: 'number' }, { type: 'string' }],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = {
             min?: NonNullable<number>;
             max?: NonNullable<number>;
@@ -525,8 +553,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = number | NonNullable<{
             min?: NonNullable<number>;
             max?: NonNullable<number>;
@@ -561,8 +592,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = number | NonNullable<{
             min?: NonNullable<number>;
             max?: NonNullable<number>;
@@ -604,8 +638,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type User = NonNullable<{
             name?: NonNullable<string>;
         }> & (NonNullable<{
@@ -645,8 +682,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type User = NonNullable<{
             name?: NonNullable<string>;
         }> & (NonNullable<{
@@ -681,8 +721,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = number & NonNullable<{
             min?: NonNullable<number>;
             max?: NonNullable<number>;
@@ -714,8 +757,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Limit = NonNullable<{
             min?: NonNullable<number>;
             max?: NonNullable<number>;
@@ -742,7 +788,9 @@ describe('generateTypeDeclaration()', () => {
       ]);
 
       expect(
-        toSource(await generateTypeDeclaration(context, schema)),
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
       ).toMatchInlineSnapshot(`"export type Limit = Components.Schemas.User;"`);
     });
 
@@ -783,8 +831,11 @@ describe('generateTypeDeclaration()', () => {
         ],
       };
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type Unknown = NonNullable<{
             name: NonNullable<string>;
         }> & (NonNullable<{
@@ -801,7 +852,9 @@ describe('generateTypeDeclaration()', () => {
       };
 
       expect(
-        toSource(await generateTypeDeclaration(context, schema)),
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
       ).toMatchInlineSnapshot(`"export type Unknown = NonNullable<never>;"`);
     });
 
@@ -888,8 +941,11 @@ describe('generateTypeDeclaration()', () => {
         'Data',
       ]);
 
-      expect(toSource(await generateTypeDeclaration(context, schema)))
-        .toMatchInlineSnapshot(`
+      expect(
+        toSource(
+          await generateTypeDeclaration(context, schema, { brandedTypes: [] }),
+        ),
+      ).toMatchInlineSnapshot(`
         "export type TrickyThing = NonNullable<{
             name: NonNullable<string>;
             duration: NonNullable<number>;
