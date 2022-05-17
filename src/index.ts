@@ -17,6 +17,7 @@ type Context = {
   nameResolver: (ref: string) => Promise<string[]>;
   buildIdentifier: (part: string) => string;
   root?: boolean;
+  sideTypes: { type: ts.Statement; parts: string[] }[];
 };
 type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 type SchemaDefinition =
@@ -95,6 +96,7 @@ export async function generateOpenAPITypes(
       return splitRef(ref);
     },
     buildIdentifier,
+    sideTypes: [],
   };
 
   const components: {
@@ -675,6 +677,8 @@ export async function generateOpenAPITypes(
     refsToBuild = Object.keys(seenSchemas).filter((ref) => !builtRefs[ref]);
   } while (refsToBuild.length);
 
+  sideTypes = sideTypes.concat(context.sideTypes);
+
   const packageTree: PackageTreeNode[] = [];
 
   sideTypes.forEach(({ type, parts }) => {
@@ -705,6 +709,7 @@ export async function generateJSONSchemaTypes(
       return splitRef(ref);
     },
     buildIdentifier,
+    sideTypes: [],
   };
 
   const mainType = await generateTypeDeclaration(
@@ -712,7 +717,7 @@ export async function generateJSONSchemaTypes(
     schema,
     name,
   );
-  let sideTypes: { type: ts.Statement; parts: string[] }[] = [];
+  let sideTypes: { type: ts.Statement; parts: string[] }[] = context.sideTypes;
   const builtRefs: { [refName: string]: boolean } = {};
   let refsToBuild = Object.keys(seenSchemas);
 
@@ -804,9 +809,38 @@ async function schemaToTypes(
   } else if ('const' in schema) {
     return [buildLiteralType(schema.const)];
   } else if (schema.enum) {
+    const enumTypes = schema.enum.reduce<string[]>(
+      (acc, value) =>
+        acc.includes(typeof value) ? acc : [...acc, typeof value],
+      [],
+    );
     const allEnumValuesAreLiteral = schema.enum
       .filter((value) => value !== null)
       .every((value) => ['number', 'string', 'boolean'].includes(typeof value));
+    const enumValuesCanBeEnumType =
+      enumTypes.length === 1 &&
+      allEnumValuesAreLiteral &&
+      enumTypes[0] === 'string';
+
+    if (enumValuesCanBeEnumType && schema.title) {
+      context.sideTypes.push({
+        type: factory.createEnumDeclaration(
+          [],
+          undefined,
+          buildIdentifier(schema.title),
+          schema.enum.map((value) =>
+            factory.createEnumMember(
+              buildIdentifier(value as string),
+              factory.createStringLiteral(value as string),
+            ),
+          ),
+        ),
+        parts: ['Enums', buildIdentifier(schema.title)],
+      });
+      return [
+        buildTypeReference(context, ['Enums', buildIdentifier(schema.title)]),
+      ];
+    }
 
     if (allEnumValuesAreLiteral) {
       return (schema.enum as Parameters<typeof buildLiteralType>[0][]).map(

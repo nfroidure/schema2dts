@@ -563,7 +563,7 @@ declare namespace Components {
         }>;
         export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
             access_token: NonNullable<string>;
-            token_type: \\"bearer\\" | \\"mac\\";
+            token_type: Enums.TokenType;
             expires_in?: NonNullable<number>;
             refresh_token?: NonNullable<string>;
         }>;
@@ -743,6 +743,12 @@ declare namespace Components {
                 uri?: NonNullable<string>;
             }>;
         }>;
+    }
+}
+declare namespace Enums {
+    enum TokenType {
+        Bearer = \\"bearer\\",
+        Mac = \\"mac\\"
     }
 }"
 `;
@@ -1269,7 +1275,7 @@ declare namespace Components {
         }>;
         export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
             access_token: NonNullable<string>;
-            token_type: \\"bearer\\" | \\"mac\\";
+            token_type: Enums.TokenType;
             expires_in?: NonNullable<number>;
             refresh_token?: NonNullable<string>;
         }>;
@@ -1444,6 +1450,12 @@ declare namespace Components {
                 uri?: NonNullable<string>;
             }>;
         }>;
+    }
+}
+declare namespace Enums {
+    enum TokenType {
+        Bearer = \\"bearer\\",
+        Mac = \\"mac\\"
     }
 }"
 `;
@@ -2202,7 +2214,7 @@ declare namespace Components {
         export type ResponsesgetTrainingDatasetResponse200Body0 = NonNullable<string>;
         export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
             access_token: NonNullable<string>;
-            token_type: \\"bearer\\" | \\"mac\\";
+            token_type: Enums.TokenType;
             expires_in?: NonNullable<number>;
             refresh_token?: NonNullable<string>;
         }>;
@@ -2214,6 +2226,12 @@ declare namespace Components {
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
             pong?: \\"pong\\";
         }>;
+    }
+}
+declare namespace Enums {
+    enum TokenType {
+        Bearer = \\"bearer\\",
+        Mac = \\"mac\\"
     }
 }"
 `;
