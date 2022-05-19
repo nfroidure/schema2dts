@@ -1,3 +1,19 @@
+# [4.0.0](https://github.com/nfroidure/schema2dts/compare/v3.1.0...v4.0.0) (2022-05-19)
+
+
+### Bug Fixes
+
+* **schemas:** fix unspecified array json schemas ([188eff0](https://github.com/nfroidure/schema2dts/commit/188eff03c75ccdbf2f34f45f8822d50d8a857ffe)), closes [#16](https://github.com/nfroidure/schema2dts/issues/16)
+
+
+### Features
+
+* **openapi:** allow to opt-out input camelization ([502ed32](https://github.com/nfroidure/schema2dts/commit/502ed32c9ac66d05a816a56cb130f73214eacbb6)), closes [#15](https://github.com/nfroidure/schema2dts/issues/15)
+* **types:** add type branding features ([f5fcc35](https://github.com/nfroidure/schema2dts/commit/f5fcc352b3f4ba5282caeaa43ad27d4c608ba770)), closes [#17](https://github.com/nfroidure/schema2dts/issues/17)
+* **types:** build real enums from JSONSchema enums ([889b20e](https://github.com/nfroidure/schema2dts/commit/889b20e9d36d5c28d31ad1d5f364d28773386d29)), closes [#18](https://github.com/nfroidure/schema2dts/issues/18)
+
+
+
 # [3.1.0](https://github.com/nfroidure/schema2dts/compare/v3.0.2...v3.1.0) (2021-11-23)
 
 
