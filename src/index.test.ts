@@ -331,12 +331,32 @@ describe('generateJSONSchemaTypes()', () => {
       });
     });
   });
+
+  test('should work with string literal enums', async () => {
+    const schema: JSONSchema7 = {
+      title: 'Limit',
+      type: ['string'],
+      enum: ['str1', 'str2'],
+    };
+
+    expect(toSource(await generateJSONSchemaTypes(schema)))
+      .toMatchInlineSnapshot(`
+      "declare type Main = Enums.Limit;
+      declare namespace Enums {
+          enum Limit {
+              Str1 = \\"str1\\",
+              Str2 = \\"str2\\"
+          }
+      }"
+    `);
+  });
 });
 
 describe('generateTypeDeclaration()', () => {
   const context = {
     nameResolver: jest.fn(),
     buildIdentifier,
+    sideTypes: [],
   };
 
   beforeEach(() => {
