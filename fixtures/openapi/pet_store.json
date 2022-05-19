@@ -901,7 +901,7 @@
           },
           "status": {
             "type": "string",
-            "description": "Order Status",
+            "title": "Order Status",
             "enum": ["placed", "approved", "delivered"]
           },
           "complete": {
@@ -971,7 +971,7 @@
           },
           "userStatus": {
             "type": "integer",
-            "description": "User Status",
+            "title": "User Status",
             "format": "int32"
           }
         },
@@ -1049,7 +1049,7 @@
           },
           "status": {
             "type": "string",
-            "description": "pet status in the store",
+            "title": "pet status in the store",
             "enum": ["available", "pending", "sold"]
           }
         },

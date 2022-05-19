@@ -18,6 +18,9 @@ type Context = {
   buildIdentifier: (part: string) => string;
   root?: boolean;
   sideTypeDeclarations: { statement: ts.Statement; namespaceParts: string[] }[];
+  jsonSchemaOptions: JSONSchemaOptions;
+  seenSchemas: SeenReferencesHash;
+  candidateName?: string;
 };
 type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 type SchemaDefinition =
@@ -69,8 +72,8 @@ async function ensureResolved<T>(
   return resolvedObject as T;
 }
 
-export const DEFAULT_JSON_SCHEMA_OPTIONS: JSONSchemaOptions = {
-  name: 'Main',
+export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
+  baseName: 'Main',
   brandedTypes: [],
 };
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
@@ -112,17 +115,6 @@ export async function generateOpenAPITypes(
       Pick<OpenAPIOptions, 'baseName' | 'brandedTypes'>
     > = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
-  const seenSchemas: SeenReferencesHash = {};
-  const context: Context = {
-    nameResolver: async (ref) => {
-      seenSchemas[ref] = true;
-
-      return splitRef(ref);
-    },
-    buildIdentifier,
-    sideTypeDeclarations: [],
-  };
-
   const components: {
     schemas: NonNullable<
       NonNullable<OpenAPIV3.Document['components']>['schemas']
@@ -148,6 +140,23 @@ export async function generateOpenAPITypes(
   };
   root.components = components;
 
+  const context: Context = {
+    nameResolver: async (ref) => {
+      context.seenSchemas[ref] = true;
+
+      return splitRef(ref);
+    },
+    buildIdentifier,
+    sideTypeDeclarations: [],
+    jsonSchemaOptions: {
+      brandedTypes:
+        brandedTypes !== 'schemas'
+          ? brandedTypes
+          : Object.keys(components.schemas).map(buildIdentifier),
+    },
+    seenSchemas: {},
+  };
+
   if (generateUnusedSchemas) {
     Object.keys(root.components?.schemas || {}).forEach((schemaName) => {
       const schema = root.components?.schemas?.[
@@ -155,9 +164,9 @@ export async function generateOpenAPITypes(
       ] as OpenAPIV3.ReferenceObject;
 
       if ('$ref' in schema) {
-        seenSchemas[schema.$ref] = true;
+        context.seenSchemas[schema.$ref] = true;
       }
-      seenSchemas[`#/components/schemas/${schemaName}`] = true;
+      context.seenSchemas[`#/components/schemas/${schemaName}`] = true;
     });
   }
 
@@ -424,12 +433,11 @@ export async function generateOpenAPITypes(
 
         if (!requestBodySchemas.length) {
           statement = await generateTypeDeclaration(
-            context,
-            { type: 'any' },
             {
-              name,
-              brandedTypes: brandedTypes !== 'schemas' ? brandedTypes : [],
+              ...context,
+              candidateName: name,
             },
+            { type: 'any' },
           );
         } else {
           const requestBodySchemasReferences: OpenAPIV3.ReferenceObject[] = (
@@ -447,18 +455,17 @@ export async function generateOpenAPITypes(
               ref = `#/components/schemas/RequestBodies${name}Body${index}`;
               components.schemas[`RequestBodies${name}Body${index}`] = schema;
             }
-            seenSchemas[ref] = true;
+            context.seenSchemas[ref] = true;
             return { $ref: ref };
           });
 
           statement = await generateTypeDeclaration(
-            context,
             {
-              oneOf: requestBodySchemasReferences,
+              ...context,
+              candidateName: name,
             },
             {
-              name,
-              brandedTypes: brandedTypes !== 'schemas' ? brandedTypes : [],
+              oneOf: requestBodySchemasReferences,
             },
           );
         }
@@ -492,12 +499,11 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Parameters', name],
           statement: await generateTypeDeclaration(
-            context,
-            parameter.schema || { type: 'any' },
             {
-              name,
-              brandedTypes: brandedTypes !== 'schemas' ? brandedTypes : [],
+              ...context,
+              candidateName: name,
             },
+            parameter.schema || { type: 'any' },
           ),
         });
       }
@@ -537,11 +543,7 @@ export async function generateOpenAPITypes(
             : [];
 
         if (!responseSchemas.length) {
-          schemasType = await schemaToTypeNode(
-            context,
-            { type: 'any' },
-            { brandedTypes: brandedTypes !== 'schemas' ? brandedTypes : [] },
-          );
+          schemasType = await schemaToTypeNode(context, { type: 'any' });
         } else {
           const responseSchemasReferences: OpenAPIV3.ReferenceObject[] = (
             responseSchemas as (
@@ -558,17 +560,13 @@ export async function generateOpenAPITypes(
               ref = `#/components/schemas/Responses${name}Body${index}`;
               components.schemas[`Responses${name}Body${index}`] = schema;
             }
-            seenSchemas[ref] = true;
+            context.seenSchemas[ref] = true;
             return { $ref: ref };
           });
 
-          schemasType = await schemaToTypeNode(
-            context,
-            {
-              oneOf: responseSchemasReferences,
-            },
-            { brandedTypes: brandedTypes !== 'schemas' ? brandedTypes : [] },
-          );
+          schemasType = await schemaToTypeNode(context, {
+            oneOf: responseSchemasReferences,
+          });
         }
         let hasRequiredHeaders = false;
         const headersTypes = await Promise.all(
@@ -698,61 +696,22 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Headers', name],
           statement: await generateTypeDeclaration(
-            context,
-            header.schema || { type: 'any' },
             {
-              name,
-              brandedTypes: brandedTypes !== 'schemas' ? brandedTypes : [],
+              ...context,
+              candidateName: name,
             },
+            header.schema || { type: 'any' },
           ),
         });
       }
     }),
   );
 
-  const builtRefs: { [refName: string]: boolean } = {};
-  let refsToBuild = Object.keys(seenSchemas);
-
-  do {
-    context.sideTypeDeclarations = context.sideTypeDeclarations.concat(
-      await Promise.all(
-        refsToBuild.map(async (ref) => {
-          builtRefs[ref] = true;
-          const namespaceParts = splitRef(ref);
-          const subSchema = await resolve<Schema, Schema>(root, namespaceParts);
-
-          return {
-            statement: await generateTypeDeclaration(
-              { ...context, root: namespaceParts.length === 1 },
-              subSchema,
-              {
-                name: buildIdentifier(
-                  namespaceParts[namespaceParts.length - 1],
-                ),
-                brandedTypes: brandedTypes === 'schemas' ? 'all' : brandedTypes,
-              },
-            ),
-            namespaceParts: namespaceParts.map((part) => buildIdentifier(part)),
-          };
-        }),
-      ),
-    );
-    refsToBuild = Object.keys(seenSchemas).filter((ref) => !builtRefs[ref]);
-  } while (refsToBuild.length);
-
-  const packageTree: PackageTreeNode[] = [];
-
-  context.sideTypeDeclarations.forEach(({ statement, namespaceParts }) => {
-    buildTree(packageTree, namespaceParts, statement);
-  }, []);
-
-  return factory.createNodeArray([
-    ...buildModuleDeclarations(context, packageTree),
-  ]);
+  return gatherStatements(context, root, []);
 }
 
 type JSONSchemaOptions = {
-  name?: string;
+  baseName?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
 };
 
@@ -768,28 +727,37 @@ type JSONSchemaOptions = {
 export async function generateJSONSchemaTypes(
   schema: Schema,
   {
-    name = DEFAULT_JSON_SCHEMA_OPTIONS.name,
+    baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
-  const seenSchemas: SeenReferencesHash = {};
   const context: Context = {
     nameResolver: async (ref) => {
-      seenSchemas[ref] = true;
+      context.seenSchemas[ref] = true;
 
       return splitRef(ref);
     },
     buildIdentifier,
     sideTypeDeclarations: [],
+    jsonSchemaOptions: { baseName, brandedTypes },
+    seenSchemas: {},
   };
 
-  const mainType = await generateTypeDeclaration(
-    { ...context, root: true },
+  const mainStatement = await generateTypeDeclaration(
+    { ...context, candidateName: baseName, root: true },
     schema,
-    { name, brandedTypes },
   );
+
+  return gatherStatements(context, schema, [mainStatement]);
+}
+
+export async function gatherStatements(
+  context: Context,
+  schema: Schema,
+  statements: ts.Statement[],
+): Promise<ts.NodeArray<ts.Statement>> {
   const builtRefs: { [refName: string]: boolean } = {};
-  let refsToBuild = Object.keys(seenSchemas);
+  let refsToBuild = Object.keys(context.seenSchemas);
 
   do {
     context.sideTypeDeclarations = context.sideTypeDeclarations.concat(
@@ -805,21 +773,26 @@ export async function generateJSONSchemaTypes(
 
           return {
             statement: await generateTypeDeclaration(
-              { ...context, root: namespaceParts.length === 1 },
-              subSchema,
               {
-                name:
-                  namespaceParts[namespaceParts.length - 1][0] +
-                  namespaceParts[namespaceParts.length - 1].slice(1),
-                brandedTypes,
+                ...context,
+                root: namespaceParts.length === 1,
+                candidateName: buildIdentifier(
+                  namespaceParts[namespaceParts.length - 1],
+                ),
+                jsonSchemaOptions: {
+                  ...context.jsonSchemaOptions,
+                },
               },
+              subSchema,
             ),
-            namespaceParts,
+            namespaceParts: namespaceParts.map((part) => buildIdentifier(part)),
           };
         }),
       ),
     );
-    refsToBuild = Object.keys(seenSchemas).filter((ref) => !builtRefs[ref]);
+    refsToBuild = Object.keys(context.seenSchemas).filter(
+      (ref) => !builtRefs[ref],
+    );
   } while (refsToBuild.length);
 
   const packageTree: PackageTreeNode[] = [];
@@ -829,7 +802,7 @@ export async function generateJSONSchemaTypes(
   }, []);
 
   return factory.createNodeArray([
-    mainType,
+    ...statements,
     ...buildModuleDeclarations(context, packageTree),
   ]);
 }
@@ -837,17 +810,22 @@ export async function generateJSONSchemaTypes(
 export async function generateTypeDeclaration(
   context: Context,
   schema: SchemaDefinition,
-  options: JSONSchemaOptions,
 ): Promise<ts.Statement> {
-  const types = await schemaToTypes(context, schema, options);
+  const types = await schemaToTypes(context, schema);
 
   const name = context.buildIdentifier(
-    options.name || (schema && (schema as Schema).title) || 'Unknown',
+    context.candidateName || (schema && (schema as Schema).title) || 'Unknown',
   );
   const isBrandedType =
     name &&
     name !== 'Unknown' &&
-    (options.brandedTypes === ALL_TYPES || options.brandedTypes.includes(name));
+    typeof schema !== 'boolean' &&
+    (schema.type === 'string' ||
+      schema.type === 'number' ||
+      schema.type === 'integer' ||
+      schema.type === 'boolean') &&
+    (context.jsonSchemaOptions.brandedTypes === ALL_TYPES ||
+      context.jsonSchemaOptions.brandedTypes.includes(name));
   let finalType =
     types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
 
@@ -855,14 +833,13 @@ export async function generateTypeDeclaration(
     finalType = factory.createIntersectionTypeNode([
       finalType,
       ...(await schemaToTypes(
-        context,
+        { ...context, candidateName: undefined },
         {
           type: 'object',
           properties: {
             _type: { enum: [name as string] },
           },
         },
-        { brandedTypes: [] },
       )),
     ]);
   }
@@ -883,9 +860,8 @@ export async function generateTypeDeclaration(
 async function schemaToTypeNode(
   context: Context,
   schema: SchemaDefinition,
-  options: JSONSchemaOptions,
 ): Promise<ts.TypeNode> {
-  const types = await schemaToTypes(context, schema, options);
+  const types = await schemaToTypes(context, schema);
 
   return types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
 }
@@ -893,7 +869,6 @@ async function schemaToTypeNode(
 async function schemaToTypes(
   context: Context,
   schema: SchemaDefinition,
-  options: JSONSchemaOptions,
   parentType?: JSONSchema6TypeName | JSONSchema6TypeName[],
 ): Promise<ts.TypeNode[]> {
   if (typeof schema === 'boolean') {
@@ -921,15 +896,17 @@ async function schemaToTypes(
       .every((value) => ['number', 'string', 'boolean'].includes(typeof value));
     const enumValuesCanBeEnumType =
       enumTypes.length === 1 &&
+      schema.enum.length > 1 &&
       allEnumValuesAreLiteral &&
       enumTypes[0] === 'string';
+    const name = schema.title || context.candidateName;
 
-    if (enumValuesCanBeEnumType && schema.title) {
+    if (enumValuesCanBeEnumType && name) {
       context.sideTypeDeclarations.push({
         statement: factory.createEnumDeclaration(
           [],
-          undefined,
-          buildIdentifier(schema.title),
+          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          buildIdentifier(name),
           schema.enum.map((value) =>
             factory.createEnumMember(
               buildIdentifier(value as string),
@@ -937,11 +914,9 @@ async function schemaToTypes(
             ),
           ),
         ),
-        namespaceParts: ['Enums', buildIdentifier(schema.title)],
+        namespaceParts: ['Enums', buildIdentifier(name)],
       });
-      return [
-        buildTypeReference(context, ['Enums', buildIdentifier(schema.title)]),
-      ];
+      return [buildTypeReference(context, ['Enums', buildIdentifier(name)])];
     }
 
     if (allEnumValuesAreLiteral) {
@@ -952,13 +927,22 @@ async function schemaToTypes(
 
     throw new YError('E_UNSUPPORTED_ENUM', schema.enum);
   } else if (schema.type) {
-    return await handleTypedSchema(context, schema, options);
+    return await handleTypedSchema(
+      { ...context, candidateName: undefined },
+      schema,
+    );
   } else if (schema.anyOf || schema.allOf || schema.oneOf) {
-    return handleComposedSchemas(context, schema, options);
+    return handleComposedSchemas(
+      { ...context, candidateName: undefined },
+      schema,
+    );
   } else if (parentType) {
     // Inject type from parent
     schema.type = parentType;
-    return await handleTypedSchema(context, schema, options);
+    return await handleTypedSchema(
+      { ...context, candidateName: undefined },
+      schema,
+    );
   }
 
   throw new YError('E_UNSUPPORTED_SCHEMA', schema);
@@ -968,7 +952,6 @@ async function schemaToTypes(
 async function handleTypedSchema(
   context: Context,
   schema: Schema,
-  options: JSONSchemaOptions,
 ): Promise<ts.TypeNode[]> {
   const types = schema.type instanceof Array ? schema.type : [schema.type];
   const isNullable = types.includes('null');
@@ -991,9 +974,15 @@ async function handleTypedSchema(
           case 'string':
             return factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
           case 'object':
-            return await buildObjectTypeNode(context, schema, options);
+            return await buildObjectTypeNode(
+              { ...context, candidateName: undefined },
+              schema,
+            );
           case 'array':
-            return await buildArrayTypeNode(context, schema, options);
+            return await buildArrayTypeNode(
+              { ...context, candidateName: undefined },
+              schema,
+            );
           default:
             throw new YError('E_BAD_TYPE', type);
         }
@@ -1008,7 +997,7 @@ async function handleTypedSchema(
 
   // Schema also contains a composed schema, handle it as well and do a intersection with base schema
   if (schema.anyOf || schema.allOf || schema.oneOf) {
-    const innerTypes = await handleComposedSchemas(context, schema, options);
+    const innerTypes = await handleComposedSchemas(context, schema);
     return [factory.createIntersectionTypeNode([...baseTypes, ...innerTypes])];
   } else {
     return baseTypes;
@@ -1019,13 +1008,12 @@ async function handleTypedSchema(
 async function handleComposedSchemas(
   context: Context,
   schema: Schema,
-  options: JSONSchemaOptions,
 ): Promise<ts.TypeNode[]> {
   const types = (
     await Promise.all(
       ((schema.anyOf || schema.allOf || schema.oneOf) as Schema[]).map(
         async (innerSchema) =>
-          await schemaToTypes(context, innerSchema, options, schema.type),
+          await schemaToTypes(context, innerSchema, schema.type),
       ),
     )
   ).map((innerTypes) =>
@@ -1052,7 +1040,6 @@ async function handleComposedSchemas(
 async function buildObjectTypeNode(
   context: Context,
   schema: Schema,
-  options: JSONSchemaOptions,
 ): Promise<ts.TypeNode> {
   const requiredProperties =
     schema.required && schema.required instanceof Array ? schema.required : [];
@@ -1068,9 +1055,8 @@ async function buildObjectTypeNode(
           const required = requiredProperties.includes(propertyName);
           const readOnly = (property as JSONSchema7).readOnly;
           const types = await schemaToTypes(
-            context,
+            { ...context, candidateName: propertyName },
             property as Schema,
-            options,
           );
 
           return factory.createPropertySignature(
@@ -1122,11 +1108,7 @@ async function buildObjectTypeNode(
             ] as JSONSchema7Definition;
             const required = requiredProperties.includes(propertyPattern);
             const readOnly = !!(property as JSONSchema7).readOnly;
-            const types = await schemaToTypes(
-              context,
-              property as Schema,
-              options,
-            );
+            const types = await schemaToTypes(context, property as Schema);
 
             return {
               readOnly,
@@ -1193,7 +1175,6 @@ async function buildObjectTypeNode(
 async function buildArrayTypeNode(
   context: Context,
   schema: Schema,
-  options: JSONSchemaOptions,
 ): Promise<ts.TypeNode> {
   const schemas = (
     schema.items instanceof Array
@@ -1208,9 +1189,7 @@ async function buildArrayTypeNode(
   }
 
   const types = (
-    await Promise.all(
-      schemas.map((schema) => schemaToTypes(context, schema, options)),
-    )
+    await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
   ).reduce((allTypes, types) => [...allTypes, ...types], []);
   const type = types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
 
@@ -1281,6 +1260,7 @@ function buildModuleDeclarations(
     return factory.createModuleDeclaration(
       undefined,
       [
+        // TODO: allow exporting
         level === 0
           ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
           : factory.createModifier(ts.SyntaxKind.ExportKeyword),

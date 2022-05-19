@@ -1585,11 +1585,13 @@
         }
       },
       "Locale": {
+        "title": "Locale",
         "type": "string",
         "pattern": "^[a-z]{2}-[A-Z]{2,3}",
         "maxLength": 5
       },
       "TimeZone": {
+        "title": "TimeZone",
         "type": "string",
         "pattern": "^[a-zA-Z]+/[a-zA-Z]+",
         "maxLength": 50
