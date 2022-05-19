@@ -1006,6 +1006,7 @@ describe('generateTypeDeclaration()', () => {
                 },
               },
             ],
+            responses: {},
           },
         },
       },
@@ -1020,6 +1021,7 @@ describe('generateTypeDeclaration()', () => {
     ).toMatchInlineSnapshot(`
       "declare namespace API {
           export namespace Test {
+              export type Output = unknown;
               export type Input = {
                   readonly foo_bar?: Parameters.FooBar;
               };

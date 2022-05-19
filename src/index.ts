@@ -1042,6 +1042,8 @@ async function buildObjectTypeNode(
   schema: Schema,
   options: JSONSchemaOptions,
 ): Promise<ts.TypeNode> {
+  const requiredProperties =
+    schema.required && schema.required instanceof Array ? schema.required : [];
   let elements: ts.TypeElement[] = [];
 
   if (schema.properties) {
@@ -1051,7 +1053,7 @@ async function buildObjectTypeNode(
           const property = schema.properties?.[
             propertyName
           ] as JSONSchema7Definition;
-          const required = (schema.required || []).includes(propertyName);
+          const required = requiredProperties.includes(propertyName);
           const readOnly = (property as JSONSchema7).readOnly;
           const types = await schemaToTypes(
             context,
@@ -1076,10 +1078,10 @@ async function buildObjectTypeNode(
 
   // We need to handle empty required properties in order to be able
   // to generate objects with only required properties
-  if (schema.required) {
+  if (requiredProperties.length) {
     elements = elements.concat(
       await Promise.all(
-        schema.required
+        requiredProperties
           .filter(
             (propertyName) =>
               'undefined' === typeof schema.properties?.[propertyName],
@@ -1106,7 +1108,7 @@ async function buildObjectTypeNode(
             const property = schema.patternProperties?.[
               propertyPattern
             ] as JSONSchema7Definition;
-            const required = (schema.required || []).includes(propertyPattern);
+            const required = requiredProperties.includes(propertyPattern);
             const readOnly = !!(property as JSONSchema7).readOnly;
             const types = await schemaToTypes(
               context,
