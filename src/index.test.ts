@@ -367,7 +367,7 @@ describe('generateTypeDeclaration()', () => {
   const context = {
     nameResolver: jest.fn(),
     buildIdentifier,
-    sideTypes: [],
+    sideTypeDeclarations: [],
   };
 
   beforeEach(() => {

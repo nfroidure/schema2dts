@@ -17,7 +17,7 @@ type Context = {
   nameResolver: (ref: string) => Promise<string[]>;
   buildIdentifier: (part: string) => string;
   root?: boolean;
-  sideTypes: { type: ts.Statement; parts: string[] }[];
+  sideTypeDeclarations: { statement: ts.Statement; namespaceParts: string[] }[];
 };
 type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 type SchemaDefinition =
@@ -44,10 +44,10 @@ export function buildIdentifier(part: string): string {
   );
 }
 
-async function resolve<T, U>(root: T, parts: string[]): Promise<U> {
-  return parts.reduce((curSchema, part) => {
+async function resolve<T, U>(root: T, namespaceParts: string[]): Promise<U> {
+  return namespaceParts.reduce((curSchema, part) => {
     if (!curSchema) {
-      throw new YError('E_RESOLVE', parts, part);
+      throw new YError('E_RESOLVE', namespaceParts, part);
     }
     return curSchema[part];
   }, root as unknown as U) as U;
@@ -113,7 +113,6 @@ export async function generateOpenAPITypes(
     > = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
   const seenSchemas: SeenReferencesHash = {};
-  let sideTypes: { type: ts.Statement; parts: string[] }[] = [];
   const context: Context = {
     nameResolver: async (ref) => {
       seenSchemas[ref] = true;
@@ -121,7 +120,7 @@ export async function generateOpenAPITypes(
       return splitRef(ref);
     },
     buildIdentifier,
-    sideTypes: [],
+    sideTypeDeclarations: [],
   };
 
   const components: {
@@ -200,9 +199,9 @@ export async function generateOpenAPITypes(
             required: !!requestBody.required,
           });
 
-          sideTypes.push({
-            parts: [baseName, operationId, 'Body'],
-            type: factory.createTypeAliasDeclaration(
+          context.sideTypeDeclarations.push({
+            namespaceParts: [baseName, operationId, 'Body'],
+            statement: factory.createTypeAliasDeclaration(
               undefined,
               [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
               'Body',
@@ -245,9 +244,14 @@ export async function generateOpenAPITypes(
                 };
               }
 
-              sideTypes.push({
-                parts: [baseName, operationId, 'Responses', `$${code}`],
-                type: factory.createTypeAliasDeclaration(
+              context.sideTypeDeclarations.push({
+                namespaceParts: [
+                  baseName,
+                  operationId,
+                  'Responses',
+                  `$${code}`,
+                ],
+                statement: factory.createTypeAliasDeclaration(
                   undefined,
                   [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
                   `$${code}`,
@@ -278,9 +282,9 @@ export async function generateOpenAPITypes(
             }),
           );
 
-          sideTypes.push({
-            parts: [baseName, operationId, 'Output'],
-            type: factory.createTypeAliasDeclaration(
+          context.sideTypeDeclarations.push({
+            namespaceParts: [baseName, operationId, 'Output'],
+            statement: factory.createTypeAliasDeclaration(
               undefined,
               [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
               'Output',
@@ -305,7 +309,7 @@ export async function generateOpenAPITypes(
         if (operation.parameters && operation.parameters.length) {
           await Promise.all(
             operation.parameters.map(async (parameter, index) => {
-              const uniqueKey = `${operationId + index}`;
+              const uniqueKey = operationId + index;
 
               if (!('$ref' in parameter)) {
                 components.parameters[uniqueKey] = parameter;
@@ -342,9 +346,14 @@ export async function generateOpenAPITypes(
                 path: ['Parameters', resolvedParameter.name],
                 required: !!resolvedParameter.required,
               });
-              sideTypes.push({
-                parts: [baseName, operationId, 'Parameters', parameterKey],
-                type: factory.createTypeAliasDeclaration(
+              context.sideTypeDeclarations.push({
+                namespaceParts: [
+                  baseName,
+                  operationId,
+                  'Parameters',
+                  parameterKey,
+                ],
+                statement: factory.createTypeAliasDeclaration(
                   undefined,
                   [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
                   context.buildIdentifier(resolvedParameter.name),
@@ -360,9 +369,9 @@ export async function generateOpenAPITypes(
           );
         }
 
-        sideTypes.push({
-          parts: [baseName, operationId, 'Input'],
-          type: factory.createTypeAliasDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: [baseName, operationId, 'Input'],
+          statement: factory.createTypeAliasDeclaration(
             undefined,
             [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             'Input',
@@ -389,9 +398,9 @@ export async function generateOpenAPITypes(
   await Promise.all(
     Object.keys(components.requestBodies).map(async (name) => {
       const requestBody = components.requestBodies[name];
-      let type: ts.Statement;
+      let statement: ts.Statement;
       if ('$ref' in requestBody) {
-        type = factory.createTypeAliasDeclaration(
+        statement = factory.createTypeAliasDeclaration(
           [],
           [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           name,
@@ -414,7 +423,7 @@ export async function generateOpenAPITypes(
           : [];
 
         if (!requestBodySchemas.length) {
-          type = await generateTypeDeclaration(
+          statement = await generateTypeDeclaration(
             context,
             { type: 'any' },
             {
@@ -442,7 +451,7 @@ export async function generateOpenAPITypes(
             return { $ref: ref };
           });
 
-          type = await generateTypeDeclaration(
+          statement = await generateTypeDeclaration(
             context,
             {
               oneOf: requestBodySchemasReferences,
@@ -454,9 +463,9 @@ export async function generateOpenAPITypes(
           );
         }
       }
-      sideTypes.push({
-        parts: ['Components', 'RequestBodies', name],
-        type,
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'RequestBodies', name],
+        statement,
       });
     }),
   );
@@ -465,9 +474,9 @@ export async function generateOpenAPITypes(
       const parameter = components.parameters[name];
 
       if ('$ref' in parameter) {
-        sideTypes.push({
-          parts: ['Components', 'Parameters', name],
-          type: factory.createTypeAliasDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: ['Components', 'Parameters', name],
+          statement: factory.createTypeAliasDeclaration(
             [],
             [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
@@ -480,9 +489,9 @@ export async function generateOpenAPITypes(
           ),
         });
       } else {
-        sideTypes.push({
-          parts: ['Components', 'Parameters', name],
-          type: await generateTypeDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: ['Components', 'Parameters', name],
+          statement: await generateTypeDeclaration(
             context,
             parameter.schema || { type: 'any' },
             {
@@ -500,9 +509,9 @@ export async function generateOpenAPITypes(
       let schemasType: ts.TypeNode;
 
       if ('$ref' in response) {
-        sideTypes.push({
-          parts: ['Components', 'Responses', name],
-          type: factory.createTypeAliasDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: ['Components', 'Responses', name],
+          statement: factory.createTypeAliasDeclaration(
             undefined,
             [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
@@ -605,9 +614,9 @@ export async function generateOpenAPITypes(
           }),
         );
 
-        sideTypes.push({
-          parts: ['Components', 'Responses', name],
-          type: factory.createTypeAliasDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: ['Components', 'Responses', name],
+          statement: factory.createTypeAliasDeclaration(
             [],
             [],
             name,
@@ -671,9 +680,9 @@ export async function generateOpenAPITypes(
       const header = components.headers[name];
 
       if ('$ref' in header) {
-        sideTypes.push({
-          parts: ['Components', 'Headers', name],
-          type: factory.createTypeAliasDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: ['Components', 'Headers', name],
+          statement: factory.createTypeAliasDeclaration(
             undefined,
             [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
@@ -686,9 +695,9 @@ export async function generateOpenAPITypes(
           ),
         });
       } else {
-        sideTypes.push({
-          parts: ['Components', 'Headers', name],
-          type: await generateTypeDeclaration(
+        context.sideTypeDeclarations.push({
+          namespaceParts: ['Components', 'Headers', name],
+          statement: await generateTypeDeclaration(
             context,
             header.schema || { type: 'any' },
             {
@@ -705,23 +714,25 @@ export async function generateOpenAPITypes(
   let refsToBuild = Object.keys(seenSchemas);
 
   do {
-    sideTypes = sideTypes.concat(
+    context.sideTypeDeclarations = context.sideTypeDeclarations.concat(
       await Promise.all(
         refsToBuild.map(async (ref) => {
           builtRefs[ref] = true;
-          const parts = splitRef(ref);
-          const subSchema = await resolve<Schema, Schema>(root, parts);
+          const namespaceParts = splitRef(ref);
+          const subSchema = await resolve<Schema, Schema>(root, namespaceParts);
 
           return {
-            type: await generateTypeDeclaration(
-              { ...context, root: parts.length === 1 },
+            statement: await generateTypeDeclaration(
+              { ...context, root: namespaceParts.length === 1 },
               subSchema,
               {
-                name: buildIdentifier(parts[parts.length - 1]),
+                name: buildIdentifier(
+                  namespaceParts[namespaceParts.length - 1],
+                ),
                 brandedTypes: brandedTypes === 'schemas' ? 'all' : brandedTypes,
               },
             ),
-            parts: parts.map((part) => buildIdentifier(part)),
+            namespaceParts: namespaceParts.map((part) => buildIdentifier(part)),
           };
         }),
       ),
@@ -729,12 +740,10 @@ export async function generateOpenAPITypes(
     refsToBuild = Object.keys(seenSchemas).filter((ref) => !builtRefs[ref]);
   } while (refsToBuild.length);
 
-  sideTypes = sideTypes.concat(context.sideTypes);
-
   const packageTree: PackageTreeNode[] = [];
 
-  sideTypes.forEach(({ type, parts }) => {
-    buildTree(packageTree, parts, type);
+  context.sideTypeDeclarations.forEach(({ statement, namespaceParts }) => {
+    buildTree(packageTree, namespaceParts, statement);
   }, []);
 
   return factory.createNodeArray([
@@ -771,7 +780,7 @@ export async function generateJSONSchemaTypes(
       return splitRef(ref);
     },
     buildIdentifier,
-    sideTypes: [],
+    sideTypeDeclarations: [],
   };
 
   const mainType = await generateTypeDeclaration(
@@ -779,30 +788,33 @@ export async function generateJSONSchemaTypes(
     schema,
     { name, brandedTypes },
   );
-  let sideTypes: { type: ts.Statement; parts: string[] }[] = context.sideTypes;
   const builtRefs: { [refName: string]: boolean } = {};
   let refsToBuild = Object.keys(seenSchemas);
 
   do {
-    sideTypes = sideTypes.concat(
+    context.sideTypeDeclarations = context.sideTypeDeclarations.concat(
       await Promise.all(
         refsToBuild.map(async (ref) => {
           builtRefs[ref] = true;
 
-          const parts = splitRef(ref);
-          const subSchema = await resolve<Schema, Schema>(schema, parts);
+          const namespaceParts = splitRef(ref);
+          const subSchema = await resolve<Schema, Schema>(
+            schema,
+            namespaceParts,
+          );
 
           return {
-            type: await generateTypeDeclaration(
-              { ...context, root: parts.length === 1 },
+            statement: await generateTypeDeclaration(
+              { ...context, root: namespaceParts.length === 1 },
               subSchema,
               {
                 name:
-                  parts[parts.length - 1][0] + parts[parts.length - 1].slice(1),
+                  namespaceParts[namespaceParts.length - 1][0] +
+                  namespaceParts[namespaceParts.length - 1].slice(1),
                 brandedTypes,
               },
             ),
-            parts,
+            namespaceParts,
           };
         }),
       ),
@@ -812,8 +824,8 @@ export async function generateJSONSchemaTypes(
 
   const packageTree: PackageTreeNode[] = [];
 
-  sideTypes.forEach(({ type, parts }) => {
-    buildTree(packageTree, parts, type);
+  context.sideTypeDeclarations.forEach(({ statement, namespaceParts }) => {
+    buildTree(packageTree, namespaceParts, statement);
   }, []);
 
   return factory.createNodeArray([
@@ -913,8 +925,8 @@ async function schemaToTypes(
       enumTypes[0] === 'string';
 
     if (enumValuesCanBeEnumType && schema.title) {
-      context.sideTypes.push({
-        type: factory.createEnumDeclaration(
+      context.sideTypeDeclarations.push({
+        statement: factory.createEnumDeclaration(
           [],
           undefined,
           buildIdentifier(schema.title),
@@ -925,7 +937,7 @@ async function schemaToTypes(
             ),
           ),
         ),
-        parts: ['Enums', buildIdentifier(schema.title)],
+        namespaceParts: ['Enums', buildIdentifier(schema.title)],
       });
       return [
         buildTypeReference(context, ['Enums', buildIdentifier(schema.title)]),
@@ -1311,9 +1323,9 @@ function buildTree(
   child.types.push(type);
 }
 
-function buildTypeReference(context: Context, parts: string[]) {
+function buildTypeReference(context: Context, namespaceParts: string[]) {
   return factory.createTypeReferenceNode(
-    parts.reduce<ts.EntityName>(
+    namespaceParts.reduce<ts.EntityName>(
       (curNode: ts.EntityName | null, referencePart: string) => {
         const identifier = factory.createIdentifier(
           context.buildIdentifier(referencePart),
