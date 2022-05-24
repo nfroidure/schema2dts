@@ -752,7 +752,8 @@ declare namespace Enums {
     }
     export enum TokenType {
         Bearer = \\"bearer\\",
-        Mac = \\"mac\\"
+        Mac = \\"mac\\",
+        Unknown = \\"\\\\uD83D\\\\uDC95-\\\\u2705\\"
     }
     export enum Error {
         InvalidRequest = \\"invalid_request\\",
@@ -1524,7 +1525,8 @@ declare namespace Enums {
     }
     export enum TokenType {
         Bearer = \\"bearer\\",
-        Mac = \\"mac\\"
+        Mac = \\"mac\\",
+        Unknown = \\"\\\\uD83D\\\\uDC95-\\\\u2705\\"
     }
     export enum Role {
         Admin = \\"admin\\",
@@ -2390,7 +2392,8 @@ declare namespace Enums {
     }
     export enum TokenType {
         Bearer = \\"bearer\\",
-        Mac = \\"mac\\"
+        Mac = \\"mac\\",
+        Unknown = \\"\\\\uD83D\\\\uDC95-\\\\u2705\\"
     }
     export enum Error {
         InvalidRequest = \\"invalid_request\\",
@@ -2654,7 +2657,7 @@ declare namespace Components {
         export type UserArray = Components.Schemas.RequestBodiesUserArrayBody0;
         export type Pet = Components.Schemas.Pet | Components.Schemas.Pet;
         export type UpdatePetWithFormRequestBody = Components.Schemas.Body;
-        export type UploadFileRequestBody = Components.Schemas.Body_1;
+        export type UploadFileRequestBody = Components.Schemas.Body1;
         export type PlaceOrderRequestBody = Components.Schemas.Order;
         export type CreateUserRequestBody = Components.Schemas.User;
         export type UpdateUserRequestBody = Components.Schemas.User;
@@ -2942,7 +2945,7 @@ declare namespace Components {
             name?: NonNullable<string>;
             status?: NonNullable<string>;
         }>;
-        export type Body_1 = NonNullable<{
+        export type Body1 = NonNullable<{
             additionalMetadata?: NonNullable<string>;
             file?: NonNullable<string>;
         }>;
@@ -3205,7 +3208,7 @@ declare namespace Components {
         export type UserArray = Components.Schemas.RequestBodiesUserArrayBody0;
         export type Pet = Components.Schemas.Pet | Components.Schemas.Pet;
         export type UpdatePetWithFormRequestBody = Components.Schemas.Body;
-        export type UploadFileRequestBody = Components.Schemas.Body_1;
+        export type UploadFileRequestBody = Components.Schemas.Body1;
         export type PlaceOrderRequestBody = Components.Schemas.Order;
         export type CreateUserRequestBody = Components.Schemas.User;
         export type UpdateUserRequestBody = Components.Schemas.User;
@@ -3311,7 +3314,7 @@ declare namespace Components {
             name?: NonNullable<string>;
             status?: NonNullable<string>;
         }>;
-        export type Body_1 = NonNullable<{
+        export type Body1 = NonNullable<{
             additionalMetadata?: NonNullable<string>;
             file?: NonNullable<string>;
         }>;
@@ -3622,7 +3625,7 @@ declare namespace Components {
         export type UserArray = Components.Schemas.RequestBodiesUserArrayBody0;
         export type Pet = Components.Schemas.Pet | Components.Schemas.Pet;
         export type UpdatePetWithFormRequestBody = Components.Schemas.Body;
-        export type UploadFileRequestBody = Components.Schemas.Body_1;
+        export type UploadFileRequestBody = Components.Schemas.Body1;
         export type PlaceOrderRequestBody = Components.Schemas.Order;
         export type CreateUserRequestBody = Components.Schemas.User;
         export type UpdateUserRequestBody = Components.Schemas.User;
@@ -3940,7 +3943,7 @@ declare namespace Components {
             name?: NonNullable<string>;
             status?: NonNullable<string>;
         }>;
-        export type Body_1 = NonNullable<{
+        export type Body1 = NonNullable<{
             additionalMetadata?: NonNullable<string>;
             file?: NonNullable<string>;
         }>;

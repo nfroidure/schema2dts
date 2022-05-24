@@ -696,7 +696,7 @@
                       "title": "token_type",
                       "description": "See https://tools.ietf.org/html/rfc6749#section-7.1",
                       "type": "string",
-                      "enum": ["bearer", "mac"]
+                      "enum": ["bearer", "mac", "💕-✅"]
                     },
                     "expires_in": {
                       "description": "The lifetime in seconds of the access token",

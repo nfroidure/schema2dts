@@ -42,9 +42,14 @@ export function splitRef(ref: string): string[] {
 }
 
 export function buildIdentifier(part: string): string {
-  return part.replace(/(?:^|[^a-z0-9]+)([a-z])/gi, (_: unknown, $1: string) =>
-    $1.toUpperCase(),
-  );
+  const identifier = part
+    .replace(/[^a-z0-9-_ ]/gi, '')
+    .replace(/(?:^|[^a-z0-9]+)([a-z])/gi, (_: unknown, $1: string) =>
+      $1.toUpperCase(),
+    )
+    .replace(/[^a-z0-9]/gi, '');
+
+  return identifier || 'Unknown';
 }
 
 async function resolve<T, U>(root: T, namespaceParts: string[]): Promise<U> {
