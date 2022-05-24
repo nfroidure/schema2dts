@@ -1,3 +1,12 @@
+## [4.1.1](https://github.com/nfroidure/schema2dts/compare/v4.1.0...v4.1.1) (2022-05-24)
+
+
+### Bug Fixes
+
+* **types:** export responses types too ([916c9a2](https://github.com/nfroidure/schema2dts/commit/916c9a2afdb75fc0ff48b6056668556243c474c4))
+
+
+
 # [4.1.0](https://github.com/nfroidure/schema2dts/compare/v4.0.0...v4.1.0) (2022-05-24)
 
 
