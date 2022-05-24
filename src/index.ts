@@ -81,6 +81,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   baseName: 'Main',
   brandedTypes: [],
   generateRealEnums: false,
+  exportNamespaces: false,
 };
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
   baseName: 'API',
@@ -89,6 +90,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
   generateUnusedSchemas: false,
   camelizeInputs: true,
   generateRealEnums: false,
+  exportNamespaces: false,
 };
 
 type OpenAPIOptions = {
@@ -98,6 +100,7 @@ type OpenAPIOptions = {
   camelizeInputs?: boolean;
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
   generateRealEnums: boolean;
+  exportNamespaces: boolean;
 };
 /**
  * Create the TypeScript types declarations from an Open API document
@@ -119,6 +122,7 @@ export async function generateOpenAPITypes(
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
+    exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
   }: Omit<OpenAPIOptions, 'baseName' | 'brandedTypes'> &
     Partial<
       Pick<OpenAPIOptions, 'baseName' | 'brandedTypes'>
@@ -163,6 +167,7 @@ export async function generateOpenAPITypes(
           ? brandedTypes
           : Object.keys(components.schemas).map(buildIdentifier),
       generateRealEnums,
+      exportNamespaces,
     },
     seenSchemas: {},
   };
@@ -724,6 +729,7 @@ type JSONSchemaOptions = {
   baseName?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
   generateRealEnums: boolean;
+  exportNamespaces: boolean;
 };
 
 // Could use https://apitools.dev/json-schema-ref-parser/
@@ -741,6 +747,7 @@ export async function generateJSONSchemaTypes(
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
+    exportNamespaces = DEFAULT_JSON_SCHEMA_OPTIONS.exportNamespaces,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
   const context: Context = {
@@ -751,7 +758,12 @@ export async function generateJSONSchemaTypes(
     },
     buildIdentifier,
     sideTypeDeclarations: [],
-    jsonSchemaOptions: { baseName, brandedTypes, generateRealEnums },
+    jsonSchemaOptions: {
+      baseName,
+      brandedTypes,
+      generateRealEnums,
+      exportNamespaces,
+    },
     seenSchemas: {},
   };
 
@@ -859,7 +871,7 @@ export async function generateTypeDeclaration(
   return factory.createTypeAliasDeclaration(
     undefined,
     [
-      context.root
+      context.root && !context.jsonSchemaOptions.exportNamespaces
         ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
         : factory.createModifier(ts.SyntaxKind.ExportKeyword),
     ],
@@ -1276,8 +1288,7 @@ function buildModuleDeclarations(
     return factory.createModuleDeclaration(
       undefined,
       [
-        // TODO: allow exporting
-        level === 0
+        level === 0 && !context.jsonSchemaOptions.exportNamespaces
           ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
           : factory.createModifier(ts.SyntaxKind.ExportKeyword),
       ],

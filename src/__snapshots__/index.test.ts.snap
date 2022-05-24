@@ -1521,7 +1521,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace AnotherAPI {
+"export namespace AnotherAPI {
     export namespace GetAnomaly {
         export type Output = Responses.$200;
         export type Input = {
@@ -1846,7 +1846,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         }
     }
 }
-declare namespace Components {
+export namespace Components {
     export namespace RequestBodies {
         export type PutUserRequestBody = Components.Schemas.UserModel;
         export type PostOAuth2TokenRequestBody = Components.Schemas.TokenRequestBody | Components.Schemas.TokenRequestBody;
@@ -2288,7 +2288,7 @@ declare namespace Components {
         }>;
     }
 }
-declare namespace Enums {
+export namespace Enums {
     export enum ResponseType {
         Code = \\"code\\",
         Token = \\"token\\"
@@ -3309,7 +3309,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace AnotherAPI {
+"export namespace AnotherAPI {
     export namespace UpdatePet {
         export type Body = Components.RequestBodies.Pet;
         export type Output = Responses.$400 | Responses.$404 | Responses.$405;
@@ -3554,7 +3554,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         }
     }
 }
-declare namespace Components {
+export namespace Components {
     export namespace RequestBodies {
         export type UserArray = Components.Schemas.RequestBodiesUserArrayBody0;
         export type Pet = Components.Schemas.Pet | Components.Schemas.Pet;
@@ -3893,7 +3893,7 @@ declare namespace Components {
         export type ResponsesloginUserResponse200Body1 = NonNullable<string>;
     }
 }
-declare namespace Enums {
+export namespace Enums {
     export enum OrderStatus {
         Placed = \\"placed\\",
         Approved = \\"approved\\",
@@ -4206,7 +4206,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace AnotherAPI {
+"export namespace AnotherAPI {
     export namespace GetDelay {
         export type Output = Responses.$204;
         export type Input = {
@@ -4274,7 +4274,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_exam
         }
     }
 }
-declare namespace Components {
+export namespace Components {
     export namespace RequestBodies {
         export type PutEchoRequestBody = Components.Schemas.Echo;
     }
@@ -4363,7 +4363,7 @@ declare namespace Components {
         }>;
     }
 }
-declare namespace Enums {
+export namespace Enums {
     export enum GetParametersResponse204HeadersXDelayPrecision {
         Ns = \\"ns\\",
         Ms = \\"ms\\",
@@ -4694,7 +4694,7 @@ declare namespace Components {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example_components.json and generateUnusedSchemas option to true 1`] = `
-"declare namespace AnotherAPI {
+"export namespace AnotherAPI {
     export namespace GetDelay {
         export type Output = Responses.$204;
         export type Input = {
@@ -4762,7 +4762,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_exam
         }
     }
 }
-declare namespace Components {
+export namespace Components {
     export namespace RequestBodies {
         export type EchoBody = Components.Schemas.Echo;
     }
@@ -4851,7 +4851,7 @@ declare namespace Components {
         }>;
     }
 }
-declare namespace Enums {
+export namespace Enums {
     export enum XDelayPrecision {
         Ns = \\"ns\\",
         Ms = \\"ms\\",

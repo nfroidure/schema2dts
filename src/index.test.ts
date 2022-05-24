@@ -83,10 +83,11 @@ describe('generateOpenAPITypes()', () => {
       toSource(
         await generateOpenAPITypes(schema, {
           generateRealEnums: true,
+          exportNamespaces: true,
         }),
       ),
     ).toMatchInlineSnapshot(`
-      "declare namespace API {
+      "export namespace API {
           export namespace GetPing {
               export type Body = Components.RequestBodies.GetPingRequestBody;
               export type Output = Responses.$200;
@@ -104,7 +105,7 @@ describe('generateOpenAPITypes()', () => {
               }
           }
       }
-      declare namespace Components {
+      export namespace Components {
           export namespace RequestBodies {
               export type GetPingRequestBody = Components.Schemas.RequestBodiesGetPingRequestBodyBody0;
           }
@@ -234,6 +235,7 @@ describe('generateOpenAPITypes()', () => {
         await generateOpenAPITypes(schema, {
           brandedTypes: ['TheSchema', 'TheSchemaClone'],
           generateRealEnums: true,
+          exportNamespaces: false,
         }),
       ),
     ).toMatchInlineSnapshot(`
@@ -297,7 +299,10 @@ describe('generateOpenAPITypes()', () => {
 
         expect(
           toSource(
-            await generateOpenAPITypes(schema, { generateRealEnums: true }),
+            await generateOpenAPITypes(schema, {
+              generateRealEnums: true,
+              exportNamespaces: false,
+            }),
           ),
         ).toMatchSnapshot();
       });
@@ -313,6 +318,7 @@ describe('generateOpenAPITypes()', () => {
               filterStatuses: [200, 201, 202, 300],
               brandedTypes: 'schemas',
               generateRealEnums: false,
+              exportNamespaces: false,
             }),
           ),
         ).toMatchSnapshot();
@@ -329,6 +335,7 @@ describe('generateOpenAPITypes()', () => {
               baseName: 'AnotherAPI',
               generateUnusedSchemas: true,
               generateRealEnums: true,
+              exportNamespaces: true,
             }),
           ),
         ).toMatchSnapshot();
@@ -366,6 +373,7 @@ describe('generateJSONSchemaTypes()', () => {
         await generateJSONSchemaTypes(schema, {
           generateRealEnums: true,
           brandedTypes: [],
+          exportNamespaces: false,
         }),
       ),
     ).toMatchInlineSnapshot(`
@@ -389,6 +397,7 @@ describe('generateTypeDeclaration()', () => {
     jsonSchemaOptions: {
       brandedTypes: [],
       generateRealEnums: true,
+      exportNamespaces: true,
     },
   };
 
@@ -409,7 +418,11 @@ describe('generateTypeDeclaration()', () => {
               ...context,
               root: true,
               candidateName: 'Limit',
-              jsonSchemaOptions: { brandedTypes: [], generateRealEnums: false },
+              jsonSchemaOptions: {
+                brandedTypes: [],
+                generateRealEnums: false,
+                exportNamespaces: false,
+              },
             },
             schema,
           ),
@@ -995,6 +1008,7 @@ describe('generateTypeDeclaration()', () => {
         await generateOpenAPITypes(schema, {
           camelizeInputs: false,
           generateRealEnums: false,
+          exportNamespaces: false,
         }),
       ),
     ).toMatchInlineSnapshot(`
