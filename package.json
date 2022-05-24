@@ -1,6 +1,6 @@
 {
   "name": "schema2dts",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator",
   "main": "dist/index",
   "module": "dist/index.mjs",

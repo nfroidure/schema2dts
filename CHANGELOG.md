@@ -1,3 +1,19 @@
+# [4.1.0](https://github.com/nfroidure/schema2dts/compare/v4.0.0...v4.1.0) (2022-05-24)
+
+
+### Bug Fixes
+
+* **types:** avoid generating empty identifiers ([2b5d554](https://github.com/nfroidure/schema2dts/commit/2b5d55419b919c8ee53fefb31f3eb8973396116d)), closes [#22](https://github.com/nfroidure/schema2dts/issues/22)
+* **types:** fix brand and enum types ([f174dd8](https://github.com/nfroidure/schema2dts/commit/f174dd89154df0a42e8305bb802d02209b389ba7))
+
+
+### Features
+
+* **types:** allow to export root namespaces ([3591eff](https://github.com/nfroidure/schema2dts/commit/3591effbcaade7c378cafc4f2389fe6051149b17))
+* **types:** allow to not use enums ([4ea574c](https://github.com/nfroidure/schema2dts/commit/4ea574c212825a2215afc9f6a479f6fa56ec9884))
+
+
+
 # [4.0.0](https://github.com/nfroidure/schema2dts/compare/v3.1.0...v4.0.0) (2022-05-19)
 
 
