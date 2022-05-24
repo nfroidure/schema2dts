@@ -114,7 +114,7 @@ describe('generateOpenAPITypes()', () => {
               export type GetPing1 = NonNullable<string>;
           }
           export namespace Responses {
-              type GetPingResponse200<S extends number> = {
+              export type GetPingResponse200<S extends number> = {
                   readonly status: S;
                   readonly headers: {
                       readonly \\"x-a-header\\": Components.Headers.GetPingResponse200HeadersXAHeader;
@@ -266,7 +266,7 @@ describe('generateOpenAPITypes()', () => {
           }
           export namespace Responses {
               export type TheResponseClone = Components.Responses.TheResponse;
-              type TheResponse<S extends number> = {
+              export type TheResponse<S extends number> = {
                   readonly status: S;
                   readonly headers?: {
                       readonly \\"x-a-header\\"?: Components.Headers.TheXAHeader;

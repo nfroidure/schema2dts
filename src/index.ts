@@ -631,7 +631,7 @@ export async function generateOpenAPITypes(
           namespaceParts: ['Components', 'Responses', name],
           statement: factory.createTypeAliasDeclaration(
             [],
-            [],
+            [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             [
               factory.createTypeParameterDeclaration(
