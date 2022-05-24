@@ -1138,7 +1138,7 @@ declare namespace Components {
     }
     export namespace Parameters {
         export type MlProject = \\"dalkia\\";
-        export type ResponseType = Enums.ResponseType;
+        export type ResponseType = \\"code\\" | \\"token\\";
         export type AnomalyId = Components.Schemas.UUID;
         export type FactoryId = Components.Schemas.UUID;
         export type LineId = Components.Schemas.UUID;
@@ -1333,14 +1333,14 @@ declare namespace Components {
         }>;
         export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
             access_token: NonNullable<string>;
-            token_type: Enums.TokenType;
+            token_type: \\"bearer\\" | \\"mac\\" | \\"\\\\uD83D\\\\uDC95-\\\\u2705\\";
             expires_in?: NonNullable<number>;
             refresh_token?: NonNullable<string>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
             pong?: \\"pong\\";
         }>;
-        export type Role = Enums.Role & NonNullable<{
+        export type Role = (\\"admin\\" | \\"user\\" | \\"candidate\\") & NonNullable<{
             _type?: \\"Role\\";
         }>;
         export type UserData = NonNullable<{
@@ -1443,9 +1443,9 @@ declare namespace Components {
         export type MachineModel = NonNullable<{
             id?: Components.Schemas.UUID;
             data: Components.Schemas.MachineData;
-            powerState: Enums.PowerState;
-            operatingState: Enums.OperatingState;
-            healthState: Enums.HealthState;
+            powerState: \\"unknown\\" | \\"on\\" | \\"off\\";
+            operatingState: \\"unknown\\" | \\"normal\\" | \\"stopped\\" | \\"idle\\";
+            healthState: \\"unknown\\" | \\"good\\" | \\"faulty\\" | \\"erroring\\";
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
         }>;
@@ -1470,10 +1470,10 @@ declare namespace Components {
         }>;
         export type AnomalyData = NonNullable<{
             assignedUser?: Components.Schemas.UUID;
-            status: Enums.Status;
+            status: \\"open\\" | \\"discarded\\" | \\"assigned\\" | \\"fixed\\" | \\"closed\\";
             archived: NonNullable<boolean>;
-            priority: Enums.Priority;
-            severity: Enums.Severity;
+            priority: \\"not_set\\" | \\"urgent\\" | \\"important\\" | \\"secondary\\";
+            severity: \\"not_set\\" | \\"critical\\" | \\"major\\" | \\"moderate\\" | \\"minor\\" | \\"cosmetic\\";
         }>;
         export type FactoryData = NonNullable<{
             externalId?: NonNullable<string>;
@@ -1516,60 +1516,6 @@ declare namespace Components {
                 uri?: NonNullable<string>;
             }>;
         }>;
-    }
-}
-declare namespace Enums {
-    export enum ResponseType {
-        Code = \\"code\\",
-        Token = \\"token\\"
-    }
-    export enum TokenType {
-        Bearer = \\"bearer\\",
-        Mac = \\"mac\\",
-        Unknown = \\"\\\\uD83D\\\\uDC95-\\\\u2705\\"
-    }
-    export enum Role {
-        Admin = \\"admin\\",
-        User = \\"user\\",
-        Candidate = \\"candidate\\"
-    }
-    export enum PowerState {
-        Unknown = \\"unknown\\",
-        On = \\"on\\",
-        Off = \\"off\\"
-    }
-    export enum OperatingState {
-        Unknown = \\"unknown\\",
-        Normal = \\"normal\\",
-        Stopped = \\"stopped\\",
-        Idle = \\"idle\\"
-    }
-    export enum HealthState {
-        Unknown = \\"unknown\\",
-        Good = \\"good\\",
-        Faulty = \\"faulty\\",
-        Erroring = \\"erroring\\"
-    }
-    export enum Status {
-        Open = \\"open\\",
-        Discarded = \\"discarded\\",
-        Assigned = \\"assigned\\",
-        Fixed = \\"fixed\\",
-        Closed = \\"closed\\"
-    }
-    export enum Priority {
-        NotSet = \\"not_set\\",
-        Urgent = \\"urgent\\",
-        Important = \\"important\\",
-        Secondary = \\"secondary\\"
-    }
-    export enum Severity {
-        NotSet = \\"not_set\\",
-        Critical = \\"critical\\",
-        Major = \\"major\\",
-        Moderate = \\"moderate\\",
-        Minor = \\"minor\\",
-        Cosmetic = \\"cosmetic\\"
     }
 }"
 `;
@@ -3308,7 +3254,7 @@ declare namespace Components {
             name: NonNullable<string>;
             photoUrls: NonNullable<NonNullable<string>[]>;
             tags?: NonNullable<Components.Schemas.Tag[]>;
-            status?: Enums.PetStatusInTheStore;
+            status?: \\"available\\" | \\"pending\\" | \\"sold\\";
         }>;
         export type Body = NonNullable<{
             name?: NonNullable<string>;
@@ -3323,7 +3269,7 @@ declare namespace Components {
             petId?: NonNullable<number>;
             quantity?: NonNullable<number>;
             shipDate?: NonNullable<string>;
-            status?: Enums.OrderStatus;
+            status?: \\"placed\\" | \\"approved\\" | \\"delivered\\";
             complete?: NonNullable<boolean>;
         }>;
         export type User = NonNullable<{
@@ -3358,18 +3304,6 @@ declare namespace Components {
             id?: NonNullable<number>;
             name?: NonNullable<string>;
         }>;
-    }
-}
-declare namespace Enums {
-    export enum PetStatusInTheStore {
-        Available = \\"available\\",
-        Pending = \\"pending\\",
-        Sold = \\"sold\\"
-    }
-    export enum OrderStatus {
-        Placed = \\"placed\\",
-        Approved = \\"approved\\",
-        Delivered = \\"delivered\\"
     }
 }"
 `;
@@ -4731,7 +4665,7 @@ declare namespace Components {
         };
     }
     export namespace Headers {
-        export type XDelayPrecision = Enums.XDelayPrecision;
+        export type XDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
     }
     export namespace Schemas {
         export type Echo = NonNullable<{
@@ -4755,13 +4689,6 @@ declare namespace Components {
         export type ResponsesPing200Body0 = NonNullable<{
             pong?: \\"pong\\";
         }>;
-    }
-}
-declare namespace Enums {
-    export enum XDelayPrecision {
-        Ns = \\"ns\\",
-        Ms = \\"ms\\",
-        S = \\"s\\"
     }
 }"
 `;

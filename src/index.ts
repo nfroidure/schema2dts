@@ -80,6 +80,7 @@ async function ensureResolved<T>(
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   baseName: 'Main',
   brandedTypes: [],
+  generateRealEnums: false,
 };
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
   baseName: 'API',
@@ -87,6 +88,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
   brandedTypes: [],
   generateUnusedSchemas: false,
   camelizeInputs: true,
+  generateRealEnums: false,
 };
 
 type OpenAPIOptions = {
@@ -95,6 +97,7 @@ type OpenAPIOptions = {
   generateUnusedSchemas?: boolean;
   camelizeInputs?: boolean;
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
+  generateRealEnums: boolean;
 };
 /**
  * Create the TypeScript types declarations from an Open API document
@@ -115,6 +118,7 @@ export async function generateOpenAPITypes(
     generateUnusedSchemas = DEFAULT_OPEN_API_OPTIONS.generateUnusedSchemas,
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
+    generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
   }: Omit<OpenAPIOptions, 'baseName' | 'brandedTypes'> &
     Partial<
       Pick<OpenAPIOptions, 'baseName' | 'brandedTypes'>
@@ -158,6 +162,7 @@ export async function generateOpenAPITypes(
         brandedTypes !== 'schemas'
           ? brandedTypes
           : Object.keys(components.schemas).map(buildIdentifier),
+      generateRealEnums,
     },
     seenSchemas: {},
   };
@@ -718,6 +723,7 @@ export async function generateOpenAPITypes(
 type JSONSchemaOptions = {
   baseName?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
+  generateRealEnums: boolean;
 };
 
 // Could use https://apitools.dev/json-schema-ref-parser/
@@ -734,6 +740,7 @@ export async function generateJSONSchemaTypes(
   {
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
+    generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
 ): Promise<ts.NodeArray<ts.Statement>> {
   const context: Context = {
@@ -744,7 +751,7 @@ export async function generateJSONSchemaTypes(
     },
     buildIdentifier,
     sideTypeDeclarations: [],
-    jsonSchemaOptions: { baseName, brandedTypes },
+    jsonSchemaOptions: { baseName, brandedTypes, generateRealEnums },
     seenSchemas: {},
   };
 
@@ -906,7 +913,11 @@ async function schemaToTypes(
       enumTypes[0] === 'string';
     const name = schema.title || context.candidateName;
 
-    if (enumValuesCanBeEnumType && name) {
+    if (
+      enumValuesCanBeEnumType &&
+      name &&
+      context.jsonSchemaOptions.generateRealEnums
+    ) {
       context.sideTypeDeclarations.push({
         statement: factory.createEnumDeclaration(
           [],

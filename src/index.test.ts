@@ -79,7 +79,13 @@ describe('generateOpenAPITypes()', () => {
       },
     } as OpenAPIV3.Document;
 
-    expect(toSource(await generateOpenAPITypes(schema))).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateOpenAPITypes(schema, {
+          generateRealEnums: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
       "declare namespace API {
           export namespace GetPing {
               export type Body = Components.RequestBodies.GetPingRequestBody;
@@ -227,6 +233,7 @@ describe('generateOpenAPITypes()', () => {
       toSource(
         await generateOpenAPITypes(schema, {
           brandedTypes: ['TheSchema', 'TheSchemaClone'],
+          generateRealEnums: true,
         }),
       ),
     ).toMatchInlineSnapshot(`
@@ -288,7 +295,11 @@ describe('generateOpenAPITypes()', () => {
           readFileSync(path.join(fixturesDir, file)).toString(),
         ) as OpenAPIV3.Document;
 
-        expect(toSource(await generateOpenAPITypes(schema))).toMatchSnapshot();
+        expect(
+          toSource(
+            await generateOpenAPITypes(schema, { generateRealEnums: true }),
+          ),
+        ).toMatchSnapshot();
       });
 
       it(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
@@ -301,6 +312,7 @@ describe('generateOpenAPITypes()', () => {
             await generateOpenAPITypes(schema, {
               filterStatuses: [200, 201, 202, 300],
               brandedTypes: 'schemas',
+              generateRealEnums: false,
             }),
           ),
         ).toMatchSnapshot();
@@ -316,6 +328,7 @@ describe('generateOpenAPITypes()', () => {
             await generateOpenAPITypes(schema, {
               baseName: 'AnotherAPI',
               generateUnusedSchemas: true,
+              generateRealEnums: true,
             }),
           ),
         ).toMatchSnapshot();
@@ -348,8 +361,14 @@ describe('generateJSONSchemaTypes()', () => {
       enum: ['str1', 'str2'],
     };
 
-    expect(toSource(await generateJSONSchemaTypes(schema)))
-      .toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          generateRealEnums: true,
+          brandedTypes: [],
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
       "declare type Main = Enums.Limit;
       declare namespace Enums {
           export enum Limit {
@@ -369,6 +388,7 @@ describe('generateTypeDeclaration()', () => {
     seenSchemas: {},
     jsonSchemaOptions: {
       brandedTypes: [],
+      generateRealEnums: true,
     },
   };
 
@@ -389,7 +409,7 @@ describe('generateTypeDeclaration()', () => {
               ...context,
               root: true,
               candidateName: 'Limit',
-              jsonSchemaOptions: { brandedTypes: [] },
+              jsonSchemaOptions: { brandedTypes: [], generateRealEnums: false },
             },
             schema,
           ),
@@ -974,6 +994,7 @@ describe('generateTypeDeclaration()', () => {
       toSource(
         await generateOpenAPITypes(schema, {
           camelizeInputs: false,
+          generateRealEnums: false,
         }),
       ),
     ).toMatchInlineSnapshot(`
