@@ -1,3 +1,12 @@
+## [4.1.2](https://github.com/nfroidure/schema2dts/compare/v4.1.1...v4.1.2) (2022-07-18)
+
+
+### Bug Fixes
+
+* **jsonschema:** support 'null' type ([0c9cd54](https://github.com/nfroidure/schema2dts/commit/0c9cd5405466ab9d261718868d8ad66395197bf0))
+
+
+
 ## [4.1.1](https://github.com/nfroidure/schema2dts/compare/v4.1.0...v4.1.1) (2022-05-24)
 
 
