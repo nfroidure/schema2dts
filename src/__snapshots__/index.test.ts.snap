@@ -13,6 +13,8 @@ declare namespace Definitions {
 }"
 `;
 
+exports[`generateJSONSchemaTypes() with JSONSchema samples should work with wierd_schema.json 1`] = `"declare type Main = NonNullable<{}> | null;"`;
+
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json 1`] = `
 "declare namespace API {
     export namespace GetAnomaly {

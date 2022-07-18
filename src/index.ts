@@ -902,6 +902,13 @@ async function schemaToTypes(
       return [factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)];
     }
   }
+  if (schema.type === 'null') {
+    return [
+      ts.factory.createLiteralTypeNode(
+        factory.createToken(ts.SyntaxKind.NullKeyword),
+      ),
+    ];
+  }
 
   if (schema.$ref) {
     const referenceParts = await context.nameResolver(schema.$ref);
