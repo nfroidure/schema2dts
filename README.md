@@ -7,7 +7,6 @@
 # schema2dts
 > A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator
 
-[![Build status](https://travis-ci.com/nfroidure/schema2dts.svg?branch=master)](https://travis-ci.com/github/nfroidure/schema2dts)
 [![Coverage Status](https://coveralls.io/repos/github/nfroidure/schema2dts/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/schema2dts?branch=master)
 
 
@@ -93,6 +92,65 @@ The current way to handle this in this library is to:
 ```
 
 [//]: # (::contents:end)
+
+# API
+## Functions
+
+<dl>
+<dt><a href="#generateOpenAPITypes">generateOpenAPITypes(schema, options)</a> ⇒ <code>TypeScript.NodeArray</code></dt>
+<dd><p>Create the TypeScript types declarations from an Open API document</p>
+</dd>
+<dt><a href="#generateJSONSchemaTypes">generateJSONSchemaTypes(schema, options)</a> ⇒ <code>TypeScript.NodeArray</code></dt>
+<dd><p>Create the TypeScript types declarations from a JSONSchema document</p>
+</dd>
+<dt><a href="#toSource">toSource(nodes)</a> ⇒</dt>
+<dd><p>Returns source from a list of TypeScript statements</p>
+</dd>
+</dl>
+
+<a name="generateOpenAPITypes"></a>
+
+## generateOpenAPITypes(schema, options) ⇒ <code>TypeScript.NodeArray</code>
+Create the TypeScript types declarations from an Open API document
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| schema | <code>JSONSchema.Document</code> | 
+| options | <code>Object</code> | 
+| options.baseName | <code>string</code> | 
+| options.filterStatuses | <code>Array.&lt;number&gt;</code> | 
+| options.generateUnusedSchemas | <code>boolean</code> | 
+| options.camelizeInputs | <code>boolean</code> | 
+| options.brandedTypes | <code>Array.&lt;string&gt;</code> | 
+
+<a name="generateJSONSchemaTypes"></a>
+
+## generateJSONSchemaTypes(schema, options) ⇒ <code>TypeScript.NodeArray</code>
+Create the TypeScript types declarations from a JSONSchema document
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| schema | <code>JSONSchema.Document</code> | 
+| options | <code>Object</code> | 
+| options.name | <code>string</code> | 
+| options.brandedTypes | <code>Array.&lt;string&gt;</code> | 
+
+<a name="toSource"></a>
+
+## toSource(nodes) ⇒
+Returns source from a list of TypeScript statements
+
+**Kind**: global function  
+**Returns**: string  
+
+| Param | Type |
+| --- | --- |
+| nodes | <code>TypedPropertyDescriptor.NodeArray</code> | 
+
 
 # Authors
 - [Nicolas Froidure](https://insertafter.com/en/index.html)

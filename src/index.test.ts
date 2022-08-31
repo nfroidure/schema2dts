@@ -1,14 +1,16 @@
-import type { JSONSchema7 } from 'json-schema';
+import { describe, test, beforeEach, jest, expect } from '@jest/globals';
 import {
   generateTypeDeclaration,
   generateJSONSchemaTypes,
   generateOpenAPITypes,
   buildIdentifier,
   toSource,
-} from '.';
+} from './index.js';
 import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
 import { OpenAPIV3 } from 'openapi-types';
+import type { JSONSchema7 } from 'json-schema';
+import type { Context } from './index.js';
 
 describe('generateOpenAPITypes()', () => {
   test('with a denormalized simple sample', async () => {
@@ -117,8 +119,8 @@ describe('generateOpenAPITypes()', () => {
               export type GetPingResponse200<S extends number> = {
                   readonly status: S;
                   readonly headers: {
-                      readonly \\"x-a-header\\": Components.Headers.GetPingResponse200HeadersXAHeader;
-                      readonly \\"x-sdk-version\\"?: Components.Headers.GetPingResponse200HeadersXSDKVersion;
+                      readonly "x-a-header": Components.Headers.GetPingResponse200HeadersXAHeader;
+                      readonly "x-sdk-version"?: Components.Headers.GetPingResponse200HeadersXSDKVersion;
                       readonly [name: string]: unknown;
                   };
                   readonly body: Components.Schemas.ResponsesGetPingResponse200Body0;
@@ -269,7 +271,7 @@ describe('generateOpenAPITypes()', () => {
               export type TheResponse<S extends number> = {
                   readonly status: S;
                   readonly headers?: {
-                      readonly \\"x-a-header\\"?: Components.Headers.TheXAHeader;
+                      readonly "x-a-header"?: Components.Headers.TheXAHeader;
                       readonly [name: string]: unknown;
                   };
                   readonly body: Components.Schemas.TheSchema;
@@ -281,7 +283,7 @@ describe('generateOpenAPITypes()', () => {
           export namespace Schemas {
               export type TheSchemaClone = Components.Schemas.TheSchema;
               export type TheSchema = NonNullable<string> & NonNullable<{
-                  _type?: \\"TheSchema\\";
+                  _type?: "TheSchema";
               }>;
           }
       }"
@@ -289,10 +291,10 @@ describe('generateOpenAPITypes()', () => {
   });
 
   describe('with OpenAPI samples', () => {
-    const fixturesDir = path.join(__dirname, '..', 'fixtures', 'openapi');
+    const fixturesDir = path.join('fixtures', 'openapi');
 
     readdirSync(fixturesDir).forEach((file) => {
-      it(`should work with ${file}`, async () => {
+      test(`should work with ${file}`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
         ) as OpenAPIV3.Document;
@@ -307,7 +309,7 @@ describe('generateOpenAPITypes()', () => {
         ).toMatchSnapshot();
       });
 
-      it(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
+      test(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
         ) as OpenAPIV3.Document;
@@ -324,7 +326,7 @@ describe('generateOpenAPITypes()', () => {
         ).toMatchSnapshot();
       });
 
-      it(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
+      test(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
         ) as OpenAPIV3.Document;
@@ -346,10 +348,10 @@ describe('generateOpenAPITypes()', () => {
 
 describe('generateJSONSchemaTypes()', () => {
   describe('with JSONSchema samples', () => {
-    const fixturesDir = path.join(__dirname, '..', 'fixtures', 'jsonschema');
+    const fixturesDir = path.join('fixtures', 'jsonschema');
 
     readdirSync(fixturesDir).forEach((file) => {
-      it(`should work with ${file}`, async () => {
+      test(`should work with ${file}`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
         ) as JSONSchema7;
@@ -380,8 +382,8 @@ describe('generateJSONSchemaTypes()', () => {
       "declare type Main = Enums.Limit;
       declare namespace Enums {
           export enum Limit {
-              Str1 = \\"str1\\",
-              Str2 = \\"str2\\"
+              Str1 = "str1",
+              Str2 = "str2"
           }
       }"
     `);
@@ -390,7 +392,7 @@ describe('generateJSONSchemaTypes()', () => {
 
 describe('generateTypeDeclaration()', () => {
   const context = {
-    nameResolver: jest.fn(),
+    nameResolver: jest.fn<Context['nameResolver']>(),
     buildIdentifier,
     sideTypeDeclarations: [],
     seenSchemas: {},
@@ -475,7 +477,7 @@ describe('generateTypeDeclaration()', () => {
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
       ).toMatchInlineSnapshot(
-        `"export type Limit = 1 | 2 | \\"hop\\" | \\"lol\\" | null;"`,
+        `"export type Limit = 1 | 2 | "hop" | "lol" | null;"`,
       );
     });
 
@@ -536,7 +538,7 @@ describe('generateTypeDeclaration()', () => {
             pace?: NonNullable<number>;
             nothing?: never;
             anything?: unknown;
-            aConst?: \\"test\\";
+            aConst?: "test";
             [pattern: string]: NonNullable<string> | unknown;
         };"
       `);
@@ -962,9 +964,9 @@ describe('generateTypeDeclaration()', () => {
             duration: NonNullable<number>;
             start: Components.Schemas.Date;
             end: Components.Schemas.Date;
-            labels: NonNullable<(\\"value\\" | \\"peaks\\" | \\"startTime\\" | \\"endTime\\" | \\"peakTime\\")[]>;
-            timestamp: NonNullable<(\\"startTime\\" | \\"endTime\\" | \\"peakTime\\")[]>;
-            data: NonNullable<NonNullable<(Components.Schemas.Date | NonNullable<number> | (\\"first\\" | \\"bosse\\" | \\"last\\") | NonNullable<string>)[]>[]>;
+            labels: NonNullable<("value" | "peaks" | "startTime" | "endTime" | "peakTime")[]>;
+            timestamp: NonNullable<("startTime" | "endTime" | "peakTime")[]>;
+            data: NonNullable<NonNullable<(Components.Schemas.Date | NonNullable<number> | ("first" | "bosse" | "last") | NonNullable<string>)[]>[]>;
             context: Components.Schemas.Data;
             [pattern: string]: unknown;
         }>;"

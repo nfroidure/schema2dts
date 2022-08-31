@@ -8,16 +8,16 @@ import type {
   JSONSchema7Definition,
 } from 'json-schema';
 import type { OpenAPIV3 } from 'openapi-types';
-import * as ts from 'typescript';
-import { factory } from 'typescript';
-import YError from 'yerror';
+import ts from 'typescript';
+import { YError } from 'yerror';
+import type { Statement, NodeArray } from 'typescript';
 
 type SeenReferencesHash = { [refName: string]: boolean };
-type Context = {
+export type Context = {
   nameResolver: (ref: string) => Promise<string[]>;
   buildIdentifier: (part: string) => string;
   root?: boolean;
-  sideTypeDeclarations: { statement: ts.Statement; namespaceParts: string[] }[];
+  sideTypeDeclarations: { statement: Statement; namespaceParts: string[] }[];
   jsonSchemaOptions: JSONSchemaOptions;
   seenSchemas: SeenReferencesHash;
   candidateName?: string;
@@ -30,7 +30,7 @@ type SchemaDefinition =
 type PackageTreeNode = {
   name: string;
   childs: PackageTreeNode[];
-  types: ts.Statement[];
+  types: Statement[];
 };
 const ALL_TYPES = 'all' as const;
 
@@ -102,6 +102,7 @@ type OpenAPIOptions = {
   generateRealEnums: boolean;
   exportNamespaces: boolean;
 };
+
 /**
  * Create the TypeScript types declarations from an Open API document
  * @param {JSONSchema.Document} schema
@@ -127,7 +128,7 @@ export async function generateOpenAPITypes(
     Partial<
       Pick<OpenAPIOptions, 'baseName' | 'brandedTypes'>
     > = DEFAULT_OPEN_API_OPTIONS,
-): Promise<ts.NodeArray<ts.Statement>> {
+): Promise<NodeArray<Statement>> {
   const components: {
     schemas: NonNullable<
       NonNullable<OpenAPIV3.Document['components']>['schemas']
@@ -225,9 +226,9 @@ export async function generateOpenAPITypes(
 
           context.sideTypeDeclarations.push({
             namespaceParts: [baseName, operationId, 'Body'],
-            statement: factory.createTypeAliasDeclaration(
+            statement: ts.factory.createTypeAliasDeclaration(
               undefined,
-              [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+              [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
               'Body',
               undefined,
               buildTypeReference(context, [
@@ -275,15 +276,15 @@ export async function generateOpenAPITypes(
                   'Responses',
                   `$${code}`,
                 ],
-                statement: factory.createTypeAliasDeclaration(
+                statement: ts.factory.createTypeAliasDeclaration(
                   undefined,
-                  [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+                  [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
                   `$${code}`,
                   [],
-                  factory.createTypeReferenceNode(
-                    factory.createQualifiedName(
-                      factory.createQualifiedName(
-                        factory.createIdentifier('Components'),
+                  ts.factory.createTypeReferenceNode(
+                    ts.factory.createQualifiedName(
+                      ts.factory.createQualifiedName(
+                        ts.factory.createIdentifier('Components'),
                         'Responses',
                       ),
                       splitRef(
@@ -292,11 +293,11 @@ export async function generateOpenAPITypes(
                     ),
                     [
                       code === 'default'
-                        ? factory.createKeywordTypeNode(
+                        ? ts.factory.createKeywordTypeNode(
                             ts.SyntaxKind.NumberKeyword,
                           )
-                        : factory.createLiteralTypeNode(
-                            factory.createNumericLiteral(code),
+                        : ts.factory.createLiteralTypeNode(
+                            ts.factory.createNumericLiteral(code),
                           ),
                     ],
                   ),
@@ -308,24 +309,26 @@ export async function generateOpenAPITypes(
 
           context.sideTypeDeclarations.push({
             namespaceParts: [baseName, operationId, 'Output'],
-            statement: factory.createTypeAliasDeclaration(
+            statement: ts.factory.createTypeAliasDeclaration(
               undefined,
-              [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+              [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
               'Output',
               undefined,
               responsesCodes.length
-                ? factory.createUnionTypeNode(
+                ? ts.factory.createUnionTypeNode(
                     responsesCodes.map((responsesCode) =>
-                      factory.createTypeReferenceNode(
-                        factory.createQualifiedName(
-                          factory.createIdentifier('Responses'),
+                      ts.factory.createTypeReferenceNode(
+                        ts.factory.createQualifiedName(
+                          ts.factory.createIdentifier('Responses'),
                           `$${responsesCode}`,
                         ),
                         [],
                       ),
                     ),
                   )
-                : factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+                : ts.factory.createKeywordTypeNode(
+                    ts.SyntaxKind.UnknownKeyword,
+                  ),
             ),
           });
         }
@@ -377,9 +380,9 @@ export async function generateOpenAPITypes(
                   'Parameters',
                   parameterKey,
                 ],
-                statement: factory.createTypeAliasDeclaration(
+                statement: ts.factory.createTypeAliasDeclaration(
                   undefined,
-                  [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+                  [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
                   context.buildIdentifier(resolvedParameter.name),
                   undefined,
                   buildTypeReference(context, [
@@ -395,19 +398,19 @@ export async function generateOpenAPITypes(
 
         context.sideTypeDeclarations.push({
           namespaceParts: [baseName, operationId, 'Input'],
-          statement: factory.createTypeAliasDeclaration(
+          statement: ts.factory.createTypeAliasDeclaration(
             undefined,
-            [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             'Input',
             undefined,
-            factory.createTypeLiteralNode(
+            ts.factory.createTypeLiteralNode(
               allInputs.map(({ name, path, required }) => {
-                return factory.createPropertySignature(
-                  [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                return ts.factory.createPropertySignature(
+                  [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                   camelizeInputs ? camelCase(name) : name,
                   required
                     ? undefined
-                    : factory.createToken(ts.SyntaxKind.QuestionToken),
+                    : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
                   buildTypeReference(context, path),
                 );
               }),
@@ -422,11 +425,11 @@ export async function generateOpenAPITypes(
   await Promise.all(
     Object.keys(components.requestBodies).map(async (name) => {
       const requestBody = components.requestBodies[name];
-      let statement: ts.Statement;
+      let statement: Statement;
       if ('$ref' in requestBody) {
-        statement = factory.createTypeAliasDeclaration(
+        statement = ts.factory.createTypeAliasDeclaration(
           [],
-          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           name,
           [],
           buildTypeReference(context, [
@@ -498,9 +501,9 @@ export async function generateOpenAPITypes(
       if ('$ref' in parameter) {
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Parameters', name],
-          statement: factory.createTypeAliasDeclaration(
+          statement: ts.factory.createTypeAliasDeclaration(
             [],
-            [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             [],
             buildTypeReference(context, [
@@ -532,9 +535,9 @@ export async function generateOpenAPITypes(
       if ('$ref' in response) {
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Responses', name],
-          statement: factory.createTypeAliasDeclaration(
+          statement: ts.factory.createTypeAliasDeclaration(
             undefined,
-            [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             undefined,
             buildTypeReference(context, [
@@ -604,12 +607,12 @@ export async function generateOpenAPITypes(
               };
             }
 
-            return factory.createPropertySignature(
-              [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-              factory.createStringLiteral(headerName.toLowerCase()),
+            return ts.factory.createPropertySignature(
+              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              ts.factory.createStringLiteral(headerName.toLowerCase()),
               resolvedHeader.required
                 ? undefined
-                : factory.createToken(ts.SyntaxKind.QuestionToken),
+                : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
               buildTypeReference(context, [
                 'Components',
                 'Headers',
@@ -629,56 +632,59 @@ export async function generateOpenAPITypes(
 
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Responses', name],
-          statement: factory.createTypeAliasDeclaration(
+          statement: ts.factory.createTypeAliasDeclaration(
             [],
-            [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             [
-              factory.createTypeParameterDeclaration(
+              ts.factory.createTypeParameterDeclaration(
+                [],
                 'S',
-                factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+                ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
               ),
             ],
-            factory.createTypeLiteralNode([
-              factory.createPropertySignature(
-                [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+            ts.factory.createTypeLiteralNode([
+              ts.factory.createPropertySignature(
+                [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                 'status',
                 undefined,
-                factory.createTypeReferenceNode('S'),
+                ts.factory.createTypeReferenceNode('S'),
               ),
-              factory.createPropertySignature(
-                [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              ts.factory.createPropertySignature(
+                [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                 'headers',
                 hasRequiredHeaders
                   ? undefined
-                  : factory.createToken(ts.SyntaxKind.QuestionToken),
-                factory.createTypeLiteralNode([
+                  : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+                ts.factory.createTypeLiteralNode([
                   ...headersTypes,
-                  factory.createIndexSignature(
+                  ts.factory.createIndexSignature(
                     [],
-                    [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                    [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                     [
-                      factory.createParameterDeclaration(
+                      ts.factory.createParameterDeclaration(
                         [],
                         [],
                         undefined,
-                        factory.createIdentifier('name'),
+                        ts.factory.createIdentifier('name'),
                         undefined,
-                        factory.createKeywordTypeNode(
+                        ts.factory.createKeywordTypeNode(
                           ts.SyntaxKind.StringKeyword,
                         ),
                         undefined,
                       ),
                     ],
-                    factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+                    ts.factory.createKeywordTypeNode(
+                      ts.SyntaxKind.UnknownKeyword,
+                    ),
                   ),
                 ]),
               ),
-              factory.createPropertySignature(
-                [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              ts.factory.createPropertySignature(
+                [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                 'body',
                 !responseSchemas.length
-                  ? factory.createToken(ts.SyntaxKind.QuestionToken)
+                  ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
                   : undefined,
                 schemasType,
               ),
@@ -695,9 +701,9 @@ export async function generateOpenAPITypes(
       if ('$ref' in header) {
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Headers', name],
-          statement: factory.createTypeAliasDeclaration(
+          statement: ts.factory.createTypeAliasDeclaration(
             undefined,
-            [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             undefined,
             buildTypeReference(context, [
@@ -749,7 +755,7 @@ export async function generateJSONSchemaTypes(
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
     exportNamespaces = DEFAULT_JSON_SCHEMA_OPTIONS.exportNamespaces,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
-): Promise<ts.NodeArray<ts.Statement>> {
+): Promise<NodeArray<Statement>> {
   const context: Context = {
     nameResolver: async (ref) => {
       context.seenSchemas[ref] = true;
@@ -778,8 +784,8 @@ export async function generateJSONSchemaTypes(
 export async function gatherStatements(
   context: Context,
   schema: Schema,
-  statements: ts.Statement[],
-): Promise<ts.NodeArray<ts.Statement>> {
+  statements: Statement[],
+): Promise<NodeArray<Statement>> {
   const builtRefs: { [refName: string]: boolean } = {};
   let refsToBuild = Object.keys(context.seenSchemas);
 
@@ -825,7 +831,7 @@ export async function gatherStatements(
     buildTree(packageTree, namespaceParts, statement);
   }, []);
 
-  return factory.createNodeArray([
+  return ts.factory.createNodeArray([
     ...statements,
     ...buildModuleDeclarations(context, packageTree),
   ]);
@@ -834,7 +840,7 @@ export async function gatherStatements(
 export async function generateTypeDeclaration(
   context: Context,
   schema: SchemaDefinition,
-): Promise<ts.Statement> {
+): Promise<Statement> {
   const types = await schemaToTypes(context, schema);
 
   const name = context.buildIdentifier(
@@ -851,10 +857,10 @@ export async function generateTypeDeclaration(
     (context.jsonSchemaOptions.brandedTypes === ALL_TYPES ||
       context.jsonSchemaOptions.brandedTypes.includes(name));
   let finalType =
-    types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
+    types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
 
   if (isBrandedType) {
-    finalType = factory.createIntersectionTypeNode([
+    finalType = ts.factory.createIntersectionTypeNode([
       finalType,
       ...(await schemaToTypes(
         { ...context, candidateName: undefined },
@@ -868,12 +874,12 @@ export async function generateTypeDeclaration(
     ]);
   }
 
-  return factory.createTypeAliasDeclaration(
+  return ts.factory.createTypeAliasDeclaration(
     undefined,
     [
       context.root && !context.jsonSchemaOptions.exportNamespaces
-        ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
-        : factory.createModifier(ts.SyntaxKind.ExportKeyword),
+        ? ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)
+        : ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
     ],
     name,
     undefined,
@@ -887,7 +893,7 @@ async function schemaToTypeNode(
 ): Promise<ts.TypeNode> {
   const types = await schemaToTypes(context, schema);
 
-  return types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
+  return types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
 }
 
 async function schemaToTypes(
@@ -897,15 +903,15 @@ async function schemaToTypes(
 ): Promise<ts.TypeNode[]> {
   if (typeof schema === 'boolean') {
     if (schema) {
-      return [factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)];
+      return [ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)];
     } else {
-      return [factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)];
+      return [ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)];
     }
   }
   if (schema.type === 'null') {
     return [
       ts.factory.createLiteralTypeNode(
-        factory.createToken(ts.SyntaxKind.NullKeyword),
+        ts.factory.createToken(ts.SyntaxKind.NullKeyword),
       ),
     ];
   }
@@ -938,14 +944,14 @@ async function schemaToTypes(
       context.jsonSchemaOptions.generateRealEnums
     ) {
       context.sideTypeDeclarations.push({
-        statement: factory.createEnumDeclaration(
+        statement: ts.factory.createEnumDeclaration(
           [],
-          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           buildIdentifier(name),
           schema.enum.map((value) =>
-            factory.createEnumMember(
+            ts.factory.createEnumMember(
               buildIdentifier(value as string),
-              factory.createStringLiteral(value as string),
+              ts.factory.createStringLiteral(value as string),
             ),
           ),
         ),
@@ -999,15 +1005,25 @@ async function handleTypedSchema(
       .map(async (type) => {
         switch (type) {
           case 'any':
-            return factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+            return ts.factory.createKeywordTypeNode(
+              ts.SyntaxKind.UnknownKeyword,
+            );
           case 'boolean':
-            return factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+            return ts.factory.createKeywordTypeNode(
+              ts.SyntaxKind.BooleanKeyword,
+            );
           case 'integer':
-            return factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+            return ts.factory.createKeywordTypeNode(
+              ts.SyntaxKind.NumberKeyword,
+            );
           case 'number':
-            return factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+            return ts.factory.createKeywordTypeNode(
+              ts.SyntaxKind.NumberKeyword,
+            );
           case 'string':
-            return factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+            return ts.factory.createKeywordTypeNode(
+              ts.SyntaxKind.StringKeyword,
+            );
           case 'object':
             return await buildObjectTypeNode(
               { ...context, candidateName: undefined },
@@ -1027,13 +1043,15 @@ async function handleTypedSchema(
   const baseTypes = isNullable
     ? typesParameters
     : typesParameters.map((typeParameter) =>
-        factory.createTypeReferenceNode('NonNullable', [typeParameter]),
+        ts.factory.createTypeReferenceNode('NonNullable', [typeParameter]),
       );
 
   // Schema also contains a composed schema, handle it as well and do a intersection with base schema
   if (schema.anyOf || schema.allOf || schema.oneOf) {
     const innerTypes = await handleComposedSchemas(context, schema);
-    return [factory.createIntersectionTypeNode([...baseTypes, ...innerTypes])];
+    return [
+      ts.factory.createIntersectionTypeNode([...baseTypes, ...innerTypes]),
+    ];
   } else {
     return baseTypes;
   }
@@ -1053,20 +1071,20 @@ async function handleComposedSchemas(
     )
   ).map((innerTypes) =>
     innerTypes.length > 1
-      ? factory.createUnionTypeNode(innerTypes)
+      ? ts.factory.createUnionTypeNode(innerTypes)
       : innerTypes[0],
   );
 
   if (schema.oneOf) {
-    return [factory.createUnionTypeNode(types)];
+    return [ts.factory.createUnionTypeNode(types)];
   } else if (schema.anyOf) {
     // Not really a union types but no way to express
     // this in TypeScript atm 🤷
-    return [factory.createUnionTypeNode(types)];
+    return [ts.factory.createUnionTypeNode(types)];
   } else if (schema.allOf) {
     // Fallback to intersection type which will only work
     // in some situations (see the README)
-    return [factory.createIntersectionTypeNode(types)];
+    return [ts.factory.createIntersectionTypeNode(types)];
   } else {
     throw new YError('E_COMPOSED_SCHEMA_UNSUPPORTED', schema);
   }
@@ -1094,15 +1112,15 @@ async function buildObjectTypeNode(
             property as Schema,
           );
 
-          return factory.createPropertySignature(
+          return ts.factory.createPropertySignature(
             readOnly
-              ? [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
+              ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
               : [],
             propertyName,
             required
               ? undefined
-              : factory.createToken(ts.SyntaxKind.QuestionToken),
-            types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
+              : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+            types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
           );
         }),
       ),
@@ -1120,11 +1138,11 @@ async function buildObjectTypeNode(
               'undefined' === typeof schema.properties?.[propertyName],
           )
           .map(async (propertyName) => {
-            return factory.createPropertySignature(
+            return ts.factory.createPropertySignature(
               [],
               propertyName,
               undefined,
-              factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
             );
           }),
       ),
@@ -1150,7 +1168,7 @@ async function buildObjectTypeNode(
               required,
               type:
                 types.length > 1
-                  ? factory.createUnionTypeNode(types)
+                  ? ts.factory.createUnionTypeNode(types)
                   : types[0],
             };
           },
@@ -1161,7 +1179,7 @@ async function buildObjectTypeNode(
         schema.additionalProperties
           ? [
               {
-                type: factory.createKeywordTypeNode(
+                type: ts.factory.createKeywordTypeNode(
                   ts.SyntaxKind.UnknownKeyword,
                 ),
                 required: false,
@@ -1183,28 +1201,30 @@ async function buildObjectTypeNode(
       );
 
     elements = elements.concat(
-      factory.createIndexSignature(
+      ts.factory.createIndexSignature(
         undefined,
-        readOnly ? [factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)] : [],
+        readOnly
+          ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
+          : [],
         [
-          factory.createParameterDeclaration(
+          ts.factory.createParameterDeclaration(
             [],
             [],
             undefined,
-            factory.createIdentifier('pattern'),
+            ts.factory.createIdentifier('pattern'),
             required
-              ? factory.createToken(ts.SyntaxKind.QuestionToken)
+              ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
               : undefined,
-            factory.createTypeReferenceNode('string', []),
+            ts.factory.createTypeReferenceNode('string', []),
             undefined,
           ),
         ],
-        factory.createUnionTypeNode(types),
+        ts.factory.createUnionTypeNode(types),
       ),
     );
   }
 
-  return factory.createTypeLiteralNode(elements);
+  return ts.factory.createTypeLiteralNode(elements);
 }
 
 async function buildArrayTypeNode(
@@ -1220,20 +1240,21 @@ async function buildArrayTypeNode(
   ).filter((s): s is Schema => typeof s !== 'boolean');
 
   if (schemas.length === 0) {
-    return factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
+    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
   }
 
   const types = (
     await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
   ).reduce((allTypes, types) => [...allTypes, ...types], []);
-  const type = types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
+  const type =
+    types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
 
   if (
     typeof schema.minItems === 'number' &&
     typeof schema.maxItems === 'number'
   ) {
     if (schema.minItems > schema.maxItems) {
-      return factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
+      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
     }
 
     // Avoid having heavy results
@@ -1243,21 +1264,25 @@ async function buildArrayTypeNode(
     // }
   }
 
-  return factory.createArrayTypeNode(type);
+  return ts.factory.createArrayTypeNode(type);
 }
 
 function buildLiteralType(value: number | string | boolean): ts.TypeNode {
   switch (typeof value) {
     case 'number':
-      return factory.createLiteralTypeNode(factory.createNumericLiteral(value));
+      return ts.factory.createLiteralTypeNode(
+        ts.factory.createNumericLiteral(value),
+      );
     case 'string':
-      return factory.createLiteralTypeNode(factory.createStringLiteral(value));
+      return ts.factory.createLiteralTypeNode(
+        ts.factory.createStringLiteral(value),
+      );
     case 'boolean':
-      return factory.createLiteralTypeNode(
-        value ? factory.createTrue() : factory.createFalse(),
+      return ts.factory.createLiteralTypeNode(
+        value ? ts.factory.createTrue() : ts.factory.createFalse(),
       );
     case 'object':
-      return factory.createLiteralTypeNode(factory.createNull());
+      return ts.factory.createLiteralTypeNode(ts.factory.createNull());
   }
 }
 
@@ -1266,7 +1291,7 @@ function buildLiteralType(value: number | string | boolean): ts.TypeNode {
  * @param {TypedPropertyDescriptor.NodeArray} nodes
  * @returns string
  */
-export function toSource(nodes: ts.Node | ts.NodeArray<ts.Node>): string {
+export function toSource(nodes: ts.Node | NodeArray<ts.Node>): string {
   const resultFile = ts.createSourceFile(
     'someFileName.ts',
     '',
@@ -1281,7 +1306,7 @@ export function toSource(nodes: ts.Node | ts.NodeArray<ts.Node>): string {
     ts.ListFormat.SourceFileStatements,
     nodes instanceof Array
       ? nodes
-      : factory.createNodeArray([nodes as ts.Node]),
+      : ts.factory.createNodeArray([nodes as ts.Node]),
     resultFile,
   );
 }
@@ -1290,17 +1315,20 @@ function buildModuleDeclarations(
   context: Context,
   currentTree: PackageTreeNode[],
   level = 0,
-): ts.Statement[] {
+): Statement[] {
   return currentTree.map((treeNode) => {
-    return factory.createModuleDeclaration(
+    // TEMPFIX: Add a const to manage the esbuild-jest problems
+    // https://github.com/aelbore/esbuild-jest/issues/54
+    const createModuleBlck = ts.factory.createModuleBlock;
+    return ts.factory.createModuleDeclaration(
       undefined,
       [
         level === 0 && !context.jsonSchemaOptions.exportNamespaces
-          ? factory.createModifier(ts.SyntaxKind.DeclareKeyword)
-          : factory.createModifier(ts.SyntaxKind.ExportKeyword),
+          ? ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)
+          : ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
       ],
-      factory.createIdentifier(context.buildIdentifier(treeNode.name)),
-      factory.createModuleBlock([
+      ts.factory.createIdentifier(context.buildIdentifier(treeNode.name)),
+      createModuleBlck([
         ...treeNode.types,
         ...(treeNode.childs
           ? buildModuleDeclarations(context, treeNode.childs, level + 1)
@@ -1338,15 +1366,15 @@ function buildTree(
 }
 
 function buildTypeReference(context: Context, namespaceParts: string[]) {
-  return factory.createTypeReferenceNode(
+  return ts.factory.createTypeReferenceNode(
     namespaceParts.reduce<ts.EntityName>(
       (curNode: ts.EntityName | null, referencePart: string) => {
-        const identifier = factory.createIdentifier(
+        const identifier = ts.factory.createIdentifier(
           context.buildIdentifier(referencePart),
         );
 
         return curNode
-          ? factory.createQualifiedName(curNode, identifier)
+          ? ts.factory.createQualifiedName(curNode, identifier)
           : identifier;
       },
       null as unknown as ts.EntityName,

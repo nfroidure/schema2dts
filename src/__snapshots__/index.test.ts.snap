@@ -350,7 +350,7 @@ declare namespace Components {
         export type PutPredictionsDataRequestBody = Components.Schemas.RequestBodiesputPredictionsDataRequestBodyBody0 | Components.Schemas.RequestBodiesputPredictionsDataRequestBodyBody1;
     }
     export namespace Parameters {
-        export type MlProject = \\"dalkia\\";
+        export type MlProject = "dalkia";
         export type ResponseType = Enums.ResponseType;
         export type AnomalyId = Components.Schemas.UUID;
         export type FactoryId = Components.Schemas.UUID;
@@ -575,7 +575,7 @@ declare namespace Components {
             error_uri?: NonNullable<string>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
         export type Role = Enums.Role;
         export type UserData = NonNullable<{
@@ -590,32 +590,32 @@ declare namespace Components {
         }>;
         export type Date = NonNullable<string>;
         export type PasswordRequestBody = NonNullable<{
-            grant_type: \\"password\\";
+            grant_type: "password";
             username: NonNullable<string>;
             password: NonNullable<string>;
             scope?: NonNullable<string>;
         }>;
         export type AuthorizationCodeRequestBody = NonNullable<{
-            grant_type: \\"authorization_code\\";
+            grant_type: "authorization_code";
             code?: NonNullable<string>;
             client_id?: NonNullable<string>;
             redirect_uri?: NonNullable<string>;
         }>;
         export type ClientCredentialsRequestBody = NonNullable<{
-            grant_type: \\"client_credentials\\";
+            grant_type: "client_credentials";
             scope?: NonNullable<string>;
         }>;
         export type RefreshTokenRequestBody = NonNullable<{
-            grant_type: \\"refresh_token\\";
+            grant_type: "refresh_token";
             refresh_token: NonNullable<string>;
             scope?: NonNullable<string>;
         }>;
         export type VerifyTokenRequestBody = NonNullable<{
-            grant_type: \\"verify_token\\";
+            grant_type: "verify_token";
             verify_token: NonNullable<string>;
         }>;
         export type PasswordChangeBody = NonNullable<{
-            grant_type: \\"password_change\\";
+            grant_type: "password_change";
             token: NonNullable<string>;
             new_password: NonNullable<string>;
         }>;
@@ -733,7 +733,7 @@ declare namespace Components {
             factoryId: Components.Schemas.UUID;
             machineId: Components.Schemas.UUID;
             settings: NonNullable<{
-                type?: \\"opc-ua\\";
+                type?: "opc-ua";
                 uri?: NonNullable<string>;
             }>;
         }>;
@@ -741,7 +741,7 @@ declare namespace Components {
             name: NonNullable<string>;
             externalId?: NonNullable<string>;
             settings: NonNullable<{
-                type?: \\"opc-ua\\";
+                type?: "opc-ua";
                 uri?: NonNullable<string>;
             }>;
         }>;
@@ -749,64 +749,64 @@ declare namespace Components {
 }
 declare namespace Enums {
     export enum ResponseType {
-        Code = \\"code\\",
-        Token = \\"token\\"
+        Code = "code",
+        Token = "token"
     }
     export enum TokenType {
-        Bearer = \\"bearer\\",
-        Mac = \\"mac\\",
-        Unknown = \\"\\\\uD83D\\\\uDC95-\\\\u2705\\"
+        Bearer = "bearer",
+        Mac = "mac",
+        Unknown = "\\uD83D\\uDC95-\\u2705"
     }
     export enum Error {
-        InvalidRequest = \\"invalid_request\\",
-        InvalidClient = \\"invalid_client\\",
-        InvalidGrant = \\"invalid_grant\\",
-        UnauthorizedClient = \\"unauthorized_client\\",
-        UnsupportedGrantType = \\"unsupported_grant_type\\",
-        InvalidScope = \\"invalid_scope\\"
+        InvalidRequest = "invalid_request",
+        InvalidClient = "invalid_client",
+        InvalidGrant = "invalid_grant",
+        UnauthorizedClient = "unauthorized_client",
+        UnsupportedGrantType = "unsupported_grant_type",
+        InvalidScope = "invalid_scope"
     }
     export enum Role {
-        Admin = \\"admin\\",
-        User = \\"user\\",
-        Candidate = \\"candidate\\"
+        Admin = "admin",
+        User = "user",
+        Candidate = "candidate"
     }
     export enum PowerState {
-        Unknown = \\"unknown\\",
-        On = \\"on\\",
-        Off = \\"off\\"
+        Unknown = "unknown",
+        On = "on",
+        Off = "off"
     }
     export enum OperatingState {
-        Unknown = \\"unknown\\",
-        Normal = \\"normal\\",
-        Stopped = \\"stopped\\",
-        Idle = \\"idle\\"
+        Unknown = "unknown",
+        Normal = "normal",
+        Stopped = "stopped",
+        Idle = "idle"
     }
     export enum HealthState {
-        Unknown = \\"unknown\\",
-        Good = \\"good\\",
-        Faulty = \\"faulty\\",
-        Erroring = \\"erroring\\"
+        Unknown = "unknown",
+        Good = "good",
+        Faulty = "faulty",
+        Erroring = "erroring"
     }
     export enum Status {
-        Open = \\"open\\",
-        Discarded = \\"discarded\\",
-        Assigned = \\"assigned\\",
-        Fixed = \\"fixed\\",
-        Closed = \\"closed\\"
+        Open = "open",
+        Discarded = "discarded",
+        Assigned = "assigned",
+        Fixed = "fixed",
+        Closed = "closed"
     }
     export enum Priority {
-        NotSet = \\"not_set\\",
-        Urgent = \\"urgent\\",
-        Important = \\"important\\",
-        Secondary = \\"secondary\\"
+        NotSet = "not_set",
+        Urgent = "urgent",
+        Important = "important",
+        Secondary = "secondary"
     }
     export enum Severity {
-        NotSet = \\"not_set\\",
-        Critical = \\"critical\\",
-        Major = \\"major\\",
-        Moderate = \\"moderate\\",
-        Minor = \\"minor\\",
-        Cosmetic = \\"cosmetic\\"
+        NotSet = "not_set",
+        Critical = "critical",
+        Major = "major",
+        Moderate = "moderate",
+        Minor = "minor",
+        Cosmetic = "cosmetic"
     }
 }"
 `;
@@ -1139,8 +1139,8 @@ declare namespace Components {
         export type PutPredictionsDataRequestBody = Components.Schemas.RequestBodiesputPredictionsDataRequestBodyBody0 | Components.Schemas.RequestBodiesputPredictionsDataRequestBodyBody1;
     }
     export namespace Parameters {
-        export type MlProject = \\"dalkia\\";
-        export type ResponseType = \\"code\\" | \\"token\\";
+        export type MlProject = "dalkia";
+        export type ResponseType = "code" | "token";
         export type AnomalyId = Components.Schemas.UUID;
         export type FactoryId = Components.Schemas.UUID;
         export type LineId = Components.Schemas.UUID;
@@ -1296,7 +1296,7 @@ declare namespace Components {
         }>;
         export type RequestBodiesputPredictionsDataRequestBodyBody1 = NonNullable<string>;
         export type UUID = NonNullable<string> & NonNullable<{
-            _type?: \\"UUID\\";
+            _type?: "UUID";
         }>;
         export type AnomalyItem = NonNullable<{
             item: Components.Schemas.UUID;
@@ -1335,15 +1335,15 @@ declare namespace Components {
         }>;
         export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
             access_token: NonNullable<string>;
-            token_type: \\"bearer\\" | \\"mac\\" | \\"\\\\uD83D\\\\uDC95-\\\\u2705\\";
+            token_type: "bearer" | "mac" | "\\uD83D\\uDC95-\\u2705";
             expires_in?: NonNullable<number>;
             refresh_token?: NonNullable<string>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
-        export type Role = (\\"admin\\" | \\"user\\" | \\"candidate\\") & NonNullable<{
-            _type?: \\"Role\\";
+        export type Role = ("admin" | "user" | "candidate") & NonNullable<{
+            _type?: "Role";
         }>;
         export type UserData = NonNullable<{
             email: NonNullable<string>;
@@ -1356,35 +1356,35 @@ declare namespace Components {
             timeZone: Components.Schemas.TimeZone;
         }>;
         export type Date = NonNullable<string> & NonNullable<{
-            _type?: \\"Date\\";
+            _type?: "Date";
         }>;
         export type PasswordRequestBody = NonNullable<{
-            grant_type: \\"password\\";
+            grant_type: "password";
             username: NonNullable<string>;
             password: NonNullable<string>;
             scope?: NonNullable<string>;
         }>;
         export type AuthorizationCodeRequestBody = NonNullable<{
-            grant_type: \\"authorization_code\\";
+            grant_type: "authorization_code";
             code?: NonNullable<string>;
             client_id?: NonNullable<string>;
             redirect_uri?: NonNullable<string>;
         }>;
         export type ClientCredentialsRequestBody = NonNullable<{
-            grant_type: \\"client_credentials\\";
+            grant_type: "client_credentials";
             scope?: NonNullable<string>;
         }>;
         export type RefreshTokenRequestBody = NonNullable<{
-            grant_type: \\"refresh_token\\";
+            grant_type: "refresh_token";
             refresh_token: NonNullable<string>;
             scope?: NonNullable<string>;
         }>;
         export type VerifyTokenRequestBody = NonNullable<{
-            grant_type: \\"verify_token\\";
+            grant_type: "verify_token";
             verify_token: NonNullable<string>;
         }>;
         export type PasswordChangeBody = NonNullable<{
-            grant_type: \\"password_change\\";
+            grant_type: "password_change";
             token: NonNullable<string>;
             new_password: NonNullable<string>;
         }>;
@@ -1413,10 +1413,10 @@ declare namespace Components {
             [pattern: string]: Components.Schemas.UserModel;
         }>;
         export type Locale = NonNullable<string> & NonNullable<{
-            _type?: \\"Locale\\";
+            _type?: "Locale";
         }>;
         export type TimeZone = NonNullable<string> & NonNullable<{
-            _type?: \\"TimeZone\\";
+            _type?: "TimeZone";
         }>;
         export type AnomalyModel = NonNullable<{
             id?: Components.Schemas.UUID;
@@ -1445,9 +1445,9 @@ declare namespace Components {
         export type MachineModel = NonNullable<{
             id?: Components.Schemas.UUID;
             data: Components.Schemas.MachineData;
-            powerState: \\"unknown\\" | \\"on\\" | \\"off\\";
-            operatingState: \\"unknown\\" | \\"normal\\" | \\"stopped\\" | \\"idle\\";
-            healthState: \\"unknown\\" | \\"good\\" | \\"faulty\\" | \\"erroring\\";
+            powerState: "unknown" | "on" | "off";
+            operatingState: "unknown" | "normal" | "stopped" | "idle";
+            healthState: "unknown" | "good" | "faulty" | "erroring";
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
         }>;
@@ -1472,10 +1472,10 @@ declare namespace Components {
         }>;
         export type AnomalyData = NonNullable<{
             assignedUser?: Components.Schemas.UUID;
-            status: \\"open\\" | \\"discarded\\" | \\"assigned\\" | \\"fixed\\" | \\"closed\\";
+            status: "open" | "discarded" | "assigned" | "fixed" | "closed";
             archived: NonNullable<boolean>;
-            priority: \\"not_set\\" | \\"urgent\\" | \\"important\\" | \\"secondary\\";
-            severity: \\"not_set\\" | \\"critical\\" | \\"major\\" | \\"moderate\\" | \\"minor\\" | \\"cosmetic\\";
+            priority: "not_set" | "urgent" | "important" | "secondary";
+            severity: "not_set" | "critical" | "major" | "moderate" | "minor" | "cosmetic";
         }>;
         export type FactoryData = NonNullable<{
             externalId?: NonNullable<string>;
@@ -1506,7 +1506,7 @@ declare namespace Components {
             factoryId: Components.Schemas.UUID;
             machineId: Components.Schemas.UUID;
             settings: NonNullable<{
-                type?: \\"opc-ua\\";
+                type?: "opc-ua";
                 uri?: NonNullable<string>;
             }>;
         }>;
@@ -1514,7 +1514,7 @@ declare namespace Components {
             name: NonNullable<string>;
             externalId?: NonNullable<string>;
             settings: NonNullable<{
-                type?: \\"opc-ua\\";
+                type?: "opc-ua";
                 uri?: NonNullable<string>;
             }>;
         }>;
@@ -1857,7 +1857,7 @@ export namespace Components {
         export type PutPredictionsDataRequestBody = Components.Schemas.RequestBodiesputPredictionsDataRequestBodyBody0 | Components.Schemas.RequestBodiesputPredictionsDataRequestBodyBody1;
     }
     export namespace Parameters {
-        export type MlProject = \\"dalkia\\";
+        export type MlProject = "dalkia";
         export type ResponseType = Enums.ResponseType;
         export type AnomalyId = Components.Schemas.UUID;
         export type FactoryId = Components.Schemas.UUID;
@@ -2148,7 +2148,7 @@ export namespace Components {
             factoryId: Components.Schemas.UUID;
             machineId: Components.Schemas.UUID;
             settings: NonNullable<{
-                type?: \\"opc-ua\\";
+                type?: "opc-ua";
                 uri?: NonNullable<string>;
             }>;
         }>;
@@ -2173,7 +2173,7 @@ export namespace Components {
             name: NonNullable<string>;
             externalId?: NonNullable<string>;
             settings: NonNullable<{
-                type?: \\"opc-ua\\";
+                type?: "opc-ua";
                 uri?: NonNullable<string>;
             }>;
         }>;
@@ -2230,32 +2230,32 @@ export namespace Components {
             users: Components.Schemas.UserModelHash;
         }>;
         export type AuthorizationCodeRequestBody = NonNullable<{
-            grant_type: \\"authorization_code\\";
+            grant_type: "authorization_code";
             code?: NonNullable<string>;
             client_id?: NonNullable<string>;
             redirect_uri?: NonNullable<string>;
         }>;
         export type PasswordRequestBody = NonNullable<{
-            grant_type: \\"password\\";
+            grant_type: "password";
             username: NonNullable<string>;
             password: NonNullable<string>;
             scope?: NonNullable<string>;
         }>;
         export type ClientCredentialsRequestBody = NonNullable<{
-            grant_type: \\"client_credentials\\";
+            grant_type: "client_credentials";
             scope?: NonNullable<string>;
         }>;
         export type RefreshTokenRequestBody = NonNullable<{
-            grant_type: \\"refresh_token\\";
+            grant_type: "refresh_token";
             refresh_token: NonNullable<string>;
             scope?: NonNullable<string>;
         }>;
         export type VerifyTokenRequestBody = NonNullable<{
-            grant_type: \\"verify_token\\";
+            grant_type: "verify_token";
             verify_token: NonNullable<string>;
         }>;
         export type PasswordChangeBody = NonNullable<{
-            grant_type: \\"password_change\\";
+            grant_type: "password_change";
             token: NonNullable<string>;
             new_password: NonNullable<string>;
         }>;
@@ -2286,70 +2286,70 @@ export namespace Components {
             error_uri?: NonNullable<string>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }
 export namespace Enums {
     export enum ResponseType {
-        Code = \\"code\\",
-        Token = \\"token\\"
+        Code = "code",
+        Token = "token"
     }
     export enum Status {
-        Open = \\"open\\",
-        Discarded = \\"discarded\\",
-        Assigned = \\"assigned\\",
-        Fixed = \\"fixed\\",
-        Closed = \\"closed\\"
+        Open = "open",
+        Discarded = "discarded",
+        Assigned = "assigned",
+        Fixed = "fixed",
+        Closed = "closed"
     }
     export enum Priority {
-        NotSet = \\"not_set\\",
-        Urgent = \\"urgent\\",
-        Important = \\"important\\",
-        Secondary = \\"secondary\\"
+        NotSet = "not_set",
+        Urgent = "urgent",
+        Important = "important",
+        Secondary = "secondary"
     }
     export enum Severity {
-        NotSet = \\"not_set\\",
-        Critical = \\"critical\\",
-        Major = \\"major\\",
-        Moderate = \\"moderate\\",
-        Minor = \\"minor\\",
-        Cosmetic = \\"cosmetic\\"
+        NotSet = "not_set",
+        Critical = "critical",
+        Major = "major",
+        Moderate = "moderate",
+        Minor = "minor",
+        Cosmetic = "cosmetic"
     }
     export enum PowerState {
-        Unknown = \\"unknown\\",
-        On = \\"on\\",
-        Off = \\"off\\"
+        Unknown = "unknown",
+        On = "on",
+        Off = "off"
     }
     export enum OperatingState {
-        Unknown = \\"unknown\\",
-        Normal = \\"normal\\",
-        Stopped = \\"stopped\\",
-        Idle = \\"idle\\"
+        Unknown = "unknown",
+        Normal = "normal",
+        Stopped = "stopped",
+        Idle = "idle"
     }
     export enum HealthState {
-        Unknown = \\"unknown\\",
-        Good = \\"good\\",
-        Faulty = \\"faulty\\",
-        Erroring = \\"erroring\\"
+        Unknown = "unknown",
+        Good = "good",
+        Faulty = "faulty",
+        Erroring = "erroring"
     }
     export enum Role {
-        Admin = \\"admin\\",
-        User = \\"user\\",
-        Candidate = \\"candidate\\"
+        Admin = "admin",
+        User = "user",
+        Candidate = "candidate"
     }
     export enum TokenType {
-        Bearer = \\"bearer\\",
-        Mac = \\"mac\\",
-        Unknown = \\"\\\\uD83D\\\\uDC95-\\\\u2705\\"
+        Bearer = "bearer",
+        Mac = "mac",
+        Unknown = "\\uD83D\\uDC95-\\u2705"
     }
     export enum Error {
-        InvalidRequest = \\"invalid_request\\",
-        InvalidClient = \\"invalid_client\\",
-        InvalidGrant = \\"invalid_grant\\",
-        UnauthorizedClient = \\"unauthorized_client\\",
-        UnsupportedGrantType = \\"unsupported_grant_type\\",
-        InvalidScope = \\"invalid_scope\\"
+        InvalidRequest = "invalid_request",
+        InvalidClient = "invalid_client",
+        InvalidGrant = "invalid_grant",
+        UnauthorizedClient = "unauthorized_client",
+        UnsupportedGrantType = "unsupported_grant_type",
+        InvalidScope = "invalid_scope"
     }
 }"
 `;
@@ -2623,7 +2623,7 @@ declare namespace Components {
         export type GetUserByName0 = NonNullable<string>;
         export type UpdateUser0 = NonNullable<string>;
         export type DeleteUser0 = NonNullable<string>;
-        export type FindPetsByStatus0 = NonNullable<(\\"available\\" | \\"pending\\" | \\"sold\\")[]>;
+        export type FindPetsByStatus0 = NonNullable<("available" | "pending" | "sold")[]>;
         export type FindPetsByTags0 = NonNullable<NonNullable<string>[]>;
     }
     export namespace Responses {
@@ -2868,8 +2868,8 @@ declare namespace Components {
         export type loginUserResponse200<S extends number> = {
             readonly status: S;
             readonly headers: {
-                readonly \\"x-rate-limit\\": Components.Headers.LoginUserResponse200HeadersXRateLimit;
-                readonly \\"x-expires-after\\"?: Components.Headers.LoginUserResponse200HeadersXExpiresAfter;
+                readonly "x-rate-limit": Components.Headers.LoginUserResponse200HeadersXRateLimit;
+                readonly "x-expires-after"?: Components.Headers.LoginUserResponse200HeadersXExpiresAfter;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesloginUserResponse200Body0 | Components.Schemas.ResponsesloginUserResponse200Body1;
@@ -2941,14 +2941,14 @@ declare namespace Components {
 }
 declare namespace Enums {
     export enum PetStatusInTheStore {
-        Available = \\"available\\",
-        Pending = \\"pending\\",
-        Sold = \\"sold\\"
+        Available = "available",
+        Pending = "pending",
+        Sold = "sold"
     }
     export enum OrderStatus {
-        Placed = \\"placed\\",
-        Approved = \\"approved\\",
-        Delivered = \\"delivered\\"
+        Placed = "placed",
+        Approved = "approved",
+        Delivered = "delivered"
     }
 }"
 `;
@@ -3174,7 +3174,7 @@ declare namespace Components {
         export type GetUserByName0 = NonNullable<string>;
         export type UpdateUser0 = NonNullable<string>;
         export type DeleteUser0 = NonNullable<string>;
-        export type FindPetsByStatus0 = NonNullable<(\\"available\\" | \\"pending\\" | \\"sold\\")[]>;
+        export type FindPetsByStatus0 = NonNullable<("available" | "pending" | "sold")[]>;
         export type FindPetsByTags0 = NonNullable<NonNullable<string>[]>;
     }
     export namespace Responses {
@@ -3237,8 +3237,8 @@ declare namespace Components {
         export type loginUserResponse200<S extends number> = {
             readonly status: S;
             readonly headers: {
-                readonly \\"x-rate-limit\\": Components.Headers.LoginUserResponse200HeadersXRateLimit;
-                readonly \\"x-expires-after\\"?: Components.Headers.LoginUserResponse200HeadersXExpiresAfter;
+                readonly "x-rate-limit": Components.Headers.LoginUserResponse200HeadersXRateLimit;
+                readonly "x-expires-after"?: Components.Headers.LoginUserResponse200HeadersXExpiresAfter;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesloginUserResponse200Body0 | Components.Schemas.ResponsesloginUserResponse200Body1;
@@ -3256,7 +3256,7 @@ declare namespace Components {
             name: NonNullable<string>;
             photoUrls: NonNullable<NonNullable<string>[]>;
             tags?: NonNullable<Components.Schemas.Tag[]>;
-            status?: \\"available\\" | \\"pending\\" | \\"sold\\";
+            status?: "available" | "pending" | "sold";
         }>;
         export type Body = NonNullable<{
             name?: NonNullable<string>;
@@ -3271,7 +3271,7 @@ declare namespace Components {
             petId?: NonNullable<number>;
             quantity?: NonNullable<number>;
             shipDate?: NonNullable<string>;
-            status?: \\"placed\\" | \\"approved\\" | \\"delivered\\";
+            status?: "placed" | "approved" | "delivered";
             complete?: NonNullable<boolean>;
         }>;
         export type User = NonNullable<{
@@ -3579,7 +3579,7 @@ export namespace Components {
         export type GetUserByName0 = NonNullable<string>;
         export type UpdateUser0 = NonNullable<string>;
         export type DeleteUser0 = NonNullable<string>;
-        export type FindPetsByStatus0 = NonNullable<(\\"available\\" | \\"pending\\" | \\"sold\\")[]>;
+        export type FindPetsByStatus0 = NonNullable<("available" | "pending" | "sold")[]>;
         export type FindPetsByTags0 = NonNullable<NonNullable<string>[]>;
     }
     export namespace Responses {
@@ -3824,8 +3824,8 @@ export namespace Components {
         export type loginUserResponse200<S extends number> = {
             readonly status: S;
             readonly headers: {
-                readonly \\"x-rate-limit\\": Components.Headers.LoginUserResponse200HeadersXRateLimit;
-                readonly \\"x-expires-after\\"?: Components.Headers.LoginUserResponse200HeadersXExpiresAfter;
+                readonly "x-rate-limit": Components.Headers.LoginUserResponse200HeadersXRateLimit;
+                readonly "x-expires-after"?: Components.Headers.LoginUserResponse200HeadersXExpiresAfter;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesloginUserResponse200Body0 | Components.Schemas.ResponsesloginUserResponse200Body1;
@@ -3897,14 +3897,14 @@ export namespace Components {
 }
 export namespace Enums {
     export enum OrderStatus {
-        Placed = \\"placed\\",
-        Approved = \\"approved\\",
-        Delivered = \\"delivered\\"
+        Placed = "placed",
+        Approved = "approved",
+        Delivered = "delivered"
     }
     export enum PetStatusInTheStore {
-        Available = \\"available\\",
-        Pending = \\"pending\\",
-        Sold = \\"sold\\"
+        Available = "available",
+        Pending = "pending",
+        Sold = "sold"
     }
 }"
 `;
@@ -4034,7 +4034,7 @@ declare namespace Components {
         export type getParametersResponse204<S extends number> = {
             readonly status: S;
             readonly headers?: {
-                readonly \\"x-delay-precision\\"?: Components.Headers.GetParametersResponse204HeadersXDelayPrecision;
+                readonly "x-delay-precision"?: Components.Headers.GetParametersResponse204HeadersXDelayPrecision;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesgetParametersResponse204Body0;
@@ -4063,15 +4063,15 @@ declare namespace Components {
             currentDate?: NonNullable<string>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }
 declare namespace Enums {
     export enum GetParametersResponse204HeadersXDelayPrecision {
-        Ns = \\"ns\\",
-        Ms = \\"ms\\",
-        S = \\"s\\"
+        Ns = "ns",
+        Ms = "ms",
+        S = "s"
     }
 }"
 `;
@@ -4201,7 +4201,7 @@ declare namespace Components {
             currentDate?: NonNullable<string>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }"
@@ -4332,7 +4332,7 @@ export namespace Components {
         export type getParametersResponse204<S extends number> = {
             readonly status: S;
             readonly headers?: {
-                readonly \\"x-delay-precision\\"?: Components.Headers.GetParametersResponse204HeadersXDelayPrecision;
+                readonly "x-delay-precision"?: Components.Headers.GetParametersResponse204HeadersXDelayPrecision;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesgetParametersResponse204Body0;
@@ -4361,15 +4361,15 @@ export namespace Components {
             pathParam2?: NonNullable<NonNullable<string>[]>;
         }>;
         export type ResponsesgetPingResponse200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }
 export namespace Enums {
     export enum GetParametersResponse204HeadersXDelayPrecision {
-        Ns = \\"ns\\",
-        Ms = \\"ms\\",
-        S = \\"s\\"
+        Ns = "ns",
+        Ms = "ms",
+        S = "s"
     }
 }"
 `;
@@ -4499,7 +4499,7 @@ declare namespace Components {
         export type Params204<S extends number> = {
             readonly status: S;
             readonly headers?: {
-                readonly \\"x-delay-precision\\"?: Components.Headers.XDelayPrecision;
+                readonly "x-delay-precision"?: Components.Headers.XDelayPrecision;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesParams204Body0;
@@ -4528,15 +4528,15 @@ declare namespace Components {
             currentDate?: NonNullable<string>;
         }>;
         export type ResponsesPing200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }
 declare namespace Enums {
     export enum XDelayPrecision {
-        Ns = \\"ns\\",
-        Ms = \\"ms\\",
-        S = \\"s\\"
+        Ns = "ns",
+        Ms = "ms",
+        S = "s"
     }
 }"
 `;
@@ -4660,14 +4660,14 @@ declare namespace Components {
         export type Params204<S extends number> = {
             readonly status: S;
             readonly headers?: {
-                readonly \\"x-delay-precision\\"?: Components.Headers.XDelayPrecision;
+                readonly "x-delay-precision"?: Components.Headers.XDelayPrecision;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesParams204Body0;
         };
     }
     export namespace Headers {
-        export type XDelayPrecision = \\"ns\\" | \\"ms\\" | \\"s\\";
+        export type XDelayPrecision = "ns" | "ms" | "s";
     }
     export namespace Schemas {
         export type Echo = NonNullable<{
@@ -4689,7 +4689,7 @@ declare namespace Components {
             currentDate?: NonNullable<string>;
         }>;
         export type ResponsesPing200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }"
@@ -4820,7 +4820,7 @@ export namespace Components {
         export type Params204<S extends number> = {
             readonly status: S;
             readonly headers?: {
-                readonly \\"x-delay-precision\\"?: Components.Headers.XDelayPrecision;
+                readonly "x-delay-precision"?: Components.Headers.XDelayPrecision;
                 readonly [name: string]: unknown;
             };
             readonly body: Components.Schemas.ResponsesParams204Body0;
@@ -4849,15 +4849,15 @@ export namespace Components {
             pathParam2?: NonNullable<NonNullable<string>[]>;
         }>;
         export type ResponsesPing200Body0 = NonNullable<{
-            pong?: \\"pong\\";
+            pong?: "pong";
         }>;
     }
 }
 export namespace Enums {
     export enum XDelayPrecision {
-        Ns = \\"ns\\",
-        Ms = \\"ms\\",
-        S = \\"s\\"
+        Ns = "ns",
+        Ms = "ms",
+        S = "s"
     }
 }"
 `;
