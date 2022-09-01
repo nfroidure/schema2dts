@@ -1,3 +1,12 @@
+## [4.1.3](https://github.com/nfroidure/schema2dts/compare/v4.1.2...v4.1.3) (2022-09-01)
+
+
+### Bug Fixes
+
+* **types:** fix TypeScript types ([d5c6d58](https://github.com/nfroidure/schema2dts/commit/d5c6d582a2db6397b3e51ea2691c0968743f570e))
+
+
+
 ## [4.1.2](https://github.com/nfroidure/schema2dts/compare/v4.1.1...v4.1.2) (2022-07-18)
 
 
