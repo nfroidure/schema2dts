@@ -227,7 +227,6 @@ export async function generateOpenAPITypes(
           context.sideTypeDeclarations.push({
             namespaceParts: [baseName, operationId, 'Body'],
             statement: ts.factory.createTypeAliasDeclaration(
-              undefined,
               [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
               'Body',
               undefined,
@@ -277,7 +276,6 @@ export async function generateOpenAPITypes(
                   `$${code}`,
                 ],
                 statement: ts.factory.createTypeAliasDeclaration(
-                  undefined,
                   [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
                   `$${code}`,
                   [],
@@ -310,7 +308,6 @@ export async function generateOpenAPITypes(
           context.sideTypeDeclarations.push({
             namespaceParts: [baseName, operationId, 'Output'],
             statement: ts.factory.createTypeAliasDeclaration(
-              undefined,
               [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
               'Output',
               undefined,
@@ -381,7 +378,6 @@ export async function generateOpenAPITypes(
                   parameterKey,
                 ],
                 statement: ts.factory.createTypeAliasDeclaration(
-                  undefined,
                   [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
                   context.buildIdentifier(resolvedParameter.name),
                   undefined,
@@ -399,7 +395,6 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: [baseName, operationId, 'Input'],
           statement: ts.factory.createTypeAliasDeclaration(
-            undefined,
             [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             'Input',
             undefined,
@@ -428,7 +423,6 @@ export async function generateOpenAPITypes(
       let statement: Statement;
       if ('$ref' in requestBody) {
         statement = ts.factory.createTypeAliasDeclaration(
-          [],
           [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           name,
           [],
@@ -502,7 +496,6 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Parameters', name],
           statement: ts.factory.createTypeAliasDeclaration(
-            [],
             [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             [],
@@ -536,7 +529,6 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Responses', name],
           statement: ts.factory.createTypeAliasDeclaration(
-            undefined,
             [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             undefined,
@@ -633,7 +625,6 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Responses', name],
           statement: ts.factory.createTypeAliasDeclaration(
-            [],
             [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             [
@@ -659,11 +650,9 @@ export async function generateOpenAPITypes(
                 ts.factory.createTypeLiteralNode([
                   ...headersTypes,
                   ts.factory.createIndexSignature(
-                    [],
                     [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
                     [
                       ts.factory.createParameterDeclaration(
-                        [],
                         [],
                         undefined,
                         ts.factory.createIdentifier('name'),
@@ -702,7 +691,6 @@ export async function generateOpenAPITypes(
         context.sideTypeDeclarations.push({
           namespaceParts: ['Components', 'Headers', name],
           statement: ts.factory.createTypeAliasDeclaration(
-            undefined,
             [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
             name,
             undefined,
@@ -875,7 +863,6 @@ export async function generateTypeDeclaration(
   }
 
   return ts.factory.createTypeAliasDeclaration(
-    undefined,
     [
       context.root && !context.jsonSchemaOptions.exportNamespaces
         ? ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)
@@ -1202,13 +1189,11 @@ async function buildObjectTypeNode(
 
     elements = elements.concat(
       ts.factory.createIndexSignature(
-        undefined,
         readOnly
           ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
           : [],
         [
           ts.factory.createParameterDeclaration(
-            [],
             [],
             undefined,
             ts.factory.createIdentifier('pattern'),
@@ -1321,7 +1306,6 @@ function buildModuleDeclarations(
     // https://github.com/aelbore/esbuild-jest/issues/54
     const createModuleBlck = ts.factory.createModuleBlock;
     return ts.factory.createModuleDeclaration(
-      undefined,
       [
         level === 0 && !context.jsonSchemaOptions.exportNamespaces
           ? ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)
