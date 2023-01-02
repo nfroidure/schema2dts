@@ -1,3 +1,12 @@
+## [4.1.4](https://github.com/nfroidure/schema2dts/compare/v4.1.3...v4.1.4) (2023-01-02)
+
+
+### Bug Fixes
+
+* **typescript:** avoid using deprecated overlaods ([0a88a88](https://github.com/nfroidure/schema2dts/commit/0a88a88c76c4307ed5cc51983603f77a2f9de1bc)), closes [#24](https://github.com/nfroidure/schema2dts/issues/24)
+
+
+
 ## [4.1.3](https://github.com/nfroidure/schema2dts/compare/v4.1.2...v4.1.3) (2022-09-01)
 
 
