@@ -1,3 +1,12 @@
+## [4.1.5](https://github.com/nfroidure/schema2dts/compare/v4.1.4...v4.1.5) (2023-02-02)
+
+
+### Bug Fixes
+
+* **types:** fix deprecated calls ([e670cf2](https://github.com/nfroidure/schema2dts/commit/e670cf2b39b13a18102df62de28dd928e823efba))
+
+
+
 ## [4.1.4](https://github.com/nfroidure/schema2dts/compare/v4.1.3...v4.1.4) (2023-01-02)
 
 
