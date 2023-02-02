@@ -932,7 +932,6 @@ async function schemaToTypes(
     ) {
       context.sideTypeDeclarations.push({
         statement: ts.factory.createEnumDeclaration(
-          [],
           [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
           buildIdentifier(name),
           schema.enum.map((value) =>
