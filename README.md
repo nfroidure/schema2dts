@@ -124,6 +124,9 @@ Create the TypeScript types declarations from an Open API document
 | options.generateUnusedSchemas | <code>boolean</code> | 
 | options.camelizeInputs | <code>boolean</code> | 
 | options.brandedTypes | <code>Array.&lt;string&gt;</code> | 
+| options.generateRealEnums | <code>boolean</code> | 
+| options.exportNamespaces | <code>boolean</code> | 
+| options.requireCleanAPI | <code>boolean</code> | 
 
 <a name="generateJSONSchemaTypes"></a>
 

@@ -118,6 +118,9 @@ type OpenAPIOptions = {
  * @param {boolean} options.generateUnusedSchemas
  * @param {boolean} options.camelizeInputs
  * @param {Array<string>} options.brandedTypes
+ * @param {boolean} options.generateRealEnums
+ * @param {boolean} options.exportNamespaces
+ * @param {boolean} options.requireCleanAPI
  * @returns {TypeScript.NodeArray}
  */
 export async function generateOpenAPITypes(
@@ -990,8 +993,6 @@ async function schemaToTypes(
       schema,
     );
   }
-
-  console.error(schema);
 
   throw new YError('E_UNSUPPORTED_SCHEMA', schema);
 }
