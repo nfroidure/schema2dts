@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import camelCase from 'camelcase';
 import type {
   JSONSchema4,
@@ -53,12 +54,15 @@ export function buildIdentifier(part: string): string {
 }
 
 async function resolve<T, U>(root: T, namespaceParts: string[]): Promise<U> {
-  return namespaceParts.reduce((curSchema, part) => {
-    if (!curSchema) {
-      throw new YError('E_RESOLVE', namespaceParts, part);
-    }
-    return curSchema[part];
-  }, root as unknown as U) as U;
+  return namespaceParts.reduce(
+    (curSchema, part) => {
+      if (!curSchema) {
+        throw new YError('E_RESOLVE', namespaceParts, part);
+      }
+      return curSchema[part];
+    },
+    root as unknown as U,
+  ) as U;
 }
 
 async function ensureResolved<T>(
@@ -67,10 +71,10 @@ async function ensureResolved<T>(
 ): Promise<T> {
   let resolvedObject = object;
 
-  while ('$ref' in resolvedObject) {
+  while ('$ref' in (resolvedObject as OpenAPIV3.ReferenceObject)) {
     resolvedObject = await resolve<OpenAPIV3.Document, T>(
       root,
-      splitRef(resolvedObject.$ref),
+      splitRef((resolvedObject as OpenAPIV3.ReferenceObject).$ref),
     );
   }
 
@@ -91,6 +95,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
   camelizeInputs: true,
   generateRealEnums: false,
   exportNamespaces: false,
+  requireCleanAPI: false,
 };
 
 type OpenAPIOptions = {
@@ -101,6 +106,7 @@ type OpenAPIOptions = {
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
   generateRealEnums: boolean;
   exportNamespaces: boolean;
+  requireCleanAPI?: boolean;
 };
 
 /**
@@ -124,6 +130,7 @@ export async function generateOpenAPITypes(
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
     exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
+    requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
   }: Omit<OpenAPIOptions, 'baseName' | 'brandedTypes'> &
     Partial<
       Pick<OpenAPIOptions, 'baseName' | 'brandedTypes'>
@@ -198,7 +205,14 @@ export async function generateOpenAPITypes(
           path: string[];
           required: boolean;
         }[] = [];
-        const operationId = operation.operationId as string;
+        const operationId =
+          (operation.operationId as string) ||
+          (requireCleanAPI
+            ? ''
+            : [method, ...path.split(/\//)]
+                .filter((id) => id)
+                .map(context.buildIdentifier)
+                .join(''));
 
         if (!operationId) {
           throw new YError('E_OPERATION_ID_REQUIRED', path, method);
@@ -902,6 +916,11 @@ async function schemaToTypes(
       ),
     ];
   }
+  if (typeof schema.type === 'undefined') {
+    if ('properties' in schema) {
+      schema.type = 'object';
+    }
+  }
 
   if (schema.$ref) {
     const referenceParts = await context.nameResolver(schema.$ref);
@@ -972,6 +991,8 @@ async function schemaToTypes(
     );
   }
 
+  console.error(schema);
+
   throw new YError('E_UNSUPPORTED_SCHEMA', schema);
 }
 
@@ -985,7 +1006,7 @@ async function handleTypedSchema(
   const typesParameters: ts.TypeNode[] = await Promise.all(
     types
       .filter(
-        (type): type is Exclude<typeof types[number], 'null'> =>
+        (type): type is Exclude<(typeof types)[number], 'null'> =>
           type !== 'null',
       )
       .map(async (type) => {

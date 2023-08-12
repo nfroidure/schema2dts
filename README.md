@@ -7,7 +7,7 @@
 # schema2dts
 > A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator
 
-[![Coverage Status](https://coveralls.io/repos/github/nfroidure/schema2dts/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/schema2dts?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/nfroidure/schema2dts/badge.svg?branch=main)](https://coveralls.io/github/nfroidure/schema2dts?branch=main)
 
 
 [//]: # (::contents:start)
@@ -156,4 +156,4 @@ Returns source from a list of TypeScript statements
 - [Nicolas Froidure](https://insertafter.com/en/index.html)
 
 # License
-[ISC](https://github.com/nfroidure/schema2dts/blob/master/LICENSE)
+[ISC](https://github.com/nfroidure/schema2dts/blob/main/LICENSE)
