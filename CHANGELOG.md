@@ -1,3 +1,7 @@
+## [5.0.1](https://github.com/nfroidure/schema2dts/compare/v5.0.0...v5.0.1) (2023-08-16)
+
+
+
 # [5.0.0](https://github.com/nfroidure/schema2dts/compare/v4.1.5...v5.0.0) (2023-08-12)
 
 
