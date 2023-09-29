@@ -87,7 +87,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   generateRealEnums: false,
   exportNamespaces: false,
 };
-export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
+export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   baseName: 'API',
   filterStatuses: [],
   brandedTypes: [],
@@ -98,7 +98,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPIOptions = {
   requireCleanAPI: false,
 };
 
-type OpenAPIOptions = {
+export type OpenAPITypesGenerationOptions = {
   baseName: string;
   filterStatuses?: (number | 'default')[];
   generateUnusedSchemas?: boolean;
@@ -134,9 +134,9 @@ export async function generateOpenAPITypes(
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
     exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
-  }: Omit<OpenAPIOptions, 'baseName' | 'brandedTypes'> &
+  }: Omit<OpenAPITypesGenerationOptions, 'baseName' | 'brandedTypes'> &
     Partial<
-      Pick<OpenAPIOptions, 'baseName' | 'brandedTypes'>
+      Pick<OpenAPITypesGenerationOptions, 'baseName' | 'brandedTypes'>
     > = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<NodeArray<Statement>> {
   const components: {
