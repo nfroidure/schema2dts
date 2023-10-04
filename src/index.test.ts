@@ -560,14 +560,17 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = {
-            min?: NonNullable<number>;
-            max?: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            readonly pace?: NonNullable<number>;
-        } | number | (NonNullable<number> | NonNullable<string>)[];"
-      `);
+"export type Limit = {
+    min?: NonNullable<number>;
+    max?: NonNullable<number>;
+    minIncluded?: NonNullable<boolean>;
+    maxIncluded?: NonNullable<boolean>;
+    readonly pace?: NonNullable<number>;
+} | number | [
+    NonNullable<number>,
+    NonNullable<string>
+];"
+`);
     });
 
     test('should work with anyOf schemas', async () => {
@@ -596,14 +599,17 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = number | NonNullable<{
-            min?: NonNullable<number>;
-            max?: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            readonly pace?: NonNullable<number>;
-        }> | NonNullable<(NonNullable<number> | NonNullable<string>)[]>;"
-      `);
+"export type Limit = number | NonNullable<{
+    min?: NonNullable<number>;
+    max?: NonNullable<number>;
+    minIncluded?: NonNullable<boolean>;
+    maxIncluded?: NonNullable<boolean>;
+    readonly pace?: NonNullable<number>;
+}> | NonNullable<[
+    NonNullable<number>,
+    NonNullable<string>
+]>;"
+`);
     });
 
     test('should work with oneOf schemas', async () => {
@@ -632,14 +638,17 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = number | NonNullable<{
-            min?: NonNullable<number>;
-            max?: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            readonly pace?: NonNullable<number>;
-        }> | NonNullable<(NonNullable<number> | NonNullable<string>)[]>;"
-      `);
+"export type Limit = number | NonNullable<{
+    min?: NonNullable<number>;
+    max?: NonNullable<number>;
+    minIncluded?: NonNullable<boolean>;
+    maxIncluded?: NonNullable<boolean>;
+    readonly pace?: NonNullable<number>;
+}> | NonNullable<[
+    NonNullable<number>,
+    NonNullable<string>
+]>;"
+`);
     });
 
     test('should work with base schema and nested oneof schemas', async () => {
@@ -752,14 +761,17 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = number & NonNullable<{
-            min?: NonNullable<number>;
-            max?: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            readonly pace?: NonNullable<number>;
-        }> & NonNullable<(NonNullable<number> | NonNullable<string>)[]>;"
-      `);
+"export type Limit = number & NonNullable<{
+    min?: NonNullable<number>;
+    max?: NonNullable<number>;
+    minIncluded?: NonNullable<boolean>;
+    maxIncluded?: NonNullable<boolean>;
+    readonly pace?: NonNullable<number>;
+}> & NonNullable<[
+    NonNullable<number>,
+    NonNullable<string>
+]>;"
+`);
     });
 
     test('should work with allOf schemas and required properties added', async () => {
@@ -864,14 +876,27 @@ describe('generateTypeDeclaration()', () => {
       `);
     });
 
-    test('should work with no items array schemas', async () => {
+    test('should work with not defined items array schemas', async () => {
       const schema: JSONSchema7 = {
         type: 'array',
       };
 
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
-      ).toMatchInlineSnapshot(`"export type Unknown = NonNullable<never>;"`);
+      ).toMatchInlineSnapshot(
+        `"export type Unknown = NonNullable<unknown[]>;"`,
+      );
+    });
+
+    test('should work with no items array schemas', async () => {
+      const schema: JSONSchema7 = {
+        type: 'array',
+        maxItems: 0,
+      };
+
+      expect(
+        toSource(await generateTypeDeclaration(context, schema)),
+      ).toMatchInlineSnapshot(`"export type Unknown = NonNullable<never[]>;"`);
     });
 
     test('should work with anyOf/array special test case schemas', async () => {
@@ -972,6 +997,84 @@ describe('generateTypeDeclaration()', () => {
         }>;"
       `);
     });
+  });
+
+  test('should work with tuple test case schemas', async () => {
+    const schema: JSONSchema7 = {
+      title: 'TupleTest',
+      type: 'object',
+      additionalProperties: false,
+      required: ['data'],
+      properties: {
+        data: {
+          type: 'array',
+          items: {
+            type: 'array',
+            items: [
+              { type: 'string' },
+              { type: 'number' },
+              { type: 'number' },
+              {
+                type: 'array',
+                items: { type: 'string' },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    expect(toSource(await generateTypeDeclaration(context, schema)))
+      .toMatchInlineSnapshot(`
+"export type TupleTest = NonNullable<{
+    data: NonNullable<NonNullable<[
+        NonNullable<string>,
+        NonNullable<number>,
+        NonNullable<number>,
+        NonNullable<NonNullable<string>[]>
+    ]>[]>;
+}>;"
+`);
+  });
+
+  test('should work with tuples and rest test case schemas', async () => {
+    const schema: JSONSchema7 = {
+      title: 'TupleTest',
+      type: 'object',
+      additionalProperties: false,
+      required: ['data'],
+      properties: {
+        data: {
+          type: 'array',
+          items: {
+            type: 'array',
+            items: [
+              { type: 'string' },
+              { type: 'number' },
+              { type: 'number' },
+              {
+                type: 'array',
+                items: { type: 'string' },
+              },
+            ],
+            additionalItems: { type: 'boolean' },
+          },
+        },
+      },
+    };
+
+    expect(toSource(await generateTypeDeclaration(context, schema)))
+      .toMatchInlineSnapshot(`
+"export type TupleTest = NonNullable<{
+    data: NonNullable<NonNullable<[
+        NonNullable<string>,
+        NonNullable<number>,
+        NonNullable<number>,
+        NonNullable<NonNullable<string>[]>,
+        ...NonNullable<boolean>[]
+    ]>[]>;
+}>;"
+`);
   });
 
   test('should work with snake case parameter in query', async () => {

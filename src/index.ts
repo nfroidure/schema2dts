@@ -1237,40 +1237,67 @@ async function buildArrayTypeNode(
   context: Context,
   schema: Schema,
 ): Promise<ts.TypeNode> {
-  const schemas = (
-    schema.items instanceof Array
-      ? schema.items
-      : 'undefined' !== typeof schema.items
-      ? [schema.items]
-      : []
-  ).filter((s): s is Schema => typeof s !== 'boolean');
-
-  if (schemas.length === 0) {
-    return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
+  if (typeof schema.maxItems === 'number' && schema.maxItems <= 0) {
+    return ts.factory.createArrayTypeNode(
+      ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
+    );
   }
 
-  const types = (
-    await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
-  ).reduce((allTypes, types) => [...allTypes, ...types], []);
-  const type =
-    types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
+  // We may switch from items arrays to tuples when there is
+  // allow number of items allowed.
+  // if (schema.maxItems < 5) {
+  //   const tupleTypes =
+  //   return ast.buildTupleTypeNode(types, minItems, maxItems);
+  // }
 
-  if (
-    typeof schema.minItems === 'number' &&
-    typeof schema.maxItems === 'number'
-  ) {
-    if (schema.minItems > schema.maxItems) {
-      return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
+  const additionalItems =
+    schema.additionalItems ||
+    // Backward compatibility with old JSONSchema behavior
+    (typeof schema.items !== 'boolean' && !(schema.items instanceof Array)
+      ? schema.items
+      : undefined);
+  const prefixItems: Schema[] =
+    // Here, we are supporting the new way to declare tuples
+    // in the last JSONSchema Draft
+    // (see https://json-schema.org/understanding-json-schema/reference/array#tupleValidation )
+    (schema as unknown as { prefixItems: Schema[] }).prefixItems ||
+    (typeof schema.items === 'object' && schema.items instanceof Array)
+      ? (schema.items as unknown as Schema[])
+      : [];
+
+  if (prefixItems.length) {
+    const types = (
+      await Promise.all(
+        prefixItems.map((schema) => schemaToTypes(context, schema)),
+      )
+    ).map((types) =>
+      types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+    );
+
+    if (additionalItems) {
+      const additionalTypes = await schemaToTypes(context, additionalItems);
+
+      types.push(
+        ts.factory.createRestTypeNode(
+          ts.factory.createArrayTypeNode(
+            additionalTypes.length > 1
+              ? ts.factory.createUnionTypeNode(additionalTypes)
+              : additionalTypes[0],
+          ),
+        ),
+      );
     }
 
-    // Avoid having heavy results
-    // if (schema.maxItems < 5) {
-    //   const tupleTypes =
-    //   return ast.buildTupleTypeNode(types, minItems, maxItems);
-    // }
-  }
+    return ts.factory.createTupleTypeNode(types);
+  } else {
+    const types = additionalItems
+      ? await schemaToTypes(context, additionalItems)
+      : [ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)];
 
-  return ts.factory.createArrayTypeNode(type);
+    return ts.factory.createArrayTypeNode(
+      types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+    );
+  }
 }
 
 function buildLiteralType(value: number | string | boolean): ts.TypeNode {
