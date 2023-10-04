@@ -974,6 +974,40 @@ describe('generateTypeDeclaration()', () => {
     });
   });
 
+  test('should work with tuple test case schemas', async () => {
+    const schema: JSONSchema7 = {
+      title: 'TupleTest',
+      type: 'object',
+      additionalProperties: true,
+      required: ['data'],
+      properties: {
+        data: {
+          type: 'array',
+          items: {
+            type: 'array',
+            items: [
+              { type: 'string' },
+              { type: 'number' },
+              { type: 'number' },
+              {
+                type: 'array',
+                items: { type: 'string' },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    expect(toSource(await generateTypeDeclaration(context, schema)))
+      .toMatchInlineSnapshot(`
+      "export type TupleTest = NonNullable<{
+          data: NonNullable<NonNullable<(NonNullable<string> | NonNullable<number> | NonNullable<number> | NonNullable<NonNullable<string>[]>)[]>[]>;
+          [pattern: string]: unknown;
+      }>;"
+    `);
+  });
+
   test('should work with snake case parameter in query', async () => {
     const schema = {
       openapi: '3.0.2',

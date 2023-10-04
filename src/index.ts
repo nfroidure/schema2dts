@@ -1237,7 +1237,7 @@ async function buildArrayTypeNode(
   context: Context,
   schema: Schema,
 ): Promise<ts.TypeNode> {
-  const schemas = (
+  const regularItems: Schema[] = (
     schema.items instanceof Array
       ? schema.items
       : 'undefined' !== typeof schema.items
@@ -1245,12 +1245,12 @@ async function buildArrayTypeNode(
       : []
   ).filter((s): s is Schema => typeof s !== 'boolean');
 
-  if (schemas.length === 0) {
+  if (regularItems.length === 0) {
     return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword);
   }
 
   const types = (
-    await Promise.all(schemas.map((schema) => schemaToTypes(context, schema)))
+    await Promise.all(regularItems.map((schema) => schemaToTypes(context, schema)))
   ).reduce((allTypes, types) => [...allTypes, ...types], []);
   const type =
     types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
