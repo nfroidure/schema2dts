@@ -1,3 +1,12 @@
+# [5.2.0](https://github.com/nfroidure/schema2dts/compare/v5.1.0...v5.2.0) (2023-10-05)
+
+
+### Features
+
+* **tuple:** add tuple validation ([36ec937](https://github.com/nfroidure/schema2dts/commit/36ec9375ff7223ceb82c0f1a8f065e59c8b5e6be))
+
+
+
 # [5.1.0](https://github.com/nfroidure/schema2dts/compare/v5.0.1...v5.1.0) (2023-09-29)
 
 
