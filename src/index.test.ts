@@ -1077,6 +1077,22 @@ describe('generateTypeDeclaration()', () => {
 `);
   });
 
+  test('should work with tuples and rest test case schemas', async () => {
+    const schema: JSONSchema7 = {
+      type: 'array',
+      items: {
+        minItems: 1,
+        oneOf: [{ type: 'boolean' }, { type: 'string' }],
+      },
+    };
+
+    expect(
+      toSource(await generateTypeDeclaration(context, schema)),
+    ).toMatchInlineSnapshot(
+      `"export type Unknown = NonNullable<(NonNullable<boolean> | NonNullable<string>)[]>;"`,
+    );
+  });
+
   test('should work with snake case parameter in query', async () => {
     const schema = {
       openapi: '3.0.2',
