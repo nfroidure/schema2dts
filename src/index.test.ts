@@ -86,6 +86,7 @@ describe('generateOpenAPITypes()', () => {
         await generateOpenAPITypes(schema, {
           generateRealEnums: true,
           exportNamespaces: true,
+          tuplesFromFixedArraysLengthLimit: 5,
         }),
       ),
     ).toMatchInlineSnapshot(`
@@ -237,6 +238,7 @@ describe('generateOpenAPITypes()', () => {
         await generateOpenAPITypes(schema, {
           brandedTypes: ['TheSchema', 'TheSchemaClone'],
           generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: false,
         }),
       ),
@@ -303,6 +305,7 @@ describe('generateOpenAPITypes()', () => {
           toSource(
             await generateOpenAPITypes(schema, {
               generateRealEnums: true,
+              tuplesFromFixedArraysLengthLimit: 5,
               exportNamespaces: false,
             }),
           ),
@@ -320,6 +323,7 @@ describe('generateOpenAPITypes()', () => {
               filterStatuses: [200, 201, 202, 300],
               brandedTypes: 'schemas',
               generateRealEnums: false,
+              tuplesFromFixedArraysLengthLimit: 5,
               exportNamespaces: false,
             }),
           ),
@@ -337,6 +341,7 @@ describe('generateOpenAPITypes()', () => {
               baseName: 'AnotherAPI',
               generateUnusedSchemas: true,
               generateRealEnums: true,
+              tuplesFromFixedArraysLengthLimit: 5,
               exportNamespaces: true,
             }),
           ),
@@ -373,9 +378,10 @@ describe('generateJSONSchemaTypes()', () => {
     expect(
       toSource(
         await generateJSONSchemaTypes(schema, {
-          generateRealEnums: true,
           brandedTypes: [],
           exportNamespaces: false,
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
         }),
       ),
     ).toMatchInlineSnapshot(`
@@ -399,6 +405,7 @@ describe('generateTypeDeclaration()', () => {
     jsonSchemaOptions: {
       brandedTypes: [],
       generateRealEnums: true,
+      tuplesFromFixedArraysLengthLimit: 5,
       exportNamespaces: true,
     },
   };
@@ -423,6 +430,7 @@ describe('generateTypeDeclaration()', () => {
               jsonSchemaOptions: {
                 brandedTypes: [],
                 generateRealEnums: false,
+                tuplesFromFixedArraysLengthLimit: 5,
                 exportNamespaces: false,
               },
             },
@@ -1037,6 +1045,35 @@ describe('generateTypeDeclaration()', () => {
 `);
   });
 
+  test('should create tuples from fixed length arrays', async () => {
+    const schema: JSONSchema7 = {
+      title: 'FixedArrayToTupleTest',
+      type: 'object',
+      additionalProperties: false,
+      required: ['data'],
+      properties: {
+        data: {
+          type: 'array',
+          items: { type: 'string' },
+          minItems: 4,
+          maxItems: 4,
+        },
+      },
+    };
+
+    expect(toSource(await generateTypeDeclaration(context, schema)))
+      .toMatchInlineSnapshot(`
+"export type FixedArrayToTupleTest = NonNullable<{
+    data: NonNullable<[
+        NonNullable<string>,
+        NonNullable<string>,
+        NonNullable<string>,
+        NonNullable<string>
+    ]>;
+}>;"
+`);
+  });
+
   test('should work with tuples and rest test case schemas', async () => {
     const schema: JSONSchema7 = {
       title: 'TupleTest',
@@ -1130,6 +1167,7 @@ describe('generateTypeDeclaration()', () => {
         await generateOpenAPITypes(schema, {
           camelizeInputs: false,
           generateRealEnums: false,
+          tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: false,
         }),
       ),
@@ -1189,6 +1227,7 @@ describe('generateTypeDeclaration()', () => {
         await generateOpenAPITypes(schema, {
           camelizeInputs: false,
           generateRealEnums: false,
+          tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: false,
         }),
       ),

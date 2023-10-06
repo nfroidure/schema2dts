@@ -85,6 +85,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   baseName: 'Main',
   brandedTypes: [],
   generateRealEnums: false,
+  tuplesFromFixedArraysLengthLimit: 5,
   exportNamespaces: false,
 };
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
@@ -94,6 +95,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   generateUnusedSchemas: false,
   camelizeInputs: true,
   generateRealEnums: false,
+  tuplesFromFixedArraysLengthLimit: 5,
   exportNamespaces: false,
   requireCleanAPI: false,
 };
@@ -105,6 +107,7 @@ export type OpenAPITypesGenerationOptions = {
   camelizeInputs?: boolean;
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
   generateRealEnums: boolean;
+  tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
   requireCleanAPI?: boolean;
 };
@@ -132,6 +135,7 @@ export async function generateOpenAPITypes(
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
+    tuplesFromFixedArraysLengthLimit = DEFAULT_OPEN_API_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
   }: Omit<OpenAPITypesGenerationOptions, 'baseName' | 'brandedTypes'> &
@@ -178,6 +182,7 @@ export async function generateOpenAPITypes(
           ? brandedTypes
           : Object.keys(components.schemas).map(buildIdentifier),
       generateRealEnums,
+      tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
     },
     seenSchemas: {},
@@ -740,6 +745,7 @@ type JSONSchemaOptions = {
   baseName?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
   generateRealEnums: boolean;
+  tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
 };
 
@@ -758,6 +764,7 @@ export async function generateJSONSchemaTypes(
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
+    tuplesFromFixedArraysLengthLimit = DEFAULT_JSON_SCHEMA_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_JSON_SCHEMA_OPTIONS.exportNamespaces,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
 ): Promise<NodeArray<Statement>> {
@@ -773,6 +780,7 @@ export async function generateJSONSchemaTypes(
       baseName,
       brandedTypes,
       generateRealEnums,
+      tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
     },
     seenSchemas: {},
@@ -1243,13 +1251,6 @@ async function buildArrayTypeNode(
     );
   }
 
-  // We may switch from items arrays to tuples when there is
-  // allow number of items allowed.
-  // if (schema.maxItems < 5) {
-  //   const tupleTypes =
-  //   return ast.buildTupleTypeNode(types, minItems, maxItems);
-  // }
-
   const additionalItems =
     schema.additionalItems ||
     // Backward compatibility with old JSONSchema behavior
@@ -1293,6 +1294,23 @@ async function buildArrayTypeNode(
     const types = additionalItems
       ? await schemaToTypes(context, additionalItems)
       : [ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)];
+
+    // Switch from arrays to tuples for small fixed length arrays
+    if (
+      'minItems' in schema &&
+      'maxItems' in schema &&
+      typeof schema.minItems === 'number' &&
+      typeof schema.maxItems === 'number' &&
+      schema.maxItems === schema.minItems &&
+      schema.maxItems <
+        context.jsonSchemaOptions.tuplesFromFixedArraysLengthLimit
+    ) {
+      return ts.factory.createTupleTypeNode(
+        new Array(schema.minItems).fill(
+          types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+        ),
+      );
+    }
 
     return ts.factory.createArrayTypeNode(
       types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
