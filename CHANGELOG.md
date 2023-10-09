@@ -1,3 +1,13 @@
+# [5.3.0](https://github.com/nfroidure/schema2dts/compare/v5.2.0...v5.3.0) (2023-10-09)
+
+
+### Features
+
+* **types:** encode min length arrays into types ([4d2279f](https://github.com/nfroidure/schema2dts/commit/4d2279f74c361c45e27f461989a0b9e90b6d4d16))
+* **types:** new option to create tuples from fixed length arrays ([4ed19a3](https://github.com/nfroidure/schema2dts/commit/4ed19a3391cd02e01a482997b26fb90152b08167))
+
+
+
 # [5.2.0](https://github.com/nfroidure/schema2dts/compare/v5.1.0...v5.2.0) (2023-10-05)
 
 
