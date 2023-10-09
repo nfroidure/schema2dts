@@ -1074,6 +1074,33 @@ describe('generateTypeDeclaration()', () => {
 `);
   });
 
+  test('should create tuples from min length arrays', async () => {
+    const schema: JSONSchema7 = {
+      title: 'FixedArrayToTupleTest',
+      type: 'object',
+      additionalProperties: false,
+      required: ['data'],
+      properties: {
+        data: {
+          type: 'array',
+          items: { type: 'string' },
+          minItems: 2,
+        },
+      },
+    };
+
+    expect(toSource(await generateTypeDeclaration(context, schema)))
+      .toMatchInlineSnapshot(`
+"export type FixedArrayToTupleTest = NonNullable<{
+    data: NonNullable<[
+        NonNullable<string>,
+        NonNullable<string>,
+        ...NonNullable<string>[]
+    ]>;
+}>;"
+`);
+  });
+
   test('should work with tuples and rest test case schemas', async () => {
     const schema: JSONSchema7 = {
       title: 'TupleTest',

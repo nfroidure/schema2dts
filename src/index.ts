@@ -1312,6 +1312,31 @@ async function buildArrayTypeNode(
       );
     }
 
+    // Switch from arrays to tuples and spread for small min length arrays
+    if (
+      'minItems' in schema &&
+      typeof schema.minItems === 'number' &&
+      schema.minItems > 0 &&
+      schema.minItems <
+        context.jsonSchemaOptions.tuplesFromFixedArraysLengthLimit
+    ) {
+      return ts.factory.createTupleTypeNode(
+        new Array(schema.minItems)
+          .fill(
+            types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+          )
+          .concat(
+            ts.factory.createRestTypeNode(
+              ts.factory.createArrayTypeNode(
+                types.length > 1
+                  ? ts.factory.createUnionTypeNode(types)
+                  : types[0],
+              ),
+            ),
+          ),
+      );
+    }
+
     return ts.factory.createArrayTypeNode(
       types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
     );
