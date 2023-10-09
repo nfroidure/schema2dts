@@ -91,6 +91,9 @@ The current way to handle this in this library is to:
 }
 ```
 
+Currently, the `if`/`then` keywords of JSONSchema do not work. You should be
+able to replace most of its use per a `oneOf` form.
+
 [//]: # (::contents:end)
 
 # API
