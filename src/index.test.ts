@@ -90,53 +90,53 @@ describe('generateOpenAPITypes()', () => {
         }),
       ),
     ).toMatchInlineSnapshot(`
-      "export namespace API {
-          export namespace GetPing {
-              export type Body = Components.RequestBodies.GetPingRequestBody;
-              export type Output = Responses.$200;
-              export type Input = {
-                  readonly body?: Body;
-                  readonly xAHeader?: Parameters.XAHeader;
-                  readonly xApiVersion?: Parameters.XAPIVersion;
-              };
-              export namespace Responses {
-                  export type $200 = Components.Responses.GetPingResponse200<200>;
-              }
-              export namespace Parameters {
-                  export type XAHeader = Components.Parameters.GetPing0;
-                  export type XAPIVersion = Components.Parameters.GetPing1;
-              }
-          }
-      }
-      export namespace Components {
-          export namespace RequestBodies {
-              export type GetPingRequestBody = Components.Schemas.RequestBodiesGetPingRequestBodyBody0;
-          }
-          export namespace Parameters {
-              export type GetPing0 = NonNullable<number>;
-              export type GetPing1 = NonNullable<string>;
-          }
-          export namespace Responses {
-              export type GetPingResponse200<S extends number> = {
-                  readonly status: S;
-                  readonly headers: {
-                      readonly "x-a-header": Components.Headers.GetPingResponse200HeadersXAHeader;
-                      readonly "x-sdk-version"?: Components.Headers.GetPingResponse200HeadersXSDKVersion;
-                      readonly [name: string]: unknown;
-                  };
-                  readonly body: Components.Schemas.ResponsesGetPingResponse200Body0;
-              };
-          }
-          export namespace Headers {
-              export type GetPingResponse200HeadersXAHeader = NonNullable<number>;
-              export type GetPingResponse200HeadersXSDKVersion = NonNullable<string>;
-          }
-          export namespace Schemas {
-              export type RequestBodiesGetPingRequestBodyBody0 = NonNullable<string>;
-              export type ResponsesGetPingResponse200Body0 = NonNullable<string>;
-          }
-      }"
-    `);
+"export namespace API {
+    export namespace GetPing {
+        export type Body = Components.RequestBodies.GetPingRequestBody;
+        export type Output = Responses.$200;
+        export type Input = {
+            readonly body?: Body;
+            readonly xAHeader?: Parameters.XAHeader;
+            readonly xApiVersion?: Parameters.XAPIVersion;
+        };
+        export namespace Responses {
+            export type $200 = Components.Responses.GetPingResponse200<200>;
+        }
+        export namespace Parameters {
+            export type XAHeader = Components.Parameters.GetPing0;
+            export type XAPIVersion = Components.Parameters.GetPing1;
+        }
+    }
+}
+export namespace Components {
+    export namespace RequestBodies {
+        export type GetPingRequestBody = Components.Schemas.RequestBodiesGetPingRequestBodyBody0;
+    }
+    export namespace Parameters {
+        export type GetPing0 = number;
+        export type GetPing1 = string;
+    }
+    export namespace Responses {
+        export type GetPingResponse200<S extends number> = {
+            readonly status: S;
+            readonly headers: {
+                readonly "x-a-header": Components.Headers.GetPingResponse200HeadersXAHeader;
+                readonly "x-sdk-version"?: Components.Headers.GetPingResponse200HeadersXSDKVersion;
+                readonly [name: string]: unknown;
+            };
+            readonly body: Components.Schemas.ResponsesGetPingResponse200Body0;
+        };
+    }
+    export namespace Headers {
+        export type GetPingResponse200HeadersXAHeader = number;
+        export type GetPingResponse200HeadersXSDKVersion = string;
+    }
+    export namespace Schemas {
+        export type RequestBodiesGetPingRequestBodyBody0 = string;
+        export type ResponsesGetPingResponse200Body0 = string;
+    }
+}"
+`);
   });
 
   test('with a normalized simple sample', async () => {
@@ -243,53 +243,53 @@ describe('generateOpenAPITypes()', () => {
         }),
       ),
     ).toMatchInlineSnapshot(`
-      "declare namespace API {
-          export namespace GetTest {
-              export type Body = Components.RequestBodies.TheBody;
-              export type Output = Responses.$200;
-              export type Input = {
-                  readonly body?: Body;
-                  readonly testParam?: Parameters.TestParam;
-              };
-              export namespace Responses {
-                  export type $200 = Components.Responses.TheResponse<200>;
-              }
-              export namespace Parameters {
-                  export type TestParam = Components.Parameters.TheTestParam;
-              }
-          }
-      }
-      declare namespace Components {
-          export namespace RequestBodies {
-              export type TheBodyClone = Components.RequestBodies.TheBody;
-              export type TheBody = Components.Schemas.TheSchemaClone;
-          }
-          export namespace Parameters {
-              export type TheTestParamClone = Components.Parameters.TheTestParam;
-              export type TheTestParam = Components.Schemas.TheSchema;
-          }
-          export namespace Responses {
-              export type TheResponseClone = Components.Responses.TheResponse;
-              export type TheResponse<S extends number> = {
-                  readonly status: S;
-                  readonly headers?: {
-                      readonly "x-a-header"?: Components.Headers.TheXAHeader;
-                      readonly [name: string]: unknown;
-                  };
-                  readonly body: Components.Schemas.TheSchema;
-              };
-          }
-          export namespace Headers {
-              export type TheXAHeader = NonNullable<number>;
-          }
-          export namespace Schemas {
-              export type TheSchemaClone = Components.Schemas.TheSchema;
-              export type TheSchema = NonNullable<string> & NonNullable<{
-                  _type?: "TheSchema";
-              }>;
-          }
-      }"
-    `);
+"declare namespace API {
+    export namespace GetTest {
+        export type Body = Components.RequestBodies.TheBody;
+        export type Output = Responses.$200;
+        export type Input = {
+            readonly body?: Body;
+            readonly testParam?: Parameters.TestParam;
+        };
+        export namespace Responses {
+            export type $200 = Components.Responses.TheResponse<200>;
+        }
+        export namespace Parameters {
+            export type TestParam = Components.Parameters.TheTestParam;
+        }
+    }
+}
+declare namespace Components {
+    export namespace RequestBodies {
+        export type TheBodyClone = Components.RequestBodies.TheBody;
+        export type TheBody = Components.Schemas.TheSchemaClone;
+    }
+    export namespace Parameters {
+        export type TheTestParamClone = Components.Parameters.TheTestParam;
+        export type TheTestParam = Components.Schemas.TheSchema;
+    }
+    export namespace Responses {
+        export type TheResponseClone = Components.Responses.TheResponse;
+        export type TheResponse<S extends number> = {
+            readonly status: S;
+            readonly headers?: {
+                readonly "x-a-header"?: Components.Headers.TheXAHeader;
+                readonly [name: string]: unknown;
+            };
+            readonly body: Components.Schemas.TheSchema;
+        };
+    }
+    export namespace Headers {
+        export type TheXAHeader = number;
+    }
+    export namespace Schemas {
+        export type TheSchemaClone = Components.Schemas.TheSchema;
+        export type TheSchema = string & {
+            _type?: "TheSchema";
+        };
+    }
+}"
+`);
   });
 
   describe('with OpenAPI samples', () => {
@@ -437,7 +437,7 @@ describe('generateTypeDeclaration()', () => {
             schema,
           ),
         ),
-      ).toMatchInlineSnapshot(`"declare type Limit = NonNullable<number>;"`);
+      ).toMatchInlineSnapshot(`"declare type Limit = number;"`);
     });
 
     test('should work with several literal type schema', async () => {
@@ -449,7 +449,7 @@ describe('generateTypeDeclaration()', () => {
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
       ).toMatchInlineSnapshot(
-        `"export type Limit = NonNullable<number> | NonNullable<string> | NonNullable<boolean>;"`,
+        `"export type Limit = number | string | boolean;"`,
       );
     });
 
@@ -461,7 +461,7 @@ describe('generateTypeDeclaration()', () => {
 
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
-      ).toMatchInlineSnapshot(`"export type Limit = number;"`);
+      ).toMatchInlineSnapshot(`"export type Limit = number | null;"`);
     });
 
     test('should work with several literal nullable type schema', async () => {
@@ -472,7 +472,7 @@ describe('generateTypeDeclaration()', () => {
 
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
-      ).toMatchInlineSnapshot(`"export type Limit = number | string;"`);
+      ).toMatchInlineSnapshot(`"export type Limit = number | string | null;"`);
     });
 
     test('should work with literal enums', async () => {
@@ -505,14 +505,14 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = NonNullable<{
-            min: NonNullable<number>;
-            max: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            pace?: NonNullable<number>;
-        }>;"
-      `);
+"export type Limit = {
+    min: number;
+    max: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    pace?: number;
+};"
+`);
     });
 
     test('should work with nullable object schema', async () => {
@@ -538,18 +538,18 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = {
-            min?: NonNullable<number>;
-            max?: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            pace?: NonNullable<number>;
-            nothing?: never;
-            anything?: unknown;
-            aConst?: "test";
-            [pattern: string]: NonNullable<string> | unknown;
-        };"
-      `);
+"export type Limit = {
+    min?: number;
+    max?: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    pace?: number;
+    nothing?: never;
+    anything?: unknown;
+    aConst?: "test";
+    [pattern: string]: string | unknown;
+} | null;"
+`);
     });
 
     test('should work with nested schemas', async () => {
@@ -569,14 +569,14 @@ describe('generateTypeDeclaration()', () => {
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
 "export type Limit = {
-    min?: NonNullable<number>;
-    max?: NonNullable<number>;
-    minIncluded?: NonNullable<boolean>;
-    maxIncluded?: NonNullable<boolean>;
-    readonly pace?: NonNullable<number>;
-} | number | [
-    NonNullable<number>,
-    NonNullable<string>
+    min?: number;
+    max?: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    readonly pace?: number;
+} | null | number | [
+    number,
+    string
 ];"
 `);
     });
@@ -607,16 +607,16 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-"export type Limit = number | NonNullable<{
-    min?: NonNullable<number>;
-    max?: NonNullable<number>;
-    minIncluded?: NonNullable<boolean>;
-    maxIncluded?: NonNullable<boolean>;
-    readonly pace?: NonNullable<number>;
-}> | NonNullable<[
-    NonNullable<number>,
-    NonNullable<string>
-]>;"
+"export type Limit = (null | number) | {
+    min?: number;
+    max?: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    readonly pace?: number;
+} | [
+    number,
+    string
+];"
 `);
     });
 
@@ -646,16 +646,16 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-"export type Limit = number | NonNullable<{
-    min?: NonNullable<number>;
-    max?: NonNullable<number>;
-    minIncluded?: NonNullable<boolean>;
-    maxIncluded?: NonNullable<boolean>;
-    readonly pace?: NonNullable<number>;
-}> | NonNullable<[
-    NonNullable<number>,
-    NonNullable<string>
-]>;"
+"export type Limit = (null | number) | {
+    min?: number;
+    max?: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    readonly pace?: number;
+} | [
+    number,
+    string
+];"
 `);
     });
 
@@ -692,14 +692,14 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type User = NonNullable<{
-            name?: NonNullable<string>;
-        }> & (NonNullable<{
-            email: NonNullable<string>;
-        }> | NonNullable<{
-            cellphone: NonNullable<string>;
-        }>);"
-      `);
+"export type User = {
+    name?: string;
+} & ({
+    email: string;
+} | {
+    cellphone: string;
+});"
+`);
     });
 
     test('should work with base schema and nested oneof schemas and inherited types', async () => {
@@ -733,14 +733,14 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type User = NonNullable<{
-            name?: NonNullable<string>;
-        }> & (NonNullable<{
-            email: NonNullable<string>;
-        }> | NonNullable<{
-            cellphone: NonNullable<string>;
-        }>);"
-      `);
+"export type User = {
+    name?: string;
+} & ({
+    email: string;
+} | {
+    cellphone: string;
+});"
+`);
     });
 
     test('should work with allOf schemas', async () => {
@@ -769,16 +769,16 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-"export type Limit = number & NonNullable<{
-    min?: NonNullable<number>;
-    max?: NonNullable<number>;
-    minIncluded?: NonNullable<boolean>;
-    maxIncluded?: NonNullable<boolean>;
-    readonly pace?: NonNullable<number>;
-}> & NonNullable<[
-    NonNullable<number>,
-    NonNullable<string>
-]>;"
+"export type Limit = (null | number) & {
+    min?: number;
+    max?: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    readonly pace?: number;
+} & [
+    number,
+    string
+];"
 `);
     });
 
@@ -805,17 +805,17 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Limit = NonNullable<{
-            min?: NonNullable<number>;
-            max?: NonNullable<number>;
-            minIncluded?: NonNullable<boolean>;
-            maxIncluded?: NonNullable<boolean>;
-            readonly pace?: NonNullable<number>;
-        }> & NonNullable<{
-            min: unknown;
-            max: unknown;
-        }>;"
-      `);
+"export type Limit = {
+    min?: number;
+    max?: number;
+    minIncluded?: boolean;
+    maxIncluded?: boolean;
+    readonly pace?: number;
+} & {
+    min: unknown;
+    max: unknown;
+};"
+`);
     });
 
     test('should work with simple literal type schema', async () => {
@@ -874,14 +874,14 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type Unknown = NonNullable<{
-            name: NonNullable<string>;
-        }> & (NonNullable<{
-            email: NonNullable<string>;
-        }> | NonNullable<{
-            phone: NonNullable<string>;
-        }>);"
-      `);
+"export type Unknown = {
+    name: string;
+} & ({
+    email: string;
+} | {
+    phone: string;
+});"
+`);
     });
 
     test('should work with not defined items array schemas', async () => {
@@ -891,9 +891,7 @@ describe('generateTypeDeclaration()', () => {
 
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
-      ).toMatchInlineSnapshot(
-        `"export type Unknown = NonNullable<unknown[]>;"`,
-      );
+      ).toMatchInlineSnapshot(`"export type Unknown = unknown[];"`);
     });
 
     test('should work with no items array schemas', async () => {
@@ -904,7 +902,7 @@ describe('generateTypeDeclaration()', () => {
 
       expect(
         toSource(await generateTypeDeclaration(context, schema)),
-      ).toMatchInlineSnapshot(`"export type Unknown = NonNullable<never[]>;"`);
+      ).toMatchInlineSnapshot(`"export type Unknown = never[];"`);
     });
 
     test('should work with anyOf/array special test case schemas', async () => {
@@ -992,18 +990,18 @@ describe('generateTypeDeclaration()', () => {
 
       expect(toSource(await generateTypeDeclaration(context, schema)))
         .toMatchInlineSnapshot(`
-        "export type TrickyThing = NonNullable<{
-            name: NonNullable<string>;
-            duration: NonNullable<number>;
-            start: Components.Schemas.Date;
-            end: Components.Schemas.Date;
-            labels: NonNullable<("value" | "peaks" | "startTime" | "endTime" | "peakTime")[]>;
-            timestamp: NonNullable<("startTime" | "endTime" | "peakTime")[]>;
-            data: NonNullable<NonNullable<(Components.Schemas.Date | NonNullable<number> | ("first" | "bosse" | "last") | NonNullable<string>)[]>[]>;
-            context: Components.Schemas.Data;
-            [pattern: string]: unknown;
-        }>;"
-      `);
+"export type TrickyThing = {
+    name: string;
+    duration: number;
+    start: Components.Schemas.Date;
+    end: Components.Schemas.Date;
+    labels: ("value" | "peaks" | "startTime" | "endTime" | "peakTime")[];
+    timestamp: ("startTime" | "endTime" | "peakTime")[];
+    data: (Components.Schemas.Date | number | ("first" | "bosse" | "last") | string)[][];
+    context: Components.Schemas.Data;
+    [pattern: string]: unknown;
+};"
+`);
     });
   });
 
@@ -1034,14 +1032,14 @@ describe('generateTypeDeclaration()', () => {
 
     expect(toSource(await generateTypeDeclaration(context, schema)))
       .toMatchInlineSnapshot(`
-"export type TupleTest = NonNullable<{
-    data: NonNullable<NonNullable<[
-        NonNullable<string>,
-        NonNullable<number>,
-        NonNullable<number>,
-        NonNullable<NonNullable<string>[]>
-    ]>[]>;
-}>;"
+"export type TupleTest = {
+    data: [
+        string,
+        number,
+        number,
+        string[]
+    ][];
+};"
 `);
   });
 
@@ -1063,14 +1061,14 @@ describe('generateTypeDeclaration()', () => {
 
     expect(toSource(await generateTypeDeclaration(context, schema)))
       .toMatchInlineSnapshot(`
-"export type FixedArrayToTupleTest = NonNullable<{
-    data: NonNullable<[
-        NonNullable<string>,
-        NonNullable<string>,
-        NonNullable<string>,
-        NonNullable<string>
-    ]>;
-}>;"
+"export type FixedArrayToTupleTest = {
+    data: [
+        string,
+        string,
+        string,
+        string
+    ];
+};"
 `);
   });
 
@@ -1091,13 +1089,13 @@ describe('generateTypeDeclaration()', () => {
 
     expect(toSource(await generateTypeDeclaration(context, schema)))
       .toMatchInlineSnapshot(`
-"export type FixedArrayToTupleTest = NonNullable<{
-    data: NonNullable<[
-        NonNullable<string>,
-        NonNullable<string>,
-        ...NonNullable<string>[]
-    ]>;
-}>;"
+"export type FixedArrayToTupleTest = {
+    data: [
+        string,
+        string,
+        ...string[]
+    ];
+};"
 `);
   });
 
@@ -1129,15 +1127,15 @@ describe('generateTypeDeclaration()', () => {
 
     expect(toSource(await generateTypeDeclaration(context, schema)))
       .toMatchInlineSnapshot(`
-"export type TupleTest = NonNullable<{
-    data: NonNullable<NonNullable<[
-        NonNullable<string>,
-        NonNullable<number>,
-        NonNullable<number>,
-        NonNullable<NonNullable<string>[]>,
-        ...NonNullable<boolean>[]
-    ]>[]>;
-}>;"
+"export type TupleTest = {
+    data: [
+        string,
+        number,
+        number,
+        string[],
+        ...boolean[]
+    ][];
+};"
 `);
   });
 
@@ -1152,9 +1150,7 @@ describe('generateTypeDeclaration()', () => {
 
     expect(
       toSource(await generateTypeDeclaration(context, schema)),
-    ).toMatchInlineSnapshot(
-      `"export type Unknown = NonNullable<(NonNullable<boolean> | NonNullable<string>)[]>;"`,
-    );
+    ).toMatchInlineSnapshot(`"export type Unknown = (boolean | string)[];"`);
   });
 
   test('should work with snake case parameter in query', async () => {
@@ -1199,23 +1195,23 @@ describe('generateTypeDeclaration()', () => {
         }),
       ),
     ).toMatchInlineSnapshot(`
-      "declare namespace API {
-          export namespace Test {
-              export type Output = unknown;
-              export type Input = {
-                  readonly foo_bar?: Parameters.FooBar;
-              };
-              export namespace Parameters {
-                  export type FooBar = Components.Parameters.Test0;
-              }
-          }
-      }
-      declare namespace Components {
-          export namespace Parameters {
-              export type Test0 = NonNullable<string>;
-          }
-      }"
-    `);
+"declare namespace API {
+    export namespace Test {
+        export type Output = unknown;
+        export type Input = {
+            readonly foo_bar?: Parameters.FooBar;
+        };
+        export namespace Parameters {
+            export type FooBar = Components.Parameters.Test0;
+        }
+    }
+}
+declare namespace Components {
+    export namespace Parameters {
+        export type Test0 = string;
+    }
+}"
+`);
   });
 
   test('should work without operation id per default', async () => {
@@ -1259,22 +1255,22 @@ describe('generateTypeDeclaration()', () => {
         }),
       ),
     ).toMatchInlineSnapshot(`
-      "declare namespace API {
-          export namespace GetTest {
-              export type Output = unknown;
-              export type Input = {
-                  readonly foo_bar?: Parameters.FooBar;
-              };
-              export namespace Parameters {
-                  export type FooBar = Components.Parameters.GetTest0;
-              }
-          }
-      }
-      declare namespace Components {
-          export namespace Parameters {
-              export type GetTest0 = NonNullable<string>;
-          }
-      }"
-    `);
+"declare namespace API {
+    export namespace GetTest {
+        export type Output = unknown;
+        export type Input = {
+            readonly foo_bar?: Parameters.FooBar;
+        };
+        export namespace Parameters {
+            export type FooBar = Components.Parameters.GetTest0;
+        }
+    }
+}
+declare namespace Components {
+    export namespace Parameters {
+        export type GetTest0 = string;
+    }
+}"
+`);
   });
 });

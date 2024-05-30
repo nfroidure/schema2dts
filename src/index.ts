@@ -1011,60 +1011,41 @@ async function handleTypedSchema(
   schema: Schema,
 ): Promise<ts.TypeNode[]> {
   const types = schema.type instanceof Array ? schema.type : [schema.type];
-  const isNullable = types.includes('null');
-  const typesParameters: ts.TypeNode[] = await Promise.all(
-    types
-      .filter(
-        (type): type is Exclude<(typeof types)[number], 'null'> =>
-          type !== 'null',
-      )
-      .map(async (type) => {
-        switch (type) {
-          case 'any':
-            return ts.factory.createKeywordTypeNode(
-              ts.SyntaxKind.UnknownKeyword,
-            );
-          case 'boolean':
-            return ts.factory.createKeywordTypeNode(
-              ts.SyntaxKind.BooleanKeyword,
-            );
-          case 'integer':
-            return ts.factory.createKeywordTypeNode(
-              ts.SyntaxKind.NumberKeyword,
-            );
-          case 'number':
-            return ts.factory.createKeywordTypeNode(
-              ts.SyntaxKind.NumberKeyword,
-            );
-          case 'string':
-            return ts.factory.createKeywordTypeNode(
-              ts.SyntaxKind.StringKeyword,
-            );
-          case 'object':
-            return await buildObjectTypeNode(
-              { ...context, candidateName: undefined },
-              schema,
-            );
-          case 'array':
-            return await buildArrayTypeNode(
-              { ...context, candidateName: undefined },
-              schema,
-            );
-          default:
-            throw new YError('E_BAD_TYPE', type);
-        }
-      }),
+  const baseTypes: ts.TypeNode[] = await Promise.all(
+    types.map(async (type) => {
+      switch (type) {
+        case 'null':
+          return ts.factory.createLiteralTypeNode(ts.factory.createNull());
+        case 'any':
+          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+        case 'boolean':
+          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+        case 'integer':
+          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+        case 'number':
+          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+        case 'string':
+          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+        case 'object':
+          return await buildObjectTypeNode(
+            { ...context, candidateName: undefined },
+            schema,
+          );
+        case 'array':
+          return await buildArrayTypeNode(
+            { ...context, candidateName: undefined },
+            schema,
+          );
+        default:
+          throw new YError('E_BAD_TYPE', type);
+      }
+    }),
   );
-
-  const baseTypes = isNullable
-    ? typesParameters
-    : typesParameters.map((typeParameter) =>
-        ts.factory.createTypeReferenceNode('NonNullable', [typeParameter]),
-      );
 
   // Schema also contains a composed schema, handle it as well and do a intersection with base schema
   if (schema.anyOf || schema.allOf || schema.oneOf) {
     const innerTypes = await handleComposedSchemas(context, schema);
+
     return [
       ts.factory.createIntersectionTypeNode([...baseTypes, ...innerTypes]),
     ];
