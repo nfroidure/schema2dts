@@ -7,7 +7,6 @@
 # schema2dts
 > A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator
 
-[![Coverage Status](https://coveralls.io/repos/github/nfroidure/schema2dts/badge.svg?branch=main)](https://coveralls.io/github/nfroidure/schema2dts?branch=main)
 
 
 [//]: # (::contents:start)
