@@ -1,3 +1,18 @@
+# [6.0.0](https://github.com/nfroidure/schema2dts/compare/v5.3.0...v6.0.0) (2024-05-30)
+
+
+### Code Refactoring
+
+* **types:** better null type handling ([5d3134f](https://github.com/nfroidure/schema2dts/commit/5d3134f47b3649b20f11d42ffdc156097ccca85f)), closes [#33](https://github.com/nfroidure/schema2dts/issues/33)
+
+
+### BREAKING CHANGES
+
+* **types:** Not sure if it really breaks anything but won't hurt to create a major version just
+in case.
+
+
+
 # [5.3.0](https://github.com/nfroidure/schema2dts/compare/v5.2.0...v5.3.0) (2023-10-09)
 
 
