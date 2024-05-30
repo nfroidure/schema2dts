@@ -1,19 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateJSONSchemaTypes() with JSONSchema samples should work with array_of_things.json 1`] = `
-"declare type Main = NonNullable<{
-    fruits?: NonNullable<NonNullable<string>[]>;
-    vegetables?: NonNullable<Definitions.Veggie[]>;
-}>;
+"declare type Main = {
+    fruits?: string[];
+    vegetables?: Definitions.Veggie[];
+};
 declare namespace Definitions {
-    export type Veggie = NonNullable<{
-        veggieName: NonNullable<string>;
-        veggieLike: NonNullable<boolean>;
-    }>;
+    export type Veggie = {
+        veggieName: string;
+        veggieLike: boolean;
+    };
 }"
 `;
 
-exports[`generateJSONSchemaTypes() with JSONSchema samples should work with wierd_schema.json 1`] = `"declare type Main = NonNullable<{}> | null;"`;
+exports[`generateJSONSchemaTypes() with JSONSchema samples should work with wierd_schema.json 1`] = `"declare type Main = {} | null;"`;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json 1`] = `
 "declare namespace API {
@@ -360,12 +360,12 @@ declare namespace Components {
         export type SensorId = Components.Schemas.UUID;
         export type SourceId = Components.Schemas.UUID;
         export type UserId = Components.Schemas.UUID;
-        export type ClientId = NonNullable<string>;
-        export type RedirectURI = NonNullable<string>;
-        export type Scope = NonNullable<string>;
-        export type State = NonNullable<string>;
-        export type XSdkVersion = NonNullable<string>;
-        export type XApplicationVersion = NonNullable<string>;
+        export type ClientId = string;
+        export type RedirectURI = string;
+        export type Scope = string;
+        export type State = string;
+        export type XSdkVersion = string;
+        export type XApplicationVersion = string;
     }
     export namespace Responses {
         export type getMySelfResponse302<S extends number> = {
@@ -373,28 +373,28 @@ declare namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type postPasswordChangeRequestResponse200<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type putPredictionsDataResponse201<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getOAuth2AuthorizeResponse302<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getAnomalyResponse200<S extends number> = {
             readonly status: S;
@@ -510,166 +510,166 @@ declare namespace Components {
         };
     }
     export namespace Schemas {
-        export type UserModel = NonNullable<{
+        export type UserModel = {
             id?: Components.Schemas.UUID;
-            roles?: NonNullable<Components.Schemas.Role[]>;
-            password?: NonNullable<string>;
-            organisationsIds?: NonNullable<Components.Schemas.UUID[]>;
+            roles?: Components.Schemas.Role[];
+            password?: string;
+            organisationsIds?: Components.Schemas.UUID[];
             data: Components.Schemas.UserData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
+        };
         export type TokenRequestBody = Components.Schemas.PasswordRequestBody | Components.Schemas.AuthorizationCodeRequestBody | Components.Schemas.ClientCredentialsRequestBody | Components.Schemas.RefreshTokenRequestBody | Components.Schemas.VerifyTokenRequestBody | Components.Schemas.PasswordChangeBody;
-        export type RequestBodiespostPasswordChangeRequestRequestBodyBody0 = NonNullable<{
-            email: NonNullable<string>;
-        }>;
-        export type RequestBodiesputPredictionsDataRequestBodyBody0 = NonNullable<{
+        export type RequestBodiespostPasswordChangeRequestRequestBodyBody0 = {
+            email: string;
+        };
+        export type RequestBodiesputPredictionsDataRequestBodyBody0 = {
             [pattern: string]: unknown;
-        }>;
-        export type RequestBodiesputPredictionsDataRequestBodyBody1 = NonNullable<string>;
-        export type UUID = NonNullable<string>;
-        export type AnomalyItem = NonNullable<{
+        };
+        export type RequestBodiesputPredictionsDataRequestBodyBody1 = string;
+        export type UUID = string;
+        export type AnomalyItem = {
             item: Components.Schemas.UUID;
             anomalies: Components.Schemas.AnomalyModelHash;
-        }>;
-        export type FactoryItem = NonNullable<{
+        };
+        export type FactoryItem = {
             item: Components.Schemas.UUID;
             factories: Components.Schemas.FactoryModelHash;
-        }>;
-        export type LineItem = NonNullable<{
+        };
+        export type LineItem = {
             item: Components.Schemas.UUID;
             lines: Components.Schemas.LineModelHash;
-        }>;
-        export type MachineItem = NonNullable<{
+        };
+        export type MachineItem = {
             item: Components.Schemas.UUID;
             machines: Components.Schemas.MachineModelHash;
-        }>;
-        export type ResponsesgetOpenAPIResponse200Body0 = NonNullable<{}>;
-        export type OrganisationItem = NonNullable<{
+        };
+        export type ResponsesgetOpenAPIResponse200Body0 = {};
+        export type OrganisationItem = {
             item: Components.Schemas.UUID;
             organisations: Components.Schemas.OrganisationModelHash;
-        }>;
-        export type ResponsesgetPredictionDatasetResponse200Body0 = NonNullable<string>;
-        export type SensorItem = NonNullable<{
+        };
+        export type ResponsesgetPredictionDatasetResponse200Body0 = string;
+        export type SensorItem = {
             item: Components.Schemas.UUID;
             sensors: Components.Schemas.SensorModelHash;
-        }>;
-        export type SourceItem = NonNullable<{
+        };
+        export type SourceItem = {
             item: Components.Schemas.UUID;
             sources: Components.Schemas.SourceModelHash;
-        }>;
-        export type ResponsesgetTrainingDatasetResponse200Body0 = NonNullable<string>;
-        export type UserItem = NonNullable<{
+        };
+        export type ResponsesgetTrainingDatasetResponse200Body0 = string;
+        export type UserItem = {
             item: Components.Schemas.UUID;
             users: Components.Schemas.UserModelHash;
-        }>;
-        export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
-            access_token: NonNullable<string>;
+        };
+        export type ResponsespostOAuth2TokenResponse200Body0 = {
+            access_token: string;
             token_type: Enums.TokenType;
-            expires_in?: NonNullable<number>;
-            refresh_token?: NonNullable<string>;
-        }>;
-        export type ResponsespostOAuth2TokenResponse400Body0 = NonNullable<{
+            expires_in?: number;
+            refresh_token?: string;
+        };
+        export type ResponsespostOAuth2TokenResponse400Body0 = {
             error: Enums.Error;
-            error_description?: NonNullable<string>;
-            error_uri?: NonNullable<string>;
-        }>;
-        export type ResponsesgetPingResponse200Body0 = NonNullable<{
+            error_description?: string;
+            error_uri?: string;
+        };
+        export type ResponsesgetPingResponse200Body0 = {
             pong?: "pong";
-        }>;
+        };
         export type Role = Enums.Role;
-        export type UserData = NonNullable<{
-            email: NonNullable<string>;
-            name: NonNullable<string>;
-            givenName?: NonNullable<string>;
-            familyName?: NonNullable<string>;
-            phone?: NonNullable<string>;
-            birthDay?: NonNullable<string>;
+        export type UserData = {
+            email: string;
+            name: string;
+            givenName?: string;
+            familyName?: string;
+            phone?: string;
+            birthDay?: string;
             locale: Components.Schemas.Locale;
             timeZone: Components.Schemas.TimeZone;
-        }>;
-        export type Date = NonNullable<string>;
-        export type PasswordRequestBody = NonNullable<{
+        };
+        export type Date = string;
+        export type PasswordRequestBody = {
             grant_type: "password";
-            username: NonNullable<string>;
-            password: NonNullable<string>;
-            scope?: NonNullable<string>;
-        }>;
-        export type AuthorizationCodeRequestBody = NonNullable<{
+            username: string;
+            password: string;
+            scope?: string;
+        };
+        export type AuthorizationCodeRequestBody = {
             grant_type: "authorization_code";
-            code?: NonNullable<string>;
-            client_id?: NonNullable<string>;
-            redirect_uri?: NonNullable<string>;
-        }>;
-        export type ClientCredentialsRequestBody = NonNullable<{
+            code?: string;
+            client_id?: string;
+            redirect_uri?: string;
+        };
+        export type ClientCredentialsRequestBody = {
             grant_type: "client_credentials";
-            scope?: NonNullable<string>;
-        }>;
-        export type RefreshTokenRequestBody = NonNullable<{
+            scope?: string;
+        };
+        export type RefreshTokenRequestBody = {
             grant_type: "refresh_token";
-            refresh_token: NonNullable<string>;
-            scope?: NonNullable<string>;
-        }>;
-        export type VerifyTokenRequestBody = NonNullable<{
+            refresh_token: string;
+            scope?: string;
+        };
+        export type VerifyTokenRequestBody = {
             grant_type: "verify_token";
-            verify_token: NonNullable<string>;
-        }>;
-        export type PasswordChangeBody = NonNullable<{
+            verify_token: string;
+        };
+        export type PasswordChangeBody = {
             grant_type: "password_change";
-            token: NonNullable<string>;
-            new_password: NonNullable<string>;
-        }>;
-        export type AnomalyModelHash = NonNullable<{
+            token: string;
+            new_password: string;
+        };
+        export type AnomalyModelHash = {
             [pattern: string]: Components.Schemas.AnomalyModel;
-        }>;
-        export type FactoryModelHash = NonNullable<{
+        };
+        export type FactoryModelHash = {
             [pattern: string]: Components.Schemas.FactoryModel;
-        }>;
-        export type LineModelHash = NonNullable<{
+        };
+        export type LineModelHash = {
             [pattern: string]: Components.Schemas.LineModel;
-        }>;
-        export type MachineModelHash = NonNullable<{
+        };
+        export type MachineModelHash = {
             [pattern: string]: Components.Schemas.MachineModel;
-        }>;
-        export type OrganisationModelHash = NonNullable<{
+        };
+        export type OrganisationModelHash = {
             [pattern: string]: Components.Schemas.OrganisationModel;
-        }>;
-        export type SensorModelHash = NonNullable<{
+        };
+        export type SensorModelHash = {
             [pattern: string]: Components.Schemas.SensorModel;
-        }>;
-        export type SourceModelHash = NonNullable<{
+        };
+        export type SourceModelHash = {
             [pattern: string]: Components.Schemas.SourceModel;
-        }>;
-        export type UserModelHash = NonNullable<{
+        };
+        export type UserModelHash = {
             [pattern: string]: Components.Schemas.UserModel;
-        }>;
-        export type Locale = NonNullable<string>;
-        export type TimeZone = NonNullable<string>;
-        export type AnomalyModel = NonNullable<{
+        };
+        export type Locale = string;
+        export type TimeZone = string;
+        export type AnomalyModel = {
             id?: Components.Schemas.UUID;
             organisationId?: Components.Schemas.UUID;
-            linesIds?: NonNullable<Components.Schemas.UUID[]>;
-            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
-            sensorsIds?: NonNullable<Components.Schemas.UUID[]>;
+            linesIds?: Components.Schemas.UUID[];
+            machinesIds?: Components.Schemas.UUID[];
+            sensorsIds?: Components.Schemas.UUID[];
             data: Components.Schemas.AnomalyData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
             archivedAt?: Components.Schemas.Date;
-        }>;
-        export type FactoryModel = NonNullable<{
+        };
+        export type FactoryModel = {
             id?: Components.Schemas.UUID;
             organisationId?: Components.Schemas.UUID;
             data: Components.Schemas.FactoryData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type LineModel = NonNullable<{
+        };
+        export type LineModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.LineData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type MachineModel = NonNullable<{
+        };
+        export type MachineModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.MachineData;
             powerState: Enums.PowerState;
@@ -677,74 +677,74 @@ declare namespace Components {
             healthState: Enums.HealthState;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type OrganisationModel = NonNullable<{
+        };
+        export type OrganisationModel = {
             id?: Components.Schemas.UUID;
-            factoriesIds?: NonNullable<Components.Schemas.UUID[]>;
+            factoriesIds?: Components.Schemas.UUID[];
             data: Components.Schemas.OrganisationData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type SensorModel = NonNullable<{
+        };
+        export type SensorModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.SensorData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type SourceModel = NonNullable<{
+        };
+        export type SourceModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.SourceData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type AnomalyData = NonNullable<{
+        };
+        export type AnomalyData = {
             assignedUser?: Components.Schemas.UUID;
             status: Enums.Status;
-            archived: NonNullable<boolean>;
+            archived: boolean;
             priority: Enums.Priority;
             severity: Enums.Severity;
-        }>;
-        export type FactoryData = NonNullable<{
-            externalId?: NonNullable<string>;
-            name: NonNullable<string>;
-        }>;
-        export type LineData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type FactoryData = {
+            externalId?: string;
+            name: string;
+        };
+        export type LineData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
-            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
-            machinesTree?: NonNullable<{}>;
+            machinesIds?: Components.Schemas.UUID[];
+            machinesTree?: {};
             machineId: unknown;
             settings: unknown;
-        }>;
-        export type MachineData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type MachineData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
-        }>;
-        export type OrganisationData = NonNullable<{
-            name: NonNullable<string>;
+        };
+        export type OrganisationData = {
+            name: string;
             locale: Components.Schemas.Locale;
             timeZone: Components.Schemas.TimeZone;
-        }>;
-        export type SensorData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type SensorData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
             machineId: Components.Schemas.UUID;
-            settings: NonNullable<{
+            settings: {
                 type?: "opc-ua";
-                uri?: NonNullable<string>;
-            }>;
-        }>;
-        export type SourceData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
-            settings: NonNullable<{
+                uri?: string;
+            };
+        };
+        export type SourceData = {
+            name: string;
+            externalId?: string;
+            settings: {
                 type?: "opc-ua";
-                uri?: NonNullable<string>;
-            }>;
-        }>;
+                uri?: string;
+            };
+        };
     }
 }
 declare namespace Enums {
@@ -1149,12 +1149,12 @@ declare namespace Components {
         export type SensorId = Components.Schemas.UUID;
         export type SourceId = Components.Schemas.UUID;
         export type UserId = Components.Schemas.UUID;
-        export type ClientId = NonNullable<string>;
-        export type RedirectURI = NonNullable<string>;
-        export type Scope = NonNullable<string>;
-        export type State = NonNullable<string>;
-        export type XSdkVersion = NonNullable<string>;
-        export type XApplicationVersion = NonNullable<string>;
+        export type ClientId = string;
+        export type RedirectURI = string;
+        export type Scope = string;
+        export type State = string;
+        export type XSdkVersion = string;
+        export type XApplicationVersion = string;
     }
     export namespace Responses {
         export type postPasswordChangeRequestResponse200<S extends number> = {
@@ -1162,14 +1162,14 @@ declare namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type putPredictionsDataResponse201<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getAnomalyResponse200<S extends number> = {
             readonly status: S;
@@ -1278,171 +1278,171 @@ declare namespace Components {
         };
     }
     export namespace Schemas {
-        export type UserModel = NonNullable<{
+        export type UserModel = {
             id?: Components.Schemas.UUID;
-            roles?: NonNullable<Components.Schemas.Role[]>;
-            password?: NonNullable<string>;
-            organisationsIds?: NonNullable<Components.Schemas.UUID[]>;
+            roles?: Components.Schemas.Role[];
+            password?: string;
+            organisationsIds?: Components.Schemas.UUID[];
             data: Components.Schemas.UserData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
+        };
         export type TokenRequestBody = Components.Schemas.PasswordRequestBody | Components.Schemas.AuthorizationCodeRequestBody | Components.Schemas.ClientCredentialsRequestBody | Components.Schemas.RefreshTokenRequestBody | Components.Schemas.VerifyTokenRequestBody | Components.Schemas.PasswordChangeBody;
-        export type RequestBodiespostPasswordChangeRequestRequestBodyBody0 = NonNullable<{
-            email: NonNullable<string>;
-        }>;
-        export type RequestBodiesputPredictionsDataRequestBodyBody0 = NonNullable<{
+        export type RequestBodiespostPasswordChangeRequestRequestBodyBody0 = {
+            email: string;
+        };
+        export type RequestBodiesputPredictionsDataRequestBodyBody0 = {
             [pattern: string]: unknown;
-        }>;
-        export type RequestBodiesputPredictionsDataRequestBodyBody1 = NonNullable<string>;
-        export type UUID = NonNullable<string> & NonNullable<{
+        };
+        export type RequestBodiesputPredictionsDataRequestBodyBody1 = string;
+        export type UUID = string & {
             _type?: "UUID";
-        }>;
-        export type AnomalyItem = NonNullable<{
+        };
+        export type AnomalyItem = {
             item: Components.Schemas.UUID;
             anomalies: Components.Schemas.AnomalyModelHash;
-        }>;
-        export type FactoryItem = NonNullable<{
+        };
+        export type FactoryItem = {
             item: Components.Schemas.UUID;
             factories: Components.Schemas.FactoryModelHash;
-        }>;
-        export type LineItem = NonNullable<{
+        };
+        export type LineItem = {
             item: Components.Schemas.UUID;
             lines: Components.Schemas.LineModelHash;
-        }>;
-        export type MachineItem = NonNullable<{
+        };
+        export type MachineItem = {
             item: Components.Schemas.UUID;
             machines: Components.Schemas.MachineModelHash;
-        }>;
-        export type ResponsesgetOpenAPIResponse200Body0 = NonNullable<{}>;
-        export type OrganisationItem = NonNullable<{
+        };
+        export type ResponsesgetOpenAPIResponse200Body0 = {};
+        export type OrganisationItem = {
             item: Components.Schemas.UUID;
             organisations: Components.Schemas.OrganisationModelHash;
-        }>;
-        export type ResponsesgetPredictionDatasetResponse200Body0 = NonNullable<string>;
-        export type SensorItem = NonNullable<{
+        };
+        export type ResponsesgetPredictionDatasetResponse200Body0 = string;
+        export type SensorItem = {
             item: Components.Schemas.UUID;
             sensors: Components.Schemas.SensorModelHash;
-        }>;
-        export type SourceItem = NonNullable<{
+        };
+        export type SourceItem = {
             item: Components.Schemas.UUID;
             sources: Components.Schemas.SourceModelHash;
-        }>;
-        export type ResponsesgetTrainingDatasetResponse200Body0 = NonNullable<string>;
-        export type UserItem = NonNullable<{
+        };
+        export type ResponsesgetTrainingDatasetResponse200Body0 = string;
+        export type UserItem = {
             item: Components.Schemas.UUID;
             users: Components.Schemas.UserModelHash;
-        }>;
-        export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
-            access_token: NonNullable<string>;
+        };
+        export type ResponsespostOAuth2TokenResponse200Body0 = {
+            access_token: string;
             token_type: "bearer" | "mac" | "\\uD83D\\uDC95-\\u2705";
-            expires_in?: NonNullable<number>;
-            refresh_token?: NonNullable<string>;
-        }>;
-        export type ResponsesgetPingResponse200Body0 = NonNullable<{
+            expires_in?: number;
+            refresh_token?: string;
+        };
+        export type ResponsesgetPingResponse200Body0 = {
             pong?: "pong";
-        }>;
-        export type Role = ("admin" | "user" | "candidate") & NonNullable<{
+        };
+        export type Role = ("admin" | "user" | "candidate") & {
             _type?: "Role";
-        }>;
-        export type UserData = NonNullable<{
-            email: NonNullable<string>;
-            name: NonNullable<string>;
-            givenName?: NonNullable<string>;
-            familyName?: NonNullable<string>;
-            phone?: NonNullable<string>;
-            birthDay?: NonNullable<string>;
+        };
+        export type UserData = {
+            email: string;
+            name: string;
+            givenName?: string;
+            familyName?: string;
+            phone?: string;
+            birthDay?: string;
             locale: Components.Schemas.Locale;
             timeZone: Components.Schemas.TimeZone;
-        }>;
-        export type Date = NonNullable<string> & NonNullable<{
+        };
+        export type Date = string & {
             _type?: "Date";
-        }>;
-        export type PasswordRequestBody = NonNullable<{
+        };
+        export type PasswordRequestBody = {
             grant_type: "password";
-            username: NonNullable<string>;
-            password: NonNullable<string>;
-            scope?: NonNullable<string>;
-        }>;
-        export type AuthorizationCodeRequestBody = NonNullable<{
+            username: string;
+            password: string;
+            scope?: string;
+        };
+        export type AuthorizationCodeRequestBody = {
             grant_type: "authorization_code";
-            code?: NonNullable<string>;
-            client_id?: NonNullable<string>;
-            redirect_uri?: NonNullable<string>;
-        }>;
-        export type ClientCredentialsRequestBody = NonNullable<{
+            code?: string;
+            client_id?: string;
+            redirect_uri?: string;
+        };
+        export type ClientCredentialsRequestBody = {
             grant_type: "client_credentials";
-            scope?: NonNullable<string>;
-        }>;
-        export type RefreshTokenRequestBody = NonNullable<{
+            scope?: string;
+        };
+        export type RefreshTokenRequestBody = {
             grant_type: "refresh_token";
-            refresh_token: NonNullable<string>;
-            scope?: NonNullable<string>;
-        }>;
-        export type VerifyTokenRequestBody = NonNullable<{
+            refresh_token: string;
+            scope?: string;
+        };
+        export type VerifyTokenRequestBody = {
             grant_type: "verify_token";
-            verify_token: NonNullable<string>;
-        }>;
-        export type PasswordChangeBody = NonNullable<{
+            verify_token: string;
+        };
+        export type PasswordChangeBody = {
             grant_type: "password_change";
-            token: NonNullable<string>;
-            new_password: NonNullable<string>;
-        }>;
-        export type AnomalyModelHash = NonNullable<{
+            token: string;
+            new_password: string;
+        };
+        export type AnomalyModelHash = {
             [pattern: string]: Components.Schemas.AnomalyModel;
-        }>;
-        export type FactoryModelHash = NonNullable<{
+        };
+        export type FactoryModelHash = {
             [pattern: string]: Components.Schemas.FactoryModel;
-        }>;
-        export type LineModelHash = NonNullable<{
+        };
+        export type LineModelHash = {
             [pattern: string]: Components.Schemas.LineModel;
-        }>;
-        export type MachineModelHash = NonNullable<{
+        };
+        export type MachineModelHash = {
             [pattern: string]: Components.Schemas.MachineModel;
-        }>;
-        export type OrganisationModelHash = NonNullable<{
+        };
+        export type OrganisationModelHash = {
             [pattern: string]: Components.Schemas.OrganisationModel;
-        }>;
-        export type SensorModelHash = NonNullable<{
+        };
+        export type SensorModelHash = {
             [pattern: string]: Components.Schemas.SensorModel;
-        }>;
-        export type SourceModelHash = NonNullable<{
+        };
+        export type SourceModelHash = {
             [pattern: string]: Components.Schemas.SourceModel;
-        }>;
-        export type UserModelHash = NonNullable<{
+        };
+        export type UserModelHash = {
             [pattern: string]: Components.Schemas.UserModel;
-        }>;
-        export type Locale = NonNullable<string> & NonNullable<{
+        };
+        export type Locale = string & {
             _type?: "Locale";
-        }>;
-        export type TimeZone = NonNullable<string> & NonNullable<{
+        };
+        export type TimeZone = string & {
             _type?: "TimeZone";
-        }>;
-        export type AnomalyModel = NonNullable<{
+        };
+        export type AnomalyModel = {
             id?: Components.Schemas.UUID;
             organisationId?: Components.Schemas.UUID;
-            linesIds?: NonNullable<Components.Schemas.UUID[]>;
-            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
-            sensorsIds?: NonNullable<Components.Schemas.UUID[]>;
+            linesIds?: Components.Schemas.UUID[];
+            machinesIds?: Components.Schemas.UUID[];
+            sensorsIds?: Components.Schemas.UUID[];
             data: Components.Schemas.AnomalyData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
             archivedAt?: Components.Schemas.Date;
-        }>;
-        export type FactoryModel = NonNullable<{
+        };
+        export type FactoryModel = {
             id?: Components.Schemas.UUID;
             organisationId?: Components.Schemas.UUID;
             data: Components.Schemas.FactoryData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type LineModel = NonNullable<{
+        };
+        export type LineModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.LineData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type MachineModel = NonNullable<{
+        };
+        export type MachineModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.MachineData;
             powerState: "unknown" | "on" | "off";
@@ -1450,74 +1450,74 @@ declare namespace Components {
             healthState: "unknown" | "good" | "faulty" | "erroring";
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type OrganisationModel = NonNullable<{
+        };
+        export type OrganisationModel = {
             id?: Components.Schemas.UUID;
-            factoriesIds?: NonNullable<Components.Schemas.UUID[]>;
+            factoriesIds?: Components.Schemas.UUID[];
             data: Components.Schemas.OrganisationData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type SensorModel = NonNullable<{
+        };
+        export type SensorModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.SensorData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type SourceModel = NonNullable<{
+        };
+        export type SourceModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.SourceData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type AnomalyData = NonNullable<{
+        };
+        export type AnomalyData = {
             assignedUser?: Components.Schemas.UUID;
             status: "open" | "discarded" | "assigned" | "fixed" | "closed";
-            archived: NonNullable<boolean>;
+            archived: boolean;
             priority: "not_set" | "urgent" | "important" | "secondary";
             severity: "not_set" | "critical" | "major" | "moderate" | "minor" | "cosmetic";
-        }>;
-        export type FactoryData = NonNullable<{
-            externalId?: NonNullable<string>;
-            name: NonNullable<string>;
-        }>;
-        export type LineData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type FactoryData = {
+            externalId?: string;
+            name: string;
+        };
+        export type LineData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
-            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
-            machinesTree?: NonNullable<{}>;
+            machinesIds?: Components.Schemas.UUID[];
+            machinesTree?: {};
             machineId: unknown;
             settings: unknown;
-        }>;
-        export type MachineData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type MachineData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
-        }>;
-        export type OrganisationData = NonNullable<{
-            name: NonNullable<string>;
+        };
+        export type OrganisationData = {
+            name: string;
             locale: Components.Schemas.Locale;
             timeZone: Components.Schemas.TimeZone;
-        }>;
-        export type SensorData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type SensorData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
             machineId: Components.Schemas.UUID;
-            settings: NonNullable<{
+            settings: {
                 type?: "opc-ua";
-                uri?: NonNullable<string>;
-            }>;
-        }>;
-        export type SourceData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
-            settings: NonNullable<{
+                uri?: string;
+            };
+        };
+        export type SourceData = {
+            name: string;
+            externalId?: string;
+            settings: {
                 type?: "opc-ua";
-                uri?: NonNullable<string>;
-            }>;
-        }>;
+                uri?: string;
+            };
+        };
     }
 }"
 `;
@@ -1867,12 +1867,12 @@ export namespace Components {
         export type SensorId = Components.Schemas.UUID;
         export type SourceId = Components.Schemas.UUID;
         export type UserId = Components.Schemas.UUID;
-        export type ClientId = NonNullable<string>;
-        export type RedirectURI = NonNullable<string>;
-        export type Scope = NonNullable<string>;
-        export type State = NonNullable<string>;
-        export type XSdkVersion = NonNullable<string>;
-        export type XApplicationVersion = NonNullable<string>;
+        export type ClientId = string;
+        export type RedirectURI = string;
+        export type Scope = string;
+        export type State = string;
+        export type XSdkVersion = string;
+        export type XApplicationVersion = string;
     }
     export namespace Responses {
         export type getMySelfResponse302<S extends number> = {
@@ -1880,28 +1880,28 @@ export namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type postPasswordChangeRequestResponse200<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type putPredictionsDataResponse201<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getOAuth2AuthorizeResponse302<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getAnomalyResponse200<S extends number> = {
             readonly status: S;
@@ -2017,89 +2017,89 @@ export namespace Components {
         };
     }
     export namespace Schemas {
-        export type AnomalyData = NonNullable<{
+        export type AnomalyData = {
             assignedUser?: Components.Schemas.UUID;
             status: Enums.Status;
-            archived: NonNullable<boolean>;
+            archived: boolean;
             priority: Enums.Priority;
             severity: Enums.Severity;
-        }>;
-        export type AnomalyModel = NonNullable<{
+        };
+        export type AnomalyModel = {
             id?: Components.Schemas.UUID;
             organisationId?: Components.Schemas.UUID;
-            linesIds?: NonNullable<Components.Schemas.UUID[]>;
-            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
-            sensorsIds?: NonNullable<Components.Schemas.UUID[]>;
+            linesIds?: Components.Schemas.UUID[];
+            machinesIds?: Components.Schemas.UUID[];
+            sensorsIds?: Components.Schemas.UUID[];
             data: Components.Schemas.AnomalyData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
             archivedAt?: Components.Schemas.Date;
-        }>;
-        export type AnomalyModelHash = NonNullable<{
+        };
+        export type AnomalyModelHash = {
             [pattern: string]: Components.Schemas.AnomalyModel;
-        }>;
-        export type AnomalyItem = NonNullable<{
+        };
+        export type AnomalyItem = {
             item: Components.Schemas.UUID;
             anomalies: Components.Schemas.AnomalyModelHash;
-        }>;
-        export type AnomaliesItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type AnomaliesItems = {
+            items: Components.Schemas.UUID[];
             anomalies: Components.Schemas.AnomalyModelHash;
-        }>;
-        export type FactoryData = NonNullable<{
-            externalId?: NonNullable<string>;
-            name: NonNullable<string>;
-        }>;
-        export type FactoryModel = NonNullable<{
+        };
+        export type FactoryData = {
+            externalId?: string;
+            name: string;
+        };
+        export type FactoryModel = {
             id?: Components.Schemas.UUID;
             organisationId?: Components.Schemas.UUID;
             data: Components.Schemas.FactoryData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type FactoryModelHash = NonNullable<{
+        };
+        export type FactoryModelHash = {
             [pattern: string]: Components.Schemas.FactoryModel;
-        }>;
-        export type FactoryItem = NonNullable<{
+        };
+        export type FactoryItem = {
             item: Components.Schemas.UUID;
             factories: Components.Schemas.FactoryModelHash;
-        }>;
-        export type FactoriesItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type FactoriesItems = {
+            items: Components.Schemas.UUID[];
             factories: Components.Schemas.FactoryModelHash;
-        }>;
-        export type LineData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type LineData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
-            machinesIds?: NonNullable<Components.Schemas.UUID[]>;
-            machinesTree?: NonNullable<{}>;
+            machinesIds?: Components.Schemas.UUID[];
+            machinesTree?: {};
             machineId: unknown;
             settings: unknown;
-        }>;
-        export type LineModel = NonNullable<{
+        };
+        export type LineModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.LineData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type LineModelHash = NonNullable<{
+        };
+        export type LineModelHash = {
             [pattern: string]: Components.Schemas.LineModel;
-        }>;
-        export type LineItem = NonNullable<{
+        };
+        export type LineItem = {
             item: Components.Schemas.UUID;
             lines: Components.Schemas.LineModelHash;
-        }>;
-        export type LinesItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type LinesItems = {
+            items: Components.Schemas.UUID[];
             lines: Components.Schemas.LineModelHash;
-        }>;
-        export type MachineData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type MachineData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
-        }>;
-        export type MachineModel = NonNullable<{
+        };
+        export type MachineModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.MachineData;
             powerState: Enums.PowerState;
@@ -2107,187 +2107,187 @@ export namespace Components {
             healthState: Enums.HealthState;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type MachineModelHash = NonNullable<{
+        };
+        export type MachineModelHash = {
             [pattern: string]: Components.Schemas.MachineModel;
-        }>;
-        export type MachineItem = NonNullable<{
+        };
+        export type MachineItem = {
             item: Components.Schemas.UUID;
             machines: Components.Schemas.MachineModelHash;
-        }>;
-        export type MachinesItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type MachinesItems = {
+            items: Components.Schemas.UUID[];
             machines: Components.Schemas.MachineModelHash;
-        }>;
-        export type OrganisationData = NonNullable<{
-            name: NonNullable<string>;
+        };
+        export type OrganisationData = {
+            name: string;
             locale: Components.Schemas.Locale;
             timeZone: Components.Schemas.TimeZone;
-        }>;
-        export type OrganisationModel = NonNullable<{
+        };
+        export type OrganisationModel = {
             id?: Components.Schemas.UUID;
-            factoriesIds?: NonNullable<Components.Schemas.UUID[]>;
+            factoriesIds?: Components.Schemas.UUID[];
             data: Components.Schemas.OrganisationData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type OrganisationModelHash = NonNullable<{
+        };
+        export type OrganisationModelHash = {
             [pattern: string]: Components.Schemas.OrganisationModel;
-        }>;
-        export type OrganisationItem = NonNullable<{
+        };
+        export type OrganisationItem = {
             item: Components.Schemas.UUID;
             organisations: Components.Schemas.OrganisationModelHash;
-        }>;
-        export type OrganisationsItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type OrganisationsItems = {
+            items: Components.Schemas.UUID[];
             organisations: Components.Schemas.OrganisationModelHash;
-        }>;
-        export type SensorData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
+        };
+        export type SensorData = {
+            name: string;
+            externalId?: string;
             factoryId: Components.Schemas.UUID;
             machineId: Components.Schemas.UUID;
-            settings: NonNullable<{
+            settings: {
                 type?: "opc-ua";
-                uri?: NonNullable<string>;
-            }>;
-        }>;
-        export type SensorModel = NonNullable<{
+                uri?: string;
+            };
+        };
+        export type SensorModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.SensorData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type SensorModelHash = NonNullable<{
+        };
+        export type SensorModelHash = {
             [pattern: string]: Components.Schemas.SensorModel;
-        }>;
-        export type SensorItem = NonNullable<{
+        };
+        export type SensorItem = {
             item: Components.Schemas.UUID;
             sensors: Components.Schemas.SensorModelHash;
-        }>;
-        export type SensorsItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type SensorsItems = {
+            items: Components.Schemas.UUID[];
             sensors: Components.Schemas.SensorModelHash;
-        }>;
-        export type SourceData = NonNullable<{
-            name: NonNullable<string>;
-            externalId?: NonNullable<string>;
-            settings: NonNullable<{
+        };
+        export type SourceData = {
+            name: string;
+            externalId?: string;
+            settings: {
                 type?: "opc-ua";
-                uri?: NonNullable<string>;
-            }>;
-        }>;
-        export type SourceModel = NonNullable<{
+                uri?: string;
+            };
+        };
+        export type SourceModel = {
             id?: Components.Schemas.UUID;
             data: Components.Schemas.SourceData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type SourceModelHash = NonNullable<{
+        };
+        export type SourceModelHash = {
             [pattern: string]: Components.Schemas.SourceModel;
-        }>;
-        export type SourceItem = NonNullable<{
+        };
+        export type SourceItem = {
             item: Components.Schemas.UUID;
             sources: Components.Schemas.SourceModelHash;
-        }>;
-        export type SourcesItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type SourcesItems = {
+            items: Components.Schemas.UUID[];
             sources: Components.Schemas.SourceModelHash;
-        }>;
-        export type Locale = NonNullable<string>;
-        export type TimeZone = NonNullable<string>;
-        export type UUID = NonNullable<string>;
-        export type Date = NonNullable<string>;
+        };
+        export type Locale = string;
+        export type TimeZone = string;
+        export type UUID = string;
+        export type Date = string;
         export type Role = Enums.Role;
-        export type UserData = NonNullable<{
-            email: NonNullable<string>;
-            name: NonNullable<string>;
-            givenName?: NonNullable<string>;
-            familyName?: NonNullable<string>;
-            phone?: NonNullable<string>;
-            birthDay?: NonNullable<string>;
+        export type UserData = {
+            email: string;
+            name: string;
+            givenName?: string;
+            familyName?: string;
+            phone?: string;
+            birthDay?: string;
             locale: Components.Schemas.Locale;
             timeZone: Components.Schemas.TimeZone;
-        }>;
-        export type UserModel = NonNullable<{
+        };
+        export type UserModel = {
             id?: Components.Schemas.UUID;
-            roles?: NonNullable<Components.Schemas.Role[]>;
-            password?: NonNullable<string>;
-            organisationsIds?: NonNullable<Components.Schemas.UUID[]>;
+            roles?: Components.Schemas.Role[];
+            password?: string;
+            organisationsIds?: Components.Schemas.UUID[];
             data: Components.Schemas.UserData;
             creation?: Components.Schemas.Date;
             lastModification?: Components.Schemas.Date;
-        }>;
-        export type UserModelHash = NonNullable<{
+        };
+        export type UserModelHash = {
             [pattern: string]: Components.Schemas.UserModel;
-        }>;
-        export type UserItem = NonNullable<{
+        };
+        export type UserItem = {
             item: Components.Schemas.UUID;
             users: Components.Schemas.UserModelHash;
-        }>;
-        export type UsersItems = NonNullable<{
-            items: NonNullable<Components.Schemas.UUID[]>;
+        };
+        export type UsersItems = {
+            items: Components.Schemas.UUID[];
             users: Components.Schemas.UserModelHash;
-        }>;
-        export type AuthorizationCodeRequestBody = NonNullable<{
+        };
+        export type AuthorizationCodeRequestBody = {
             grant_type: "authorization_code";
-            code?: NonNullable<string>;
-            client_id?: NonNullable<string>;
-            redirect_uri?: NonNullable<string>;
-        }>;
-        export type PasswordRequestBody = NonNullable<{
+            code?: string;
+            client_id?: string;
+            redirect_uri?: string;
+        };
+        export type PasswordRequestBody = {
             grant_type: "password";
-            username: NonNullable<string>;
-            password: NonNullable<string>;
-            scope?: NonNullable<string>;
-        }>;
-        export type ClientCredentialsRequestBody = NonNullable<{
+            username: string;
+            password: string;
+            scope?: string;
+        };
+        export type ClientCredentialsRequestBody = {
             grant_type: "client_credentials";
-            scope?: NonNullable<string>;
-        }>;
-        export type RefreshTokenRequestBody = NonNullable<{
+            scope?: string;
+        };
+        export type RefreshTokenRequestBody = {
             grant_type: "refresh_token";
-            refresh_token: NonNullable<string>;
-            scope?: NonNullable<string>;
-        }>;
-        export type VerifyTokenRequestBody = NonNullable<{
+            refresh_token: string;
+            scope?: string;
+        };
+        export type VerifyTokenRequestBody = {
             grant_type: "verify_token";
-            verify_token: NonNullable<string>;
-        }>;
-        export type PasswordChangeBody = NonNullable<{
+            verify_token: string;
+        };
+        export type PasswordChangeBody = {
             grant_type: "password_change";
-            token: NonNullable<string>;
-            new_password: NonNullable<string>;
-        }>;
+            token: string;
+            new_password: string;
+        };
         export type TokenRequestBody = Components.Schemas.PasswordRequestBody | Components.Schemas.AuthorizationCodeRequestBody | Components.Schemas.ClientCredentialsRequestBody | Components.Schemas.RefreshTokenRequestBody | Components.Schemas.VerifyTokenRequestBody | Components.Schemas.PasswordChangeBody;
-        export type UnusedSchema = NonNullable<{
-            foo: NonNullable<string>;
-            bar?: NonNullable<string>;
-        }>;
-        export type RequestBodiespostPasswordChangeRequestRequestBodyBody0 = NonNullable<{
-            email: NonNullable<string>;
-        }>;
-        export type RequestBodiesputPredictionsDataRequestBodyBody0 = NonNullable<{
+        export type UnusedSchema = {
+            foo: string;
+            bar?: string;
+        };
+        export type RequestBodiespostPasswordChangeRequestRequestBodyBody0 = {
+            email: string;
+        };
+        export type RequestBodiesputPredictionsDataRequestBodyBody0 = {
             [pattern: string]: unknown;
-        }>;
-        export type RequestBodiesputPredictionsDataRequestBodyBody1 = NonNullable<string>;
-        export type ResponsesgetOpenAPIResponse200Body0 = NonNullable<{}>;
-        export type ResponsesgetPredictionDatasetResponse200Body0 = NonNullable<string>;
-        export type ResponsesgetTrainingDatasetResponse200Body0 = NonNullable<string>;
-        export type ResponsespostOAuth2TokenResponse200Body0 = NonNullable<{
-            access_token: NonNullable<string>;
+        };
+        export type RequestBodiesputPredictionsDataRequestBodyBody1 = string;
+        export type ResponsesgetOpenAPIResponse200Body0 = {};
+        export type ResponsesgetPredictionDatasetResponse200Body0 = string;
+        export type ResponsesgetTrainingDatasetResponse200Body0 = string;
+        export type ResponsespostOAuth2TokenResponse200Body0 = {
+            access_token: string;
             token_type: Enums.TokenType;
-            expires_in?: NonNullable<number>;
-            refresh_token?: NonNullable<string>;
-        }>;
-        export type ResponsespostOAuth2TokenResponse400Body0 = NonNullable<{
+            expires_in?: number;
+            refresh_token?: string;
+        };
+        export type ResponsespostOAuth2TokenResponse400Body0 = {
             error: Enums.Error;
-            error_description?: NonNullable<string>;
-            error_uri?: NonNullable<string>;
-        }>;
-        export type ResponsesgetPingResponse200Body0 = NonNullable<{
+            error_description?: string;
+            error_uri?: string;
+        };
+        export type ResponsesgetPingResponse200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }
 export namespace Enums {
@@ -2611,20 +2611,20 @@ declare namespace Components {
         export type UpdateUserRequestBody = Components.Schemas.User;
     }
     export namespace Parameters {
-        export type GetPetById0 = NonNullable<number>;
-        export type UpdatePetWithForm0 = NonNullable<number>;
-        export type DeletePet0 = NonNullable<string>;
-        export type DeletePet1 = NonNullable<number>;
-        export type UploadFile0 = NonNullable<number>;
-        export type GetOrderById0 = NonNullable<number>;
-        export type DeleteOrder0 = NonNullable<string>;
-        export type LoginUser0 = NonNullable<string>;
-        export type LoginUser1 = NonNullable<string>;
-        export type GetUserByName0 = NonNullable<string>;
-        export type UpdateUser0 = NonNullable<string>;
-        export type DeleteUser0 = NonNullable<string>;
-        export type FindPetsByStatus0 = NonNullable<("available" | "pending" | "sold")[]>;
-        export type FindPetsByTags0 = NonNullable<NonNullable<string>[]>;
+        export type GetPetById0 = number;
+        export type UpdatePetWithForm0 = number;
+        export type DeletePet0 = string;
+        export type DeletePet1 = number;
+        export type UploadFile0 = number;
+        export type GetOrderById0 = number;
+        export type DeleteOrder0 = string;
+        export type LoginUser0 = string;
+        export type LoginUser1 = string;
+        export type GetUserByName0 = string;
+        export type UpdateUser0 = string;
+        export type DeleteUser0 = string;
+        export type FindPetsByStatus0 = ("available" | "pending" | "sold")[];
+        export type FindPetsByTags0 = string[];
     }
     export namespace Responses {
         export type updatePetResponse400<S extends number> = {
@@ -2632,182 +2632,182 @@ declare namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updatePetResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updatePetResponse405<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type addPetResponse405<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type findPetsByStatusResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type findPetsByTagsResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getPetByIdResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getPetByIdResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updatePetWithFormResponse405<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deletePetResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type placeOrderResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getOrderByIdResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getOrderByIdResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteOrderResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteOrderResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type createUserResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type createUsersWithArrayInputResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type createUsersWithListInputResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type loginUserResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type logoutUserResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getUserByNameResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getUserByNameResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updateUserResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updateUserResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteUserResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteUserResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type findPetsByStatusResponse200<S extends number> = {
             readonly status: S;
@@ -2876,67 +2876,67 @@ declare namespace Components {
         };
     }
     export namespace Headers {
-        export type LoginUserResponse200HeadersXRateLimit = NonNullable<number>;
-        export type LoginUserResponse200HeadersXExpiresAfter = NonNullable<string>;
+        export type LoginUserResponse200HeadersXRateLimit = number;
+        export type LoginUserResponse200HeadersXExpiresAfter = string;
     }
     export namespace Schemas {
-        export type RequestBodiesUserArrayBody0 = NonNullable<Components.Schemas.User[]>;
-        export type Pet = NonNullable<{
-            id?: NonNullable<number>;
+        export type RequestBodiesUserArrayBody0 = Components.Schemas.User[];
+        export type Pet = {
+            id?: number;
             category?: Components.Schemas.Category;
-            name: NonNullable<string>;
-            photoUrls: NonNullable<NonNullable<string>[]>;
-            tags?: NonNullable<Components.Schemas.Tag[]>;
+            name: string;
+            photoUrls: string[];
+            tags?: Components.Schemas.Tag[];
             status?: Enums.PetStatusInTheStore;
-        }>;
-        export type Body = NonNullable<{
-            name?: NonNullable<string>;
-            status?: NonNullable<string>;
-        }>;
-        export type Body1 = NonNullable<{
-            additionalMetadata?: NonNullable<string>;
-            file?: NonNullable<string>;
-        }>;
-        export type Order = NonNullable<{
-            id?: NonNullable<number>;
-            petId?: NonNullable<number>;
-            quantity?: NonNullable<number>;
-            shipDate?: NonNullable<string>;
+        };
+        export type Body = {
+            name?: string;
+            status?: string;
+        };
+        export type Body1 = {
+            additionalMetadata?: string;
+            file?: string;
+        };
+        export type Order = {
+            id?: number;
+            petId?: number;
+            quantity?: number;
+            shipDate?: string;
             status?: Enums.OrderStatus;
-            complete?: NonNullable<boolean>;
-        }>;
-        export type User = NonNullable<{
-            id?: NonNullable<number>;
-            username?: NonNullable<string>;
-            firstName?: NonNullable<string>;
-            lastName?: NonNullable<string>;
-            email?: NonNullable<string>;
-            password?: NonNullable<string>;
-            phone?: NonNullable<string>;
-            userStatus?: NonNullable<number>;
-        }>;
-        export type ResponsesfindPetsByStatusResponse200Body0 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByStatusResponse200Body1 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByTagsResponse200Body0 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByTagsResponse200Body1 = NonNullable<Components.Schemas.Pet[]>;
-        export type ApiResponse = NonNullable<{
-            code?: NonNullable<number>;
-            type?: NonNullable<string>;
-            message?: NonNullable<string>;
-        }>;
-        export type ResponsesgetInventoryResponse200Body0 = NonNullable<{
+            complete?: boolean;
+        };
+        export type User = {
+            id?: number;
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+            password?: string;
+            phone?: string;
+            userStatus?: number;
+        };
+        export type ResponsesfindPetsByStatusResponse200Body0 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByStatusResponse200Body1 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByTagsResponse200Body0 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByTagsResponse200Body1 = Components.Schemas.Pet[];
+        export type ApiResponse = {
+            code?: number;
+            type?: string;
+            message?: string;
+        };
+        export type ResponsesgetInventoryResponse200Body0 = {
             [pattern: string]: unknown;
-        }>;
-        export type ResponsesloginUserResponse200Body0 = NonNullable<string>;
-        export type ResponsesloginUserResponse200Body1 = NonNullable<string>;
-        export type Category = NonNullable<{
-            id?: NonNullable<number>;
-            name?: NonNullable<string>;
-        }>;
-        export type Tag = NonNullable<{
-            id?: NonNullable<number>;
-            name?: NonNullable<string>;
-        }>;
+        };
+        export type ResponsesloginUserResponse200Body0 = string;
+        export type ResponsesloginUserResponse200Body1 = string;
+        export type Category = {
+            id?: number;
+            name?: string;
+        };
+        export type Tag = {
+            id?: number;
+            name?: string;
+        };
     }
 }
 declare namespace Enums {
@@ -3162,20 +3162,20 @@ declare namespace Components {
         export type UpdateUserRequestBody = Components.Schemas.User;
     }
     export namespace Parameters {
-        export type GetPetById0 = NonNullable<number>;
-        export type UpdatePetWithForm0 = NonNullable<number>;
-        export type DeletePet0 = NonNullable<string>;
-        export type DeletePet1 = NonNullable<number>;
-        export type UploadFile0 = NonNullable<number>;
-        export type GetOrderById0 = NonNullable<number>;
-        export type DeleteOrder0 = NonNullable<string>;
-        export type LoginUser0 = NonNullable<string>;
-        export type LoginUser1 = NonNullable<string>;
-        export type GetUserByName0 = NonNullable<string>;
-        export type UpdateUser0 = NonNullable<string>;
-        export type DeleteUser0 = NonNullable<string>;
-        export type FindPetsByStatus0 = NonNullable<("available" | "pending" | "sold")[]>;
-        export type FindPetsByTags0 = NonNullable<NonNullable<string>[]>;
+        export type GetPetById0 = number;
+        export type UpdatePetWithForm0 = number;
+        export type DeletePet0 = string;
+        export type DeletePet1 = number;
+        export type UploadFile0 = number;
+        export type GetOrderById0 = number;
+        export type DeleteOrder0 = string;
+        export type LoginUser0 = string;
+        export type LoginUser1 = string;
+        export type GetUserByName0 = string;
+        export type UpdateUser0 = string;
+        export type DeleteUser0 = string;
+        export type FindPetsByStatus0 = ("available" | "pending" | "sold")[];
+        export type FindPetsByTags0 = string[];
     }
     export namespace Responses {
         export type findPetsByStatusResponse200<S extends number> = {
@@ -3245,67 +3245,67 @@ declare namespace Components {
         };
     }
     export namespace Headers {
-        export type LoginUserResponse200HeadersXRateLimit = NonNullable<number>;
-        export type LoginUserResponse200HeadersXExpiresAfter = NonNullable<string>;
+        export type LoginUserResponse200HeadersXRateLimit = number;
+        export type LoginUserResponse200HeadersXExpiresAfter = string;
     }
     export namespace Schemas {
-        export type RequestBodiesUserArrayBody0 = NonNullable<Components.Schemas.User[]>;
-        export type Pet = NonNullable<{
-            id?: NonNullable<number>;
+        export type RequestBodiesUserArrayBody0 = Components.Schemas.User[];
+        export type Pet = {
+            id?: number;
             category?: Components.Schemas.Category;
-            name: NonNullable<string>;
-            photoUrls: NonNullable<NonNullable<string>[]>;
-            tags?: NonNullable<Components.Schemas.Tag[]>;
+            name: string;
+            photoUrls: string[];
+            tags?: Components.Schemas.Tag[];
             status?: "available" | "pending" | "sold";
-        }>;
-        export type Body = NonNullable<{
-            name?: NonNullable<string>;
-            status?: NonNullable<string>;
-        }>;
-        export type Body1 = NonNullable<{
-            additionalMetadata?: NonNullable<string>;
-            file?: NonNullable<string>;
-        }>;
-        export type Order = NonNullable<{
-            id?: NonNullable<number>;
-            petId?: NonNullable<number>;
-            quantity?: NonNullable<number>;
-            shipDate?: NonNullable<string>;
+        };
+        export type Body = {
+            name?: string;
+            status?: string;
+        };
+        export type Body1 = {
+            additionalMetadata?: string;
+            file?: string;
+        };
+        export type Order = {
+            id?: number;
+            petId?: number;
+            quantity?: number;
+            shipDate?: string;
             status?: "placed" | "approved" | "delivered";
-            complete?: NonNullable<boolean>;
-        }>;
-        export type User = NonNullable<{
-            id?: NonNullable<number>;
-            username?: NonNullable<string>;
-            firstName?: NonNullable<string>;
-            lastName?: NonNullable<string>;
-            email?: NonNullable<string>;
-            password?: NonNullable<string>;
-            phone?: NonNullable<string>;
-            userStatus?: NonNullable<number>;
-        }>;
-        export type ResponsesfindPetsByStatusResponse200Body0 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByStatusResponse200Body1 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByTagsResponse200Body0 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByTagsResponse200Body1 = NonNullable<Components.Schemas.Pet[]>;
-        export type ApiResponse = NonNullable<{
-            code?: NonNullable<number>;
-            type?: NonNullable<string>;
-            message?: NonNullable<string>;
-        }>;
-        export type ResponsesgetInventoryResponse200Body0 = NonNullable<{
+            complete?: boolean;
+        };
+        export type User = {
+            id?: number;
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+            password?: string;
+            phone?: string;
+            userStatus?: number;
+        };
+        export type ResponsesfindPetsByStatusResponse200Body0 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByStatusResponse200Body1 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByTagsResponse200Body0 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByTagsResponse200Body1 = Components.Schemas.Pet[];
+        export type ApiResponse = {
+            code?: number;
+            type?: string;
+            message?: string;
+        };
+        export type ResponsesgetInventoryResponse200Body0 = {
             [pattern: string]: unknown;
-        }>;
-        export type ResponsesloginUserResponse200Body0 = NonNullable<string>;
-        export type ResponsesloginUserResponse200Body1 = NonNullable<string>;
-        export type Category = NonNullable<{
-            id?: NonNullable<number>;
-            name?: NonNullable<string>;
-        }>;
-        export type Tag = NonNullable<{
-            id?: NonNullable<number>;
-            name?: NonNullable<string>;
-        }>;
+        };
+        export type ResponsesloginUserResponse200Body0 = string;
+        export type ResponsesloginUserResponse200Body1 = string;
+        export type Category = {
+            id?: number;
+            name?: string;
+        };
+        export type Tag = {
+            id?: number;
+            name?: string;
+        };
     }
 }"
 `;
@@ -3567,20 +3567,20 @@ export namespace Components {
         export type UpdateUserRequestBody = Components.Schemas.User;
     }
     export namespace Parameters {
-        export type GetPetById0 = NonNullable<number>;
-        export type UpdatePetWithForm0 = NonNullable<number>;
-        export type DeletePet0 = NonNullable<string>;
-        export type DeletePet1 = NonNullable<number>;
-        export type UploadFile0 = NonNullable<number>;
-        export type GetOrderById0 = NonNullable<number>;
-        export type DeleteOrder0 = NonNullable<string>;
-        export type LoginUser0 = NonNullable<string>;
-        export type LoginUser1 = NonNullable<string>;
-        export type GetUserByName0 = NonNullable<string>;
-        export type UpdateUser0 = NonNullable<string>;
-        export type DeleteUser0 = NonNullable<string>;
-        export type FindPetsByStatus0 = NonNullable<("available" | "pending" | "sold")[]>;
-        export type FindPetsByTags0 = NonNullable<NonNullable<string>[]>;
+        export type GetPetById0 = number;
+        export type UpdatePetWithForm0 = number;
+        export type DeletePet0 = string;
+        export type DeletePet1 = number;
+        export type UploadFile0 = number;
+        export type GetOrderById0 = number;
+        export type DeleteOrder0 = string;
+        export type LoginUser0 = string;
+        export type LoginUser1 = string;
+        export type GetUserByName0 = string;
+        export type UpdateUser0 = string;
+        export type DeleteUser0 = string;
+        export type FindPetsByStatus0 = ("available" | "pending" | "sold")[];
+        export type FindPetsByTags0 = string[];
     }
     export namespace Responses {
         export type updatePetResponse400<S extends number> = {
@@ -3588,182 +3588,182 @@ export namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updatePetResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updatePetResponse405<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type addPetResponse405<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type findPetsByStatusResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type findPetsByTagsResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getPetByIdResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getPetByIdResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updatePetWithFormResponse405<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deletePetResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type placeOrderResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getOrderByIdResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getOrderByIdResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteOrderResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteOrderResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type createUserResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type createUsersWithArrayInputResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type createUsersWithListInputResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type loginUserResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type logoutUserResponsedefault<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getUserByNameResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getUserByNameResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updateUserResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type updateUserResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteUserResponse400<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type deleteUserResponse404<S extends number> = {
             readonly status: S;
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type findPetsByStatusResponse200<S extends number> = {
             readonly status: S;
@@ -3832,67 +3832,67 @@ export namespace Components {
         };
     }
     export namespace Headers {
-        export type LoginUserResponse200HeadersXRateLimit = NonNullable<number>;
-        export type LoginUserResponse200HeadersXExpiresAfter = NonNullable<string>;
+        export type LoginUserResponse200HeadersXRateLimit = number;
+        export type LoginUserResponse200HeadersXExpiresAfter = string;
     }
     export namespace Schemas {
-        export type Order = NonNullable<{
-            id?: NonNullable<number>;
-            petId?: NonNullable<number>;
-            quantity?: NonNullable<number>;
-            shipDate?: NonNullable<string>;
+        export type Order = {
+            id?: number;
+            petId?: number;
+            quantity?: number;
+            shipDate?: string;
             status?: Enums.OrderStatus;
-            complete?: NonNullable<boolean>;
-        }>;
-        export type Category = NonNullable<{
-            id?: NonNullable<number>;
-            name?: NonNullable<string>;
-        }>;
-        export type User = NonNullable<{
-            id?: NonNullable<number>;
-            username?: NonNullable<string>;
-            firstName?: NonNullable<string>;
-            lastName?: NonNullable<string>;
-            email?: NonNullable<string>;
-            password?: NonNullable<string>;
-            phone?: NonNullable<string>;
-            userStatus?: NonNullable<number>;
-        }>;
-        export type Tag = NonNullable<{
-            id?: NonNullable<number>;
-            name?: NonNullable<string>;
-        }>;
-        export type Pet = NonNullable<{
-            id?: NonNullable<number>;
+            complete?: boolean;
+        };
+        export type Category = {
+            id?: number;
+            name?: string;
+        };
+        export type User = {
+            id?: number;
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+            password?: string;
+            phone?: string;
+            userStatus?: number;
+        };
+        export type Tag = {
+            id?: number;
+            name?: string;
+        };
+        export type Pet = {
+            id?: number;
             category?: Components.Schemas.Category;
-            name: NonNullable<string>;
-            photoUrls: NonNullable<NonNullable<string>[]>;
-            tags?: NonNullable<Components.Schemas.Tag[]>;
+            name: string;
+            photoUrls: string[];
+            tags?: Components.Schemas.Tag[];
             status?: Enums.PetStatusInTheStore;
-        }>;
-        export type ApiResponse = NonNullable<{
-            code?: NonNullable<number>;
-            type?: NonNullable<string>;
-            message?: NonNullable<string>;
-        }>;
-        export type Body = NonNullable<{
-            name?: NonNullable<string>;
-            status?: NonNullable<string>;
-        }>;
-        export type Body1 = NonNullable<{
-            additionalMetadata?: NonNullable<string>;
-            file?: NonNullable<string>;
-        }>;
-        export type RequestBodiesUserArrayBody0 = NonNullable<Components.Schemas.User[]>;
-        export type ResponsesfindPetsByStatusResponse200Body0 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByStatusResponse200Body1 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByTagsResponse200Body0 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesfindPetsByTagsResponse200Body1 = NonNullable<Components.Schemas.Pet[]>;
-        export type ResponsesgetInventoryResponse200Body0 = NonNullable<{
+        };
+        export type ApiResponse = {
+            code?: number;
+            type?: string;
+            message?: string;
+        };
+        export type Body = {
+            name?: string;
+            status?: string;
+        };
+        export type Body1 = {
+            additionalMetadata?: string;
+            file?: string;
+        };
+        export type RequestBodiesUserArrayBody0 = Components.Schemas.User[];
+        export type ResponsesfindPetsByStatusResponse200Body0 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByStatusResponse200Body1 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByTagsResponse200Body0 = Components.Schemas.Pet[];
+        export type ResponsesfindPetsByTagsResponse200Body1 = Components.Schemas.Pet[];
+        export type ResponsesgetInventoryResponse200Body0 = {
             [pattern: string]: unknown;
-        }>;
-        export type ResponsesloginUserResponse200Body0 = NonNullable<string>;
-        export type ResponsesloginUserResponse200Body1 = NonNullable<string>;
+        };
+        export type ResponsesloginUserResponse200Body0 = string;
+        export type ResponsesloginUserResponse200Body1 = string;
     }
 }
 export namespace Enums {
@@ -3984,9 +3984,9 @@ declare namespace Components {
     }
     export namespace Parameters {
         export type PathParam2 = Components.Schemas.Strings;
-        export type Duration = NonNullable<number>;
-        export type PathParam1 = NonNullable<number>;
-        export type GetParameters2 = NonNullable<boolean>;
+        export type Duration = number;
+        export type PathParam1 = number;
+        export type GetParameters2 = boolean;
     }
     export namespace Responses {
         export type getDelayResponse204<S extends number> = {
@@ -3994,7 +3994,7 @@ declare namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getDiagnosticResponse200<S extends number> = {
             readonly status: S;
@@ -4044,27 +4044,27 @@ declare namespace Components {
         export type GetParametersResponse204HeadersXDelayPrecision = Enums.GetParametersResponse204HeadersXDelayPrecision;
     }
     export namespace Schemas {
-        export type Echo = NonNullable<{
-            echo: NonNullable<string>;
-        }>;
-        export type Strings = NonNullable<NonNullable<string>[]>;
-        export type ResponsesgetDiagnosticResponse200Body0 = NonNullable<{
-            transactions: NonNullable<{
+        export type Echo = {
+            echo: string;
+        };
+        export type Strings = string[];
+        export type ResponsesgetDiagnosticResponse200Body0 = {
+            transactions: {
                 [pattern: string]: unknown;
-            }>;
-        }>;
-        export type ResponsesgetOpenAPIResponse200Body0 = NonNullable<{}>;
-        export type ResponsesgetParametersResponse204Body0 = NonNullable<{
-            aHeader?: NonNullable<boolean>;
-            pathParam1?: NonNullable<number>;
-            pathParam2?: NonNullable<NonNullable<string>[]>;
-        }>;
-        export type TimeSchema = NonNullable<{
-            currentDate?: NonNullable<string>;
-        }>;
-        export type ResponsesgetPingResponse200Body0 = NonNullable<{
+            };
+        };
+        export type ResponsesgetOpenAPIResponse200Body0 = {};
+        export type ResponsesgetParametersResponse204Body0 = {
+            aHeader?: boolean;
+            pathParam1?: number;
+            pathParam2?: string[];
+        };
+        export type TimeSchema = {
+            currentDate?: string;
+        };
+        export type ResponsesgetPingResponse200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }
 declare namespace Enums {
@@ -4145,9 +4145,9 @@ declare namespace Components {
     }
     export namespace Parameters {
         export type PathParam2 = Components.Schemas.Strings;
-        export type Duration = NonNullable<number>;
-        export type PathParam1 = NonNullable<number>;
-        export type GetParameters2 = NonNullable<boolean>;
+        export type Duration = number;
+        export type PathParam1 = number;
+        export type GetParameters2 = boolean;
     }
     export namespace Responses {
         export type getDiagnosticResponse200<S extends number> = {
@@ -4187,22 +4187,22 @@ declare namespace Components {
         };
     }
     export namespace Schemas {
-        export type Echo = NonNullable<{
-            echo: NonNullable<string>;
-        }>;
-        export type Strings = NonNullable<NonNullable<string>[]>;
-        export type ResponsesgetDiagnosticResponse200Body0 = NonNullable<{
-            transactions: NonNullable<{
+        export type Echo = {
+            echo: string;
+        };
+        export type Strings = string[];
+        export type ResponsesgetDiagnosticResponse200Body0 = {
+            transactions: {
                 [pattern: string]: unknown;
-            }>;
-        }>;
-        export type ResponsesgetOpenAPIResponse200Body0 = NonNullable<{}>;
-        export type TimeSchema = NonNullable<{
-            currentDate?: NonNullable<string>;
-        }>;
-        export type ResponsesgetPingResponse200Body0 = NonNullable<{
+            };
+        };
+        export type ResponsesgetOpenAPIResponse200Body0 = {};
+        export type TimeSchema = {
+            currentDate?: string;
+        };
+        export type ResponsesgetPingResponse200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }"
 `;
@@ -4282,9 +4282,9 @@ export namespace Components {
     }
     export namespace Parameters {
         export type PathParam2 = Components.Schemas.Strings;
-        export type Duration = NonNullable<number>;
-        export type PathParam1 = NonNullable<number>;
-        export type GetParameters2 = NonNullable<boolean>;
+        export type Duration = number;
+        export type PathParam1 = number;
+        export type GetParameters2 = boolean;
     }
     export namespace Responses {
         export type getDelayResponse204<S extends number> = {
@@ -4292,7 +4292,7 @@ export namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type getDiagnosticResponse200<S extends number> = {
             readonly status: S;
@@ -4342,27 +4342,27 @@ export namespace Components {
         export type GetParametersResponse204HeadersXDelayPrecision = Enums.GetParametersResponse204HeadersXDelayPrecision;
     }
     export namespace Schemas {
-        export type TimeSchema = NonNullable<{
-            currentDate?: NonNullable<string>;
-        }>;
-        export type Echo = NonNullable<{
-            echo: NonNullable<string>;
-        }>;
-        export type Strings = NonNullable<NonNullable<string>[]>;
-        export type ResponsesgetDiagnosticResponse200Body0 = NonNullable<{
-            transactions: NonNullable<{
+        export type TimeSchema = {
+            currentDate?: string;
+        };
+        export type Echo = {
+            echo: string;
+        };
+        export type Strings = string[];
+        export type ResponsesgetDiagnosticResponse200Body0 = {
+            transactions: {
                 [pattern: string]: unknown;
-            }>;
-        }>;
-        export type ResponsesgetOpenAPIResponse200Body0 = NonNullable<{}>;
-        export type ResponsesgetParametersResponse204Body0 = NonNullable<{
-            aHeader?: NonNullable<boolean>;
-            pathParam1?: NonNullable<number>;
-            pathParam2?: NonNullable<NonNullable<string>[]>;
-        }>;
-        export type ResponsesgetPingResponse200Body0 = NonNullable<{
+            };
+        };
+        export type ResponsesgetOpenAPIResponse200Body0 = {};
+        export type ResponsesgetParametersResponse204Body0 = {
+            aHeader?: boolean;
+            pathParam1?: number;
+            pathParam2?: string[];
+        };
+        export type ResponsesgetPingResponse200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }
 export namespace Enums {
@@ -4449,9 +4449,9 @@ declare namespace Components {
     }
     export namespace Parameters {
         export type PathParam2 = Components.Schemas.Strings;
-        export type Duration = NonNullable<number>;
-        export type PathParam1 = NonNullable<number>;
-        export type GetParameters2 = NonNullable<boolean>;
+        export type Duration = number;
+        export type PathParam1 = number;
+        export type GetParameters2 = boolean;
     }
     export namespace Responses {
         export type Delay204<S extends number> = {
@@ -4459,7 +4459,7 @@ declare namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type Diagnostic200<S extends number> = {
             readonly status: S;
@@ -4509,27 +4509,27 @@ declare namespace Components {
         export type XDelayPrecision = Enums.XDelayPrecision;
     }
     export namespace Schemas {
-        export type Echo = NonNullable<{
-            echo: NonNullable<string>;
-        }>;
-        export type Strings = NonNullable<NonNullable<string>[]>;
-        export type ResponsesDiagnostic200Body0 = NonNullable<{
-            transactions: NonNullable<{
+        export type Echo = {
+            echo: string;
+        };
+        export type Strings = string[];
+        export type ResponsesDiagnostic200Body0 = {
+            transactions: {
                 [pattern: string]: unknown;
-            }>;
-        }>;
-        export type ResponsesOpenAPI200Body0 = NonNullable<{}>;
-        export type ResponsesParams204Body0 = NonNullable<{
-            aHeader?: NonNullable<boolean>;
-            pathParam1?: NonNullable<number>;
-            pathParam2?: NonNullable<NonNullable<string>[]>;
-        }>;
-        export type TimeSchema = NonNullable<{
-            currentDate?: NonNullable<string>;
-        }>;
-        export type ResponsesPing200Body0 = NonNullable<{
+            };
+        };
+        export type ResponsesOpenAPI200Body0 = {};
+        export type ResponsesParams204Body0 = {
+            aHeader?: boolean;
+            pathParam1?: number;
+            pathParam2?: string[];
+        };
+        export type TimeSchema = {
+            currentDate?: string;
+        };
+        export type ResponsesPing200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }
 declare namespace Enums {
@@ -4610,9 +4610,9 @@ declare namespace Components {
     }
     export namespace Parameters {
         export type PathParam2 = Components.Schemas.Strings;
-        export type Duration = NonNullable<number>;
-        export type PathParam1 = NonNullable<number>;
-        export type GetParameters2 = NonNullable<boolean>;
+        export type Duration = number;
+        export type PathParam1 = number;
+        export type GetParameters2 = boolean;
     }
     export namespace Responses {
         export type Delay204<S extends number> = {
@@ -4620,7 +4620,7 @@ declare namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type Diagnostic200<S extends number> = {
             readonly status: S;
@@ -4670,27 +4670,27 @@ declare namespace Components {
         export type XDelayPrecision = "ns" | "ms" | "s";
     }
     export namespace Schemas {
-        export type Echo = NonNullable<{
-            echo: NonNullable<string>;
-        }>;
-        export type Strings = NonNullable<NonNullable<string>[]>;
-        export type ResponsesDiagnostic200Body0 = NonNullable<{
-            transactions: NonNullable<{
+        export type Echo = {
+            echo: string;
+        };
+        export type Strings = string[];
+        export type ResponsesDiagnostic200Body0 = {
+            transactions: {
                 [pattern: string]: unknown;
-            }>;
-        }>;
-        export type ResponsesOpenAPI200Body0 = NonNullable<{}>;
-        export type ResponsesParams204Body0 = NonNullable<{
-            aHeader?: NonNullable<boolean>;
-            pathParam1?: NonNullable<number>;
-            pathParam2?: NonNullable<NonNullable<string>[]>;
-        }>;
-        export type TimeSchema = NonNullable<{
-            currentDate?: NonNullable<string>;
-        }>;
-        export type ResponsesPing200Body0 = NonNullable<{
+            };
+        };
+        export type ResponsesOpenAPI200Body0 = {};
+        export type ResponsesParams204Body0 = {
+            aHeader?: boolean;
+            pathParam1?: number;
+            pathParam2?: string[];
+        };
+        export type TimeSchema = {
+            currentDate?: string;
+        };
+        export type ResponsesPing200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }"
 `;
@@ -4770,9 +4770,9 @@ export namespace Components {
     }
     export namespace Parameters {
         export type PathParam2 = Components.Schemas.Strings;
-        export type Duration = NonNullable<number>;
-        export type PathParam1 = NonNullable<number>;
-        export type GetParameters2 = NonNullable<boolean>;
+        export type Duration = number;
+        export type PathParam1 = number;
+        export type GetParameters2 = boolean;
     }
     export namespace Responses {
         export type Delay204<S extends number> = {
@@ -4780,7 +4780,7 @@ export namespace Components {
             readonly headers?: {
                 readonly [name: string]: unknown;
             };
-            readonly body?: NonNullable<unknown>;
+            readonly body?: unknown;
         };
         export type Diagnostic200<S extends number> = {
             readonly status: S;
@@ -4830,27 +4830,27 @@ export namespace Components {
         export type XDelayPrecision = Enums.XDelayPrecision;
     }
     export namespace Schemas {
-        export type TimeSchema = NonNullable<{
-            currentDate?: NonNullable<string>;
-        }>;
-        export type Echo = NonNullable<{
-            echo: NonNullable<string>;
-        }>;
-        export type Strings = NonNullable<NonNullable<string>[]>;
-        export type ResponsesDiagnostic200Body0 = NonNullable<{
-            transactions: NonNullable<{
+        export type TimeSchema = {
+            currentDate?: string;
+        };
+        export type Echo = {
+            echo: string;
+        };
+        export type Strings = string[];
+        export type ResponsesDiagnostic200Body0 = {
+            transactions: {
                 [pattern: string]: unknown;
-            }>;
-        }>;
-        export type ResponsesOpenAPI200Body0 = NonNullable<{}>;
-        export type ResponsesParams204Body0 = NonNullable<{
-            aHeader?: NonNullable<boolean>;
-            pathParam1?: NonNullable<number>;
-            pathParam2?: NonNullable<NonNullable<string>[]>;
-        }>;
-        export type ResponsesPing200Body0 = NonNullable<{
+            };
+        };
+        export type ResponsesOpenAPI200Body0 = {};
+        export type ResponsesParams204Body0 = {
+            aHeader?: boolean;
+            pathParam1?: number;
+            pathParam2?: string[];
+        };
+        export type ResponsesPing200Body0 = {
             pong?: "pong";
-        }>;
+        };
     }
 }
 export namespace Enums {
