@@ -1,3 +1,12 @@
+## [7.0.1](https://github.com/nfroidure/schema2dts/compare/v7.0.0...v7.0.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* **types:** fix generated types for number prefixed identifier ([fc4b703](https://github.com/nfroidure/schema2dts/commit/fc4b7038458aab2d7359f8edc8d386472534705f))
+
+
+
 # [7.0.0](https://github.com/nfroidure/schema2dts/compare/v6.0.1...v7.0.0) (2024-07-18)
 
 
