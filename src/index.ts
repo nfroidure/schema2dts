@@ -53,7 +53,7 @@ export function buildIdentifier(part: string): string {
       (_: unknown, $1: string, $2: string) => $1 + $2.toUpperCase(),
     )
     .replace(/[^a-z0-9]/gi, '')
-    .replace(/^[0-9]/, (_: unknown, $1: string) => '_' + $1);
+    .replace(/^([0-9])/, (_: unknown, $1: string) => '_' + $1);
 
   return identifier || 'Unknown';
 }

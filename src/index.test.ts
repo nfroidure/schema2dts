@@ -376,21 +376,21 @@ describe('generateJSONSchemaTypes()', () => {
     };
 
     expect(
-      toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
-      ),
-    ).toMatchInlineSnapshot(`
+  toSource(
+    await generateJSONSchemaTypes(schema, {
+      brandedTypes: [],
+      generateRealEnums: true,
+      tuplesFromFixedArraysLengthLimit: 5,
+      exportNamespaces: true
+    })
+  )
+).toMatchInlineSnapshot(`
 "export type Main = Enums.Limit;
 export namespace Enums {
     export enum Limit {
-        _0M = "1m",
-        _0D = "1d",
-        _0W = "1w"
+        _1M = "1m",
+        _1D = "1d",
+        _1W = "1w"
     }
 }"
 `);
