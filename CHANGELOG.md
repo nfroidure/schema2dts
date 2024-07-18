@@ -1,3 +1,17 @@
+# [7.0.0](https://github.com/nfroidure/schema2dts/compare/v6.0.1...v7.0.0) (2024-07-18)
+
+
+### Bug Fixes
+
+* **api:** improve identifiers generation ([cc91507](https://github.com/nfroidure/schema2dts/commit/cc91507ac7de3cebf5b8d6eb3bac632a080d05d5))
+
+
+### BREAKING CHANGES
+
+* **api:** Some identifiers could change, requiring to update them in your code.
+
+
+
 ## [6.0.1](https://github.com/nfroidure/schema2dts/compare/v6.0.0...v6.0.1) (2024-07-15)
 
 
