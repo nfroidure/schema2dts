@@ -368,6 +368,62 @@ describe('generateJSONSchemaTypes()', () => {
     });
   });
 
+  test('should work with enums having values starting with a number', async () => {
+    const schema: JSONSchema7 = {
+      title: 'Limit',
+      type: 'string',
+      enum: ['1m', '1d', '1w'],
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"export type Main = Enums.Limit;
+export namespace Enums {
+    export enum Limit {
+        _0M = "1m",
+        _0D = "1d",
+        _0W = "1w"
+    }
+}"
+`);
+  });
+
+  test('should camelize number separated identifiers', async () => {
+    const schema: JSONSchema7 = {
+      title: 'Limit',
+      type: 'string',
+      enum: ['user1name', 'user_2_name', 'user3_name'],
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"export type Main = Enums.Limit;
+export namespace Enums {
+    export enum Limit {
+        User1Name = "user1name",
+        User2Name = "user_2_name",
+        User3Name = "user3_name"
+    }
+}"
+`);
+  });
+
   test('should work with string literal enums', async () => {
     const schema: JSONSchema7 = {
       title: 'Limit',
