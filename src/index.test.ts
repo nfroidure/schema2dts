@@ -376,15 +376,15 @@ describe('generateJSONSchemaTypes()', () => {
     };
 
     expect(
-  toSource(
-    await generateJSONSchemaTypes(schema, {
-      brandedTypes: [],
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: true
-    })
-  )
-).toMatchInlineSnapshot(`
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Main = Enums.Limit;
 export namespace Enums {
     export enum Limit {
@@ -1207,6 +1207,56 @@ describe('generateTypeDeclaration()', () => {
     expect(
       toSource(await generateTypeDeclaration(context, schema)),
     ).toMatchInlineSnapshot(`"export type Unknown = (boolean | string)[];"`);
+  });
+
+  test('should work with numbers as props schemas', async () => {
+    const schema: JSONSchema7 = {
+      type: 'object',
+      properties: {
+        '1.0': {
+          description: '1th percentile for this sensor',
+          type: 'number',
+        },
+        '5.0': {
+          description: '5th percentile for this sensor',
+          type: 'number',
+        },
+        '25.0': {
+          description: '25th percentile for this sensor',
+          type: 'number',
+        },
+        '50.0': {
+          description: '50th percentile for this sensor',
+          type: 'number',
+        },
+        '75.0': {
+          description: '75th percentile for this sensor',
+          type: 'number',
+        },
+        '95.0': {
+          description: '95th percentile for this sensor',
+          type: 'number',
+        },
+        '99.0': {
+          description: '99th percentile for this sensor',
+          type: 'number',
+        },
+      },
+    };
+
+    expect(
+  toSource(await generateTypeDeclaration(context, schema))
+).toMatchInlineSnapshot(`
+"export type Unknown = {
+    "1.0"?: number;
+    "5.0"?: number;
+    "25.0"?: number;
+    "50.0"?: number;
+    "75.0"?: number;
+    "95.0"?: number;
+    "99.0"?: number;
+};"
+`);
   });
 
   test('should work with snake case parameter in query', async () => {
