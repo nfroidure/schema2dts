@@ -1113,12 +1113,17 @@ async function buildObjectTypeNode(
             { ...context, candidateName: propertyName },
             property as Schema,
           );
+          const isSuitableAsIdentifierName = /^[a-z_$][a-z0-9_$]*$/i.test(
+            propertyName,
+          );
 
           return ts.factory.createPropertySignature(
             readOnly
               ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
               : [],
-            propertyName,
+              isSuitableAsIdentifierName
+              ? propertyName
+              : ts.factory.createStringLiteral(propertyName),
             required
               ? undefined
               : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
