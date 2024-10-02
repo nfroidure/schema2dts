@@ -1,3 +1,12 @@
+## [7.0.2](https://github.com/nfroidure/schema2dts/compare/v7.0.1...v7.0.2) (2024-10-02)
+
+
+### Bug Fixes
+
+* **types:** fix numeric props handling ([fda2751](https://github.com/nfroidure/schema2dts/commit/fda2751ee8f14726f2981cb5e98ae320b862fdbe))
+
+
+
 ## [7.0.1](https://github.com/nfroidure/schema2dts/compare/v7.0.0...v7.0.1) (2024-07-18)
 
 
