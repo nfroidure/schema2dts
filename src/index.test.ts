@@ -8,7 +8,7 @@ import {
 } from './index.js';
 import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 import type { JSONSchema7 } from 'json-schema';
 import type { Context } from './index.js';
 
@@ -79,7 +79,7 @@ describe('generateOpenAPITypes()', () => {
           },
         },
       },
-    } as OpenAPIV3.Document;
+    } as OpenAPIV3_1.Document;
 
     expect(
       toSource(
@@ -231,7 +231,7 @@ export namespace Components {
           },
         },
       },
-    } as OpenAPIV3.Document;
+    } as OpenAPIV3_1.Document;
 
     expect(
       toSource(
@@ -299,7 +299,7 @@ declare namespace Components {
       test(`should work with ${file}`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPIV3.Document;
+        ) as OpenAPIV3_1.Document;
 
         expect(
           toSource(
@@ -315,7 +315,7 @@ declare namespace Components {
       test(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPIV3.Document;
+        ) as OpenAPIV3_1.Document;
 
         expect(
           toSource(
@@ -333,7 +333,7 @@ declare namespace Components {
       test(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPIV3.Document;
+        ) as OpenAPIV3_1.Document;
 
         expect(
           toSource(
@@ -1244,9 +1244,8 @@ describe('generateTypeDeclaration()', () => {
       },
     };
 
-    expect(
-  toSource(await generateTypeDeclaration(context, schema))
-).toMatchInlineSnapshot(`
+    expect(toSource(await generateTypeDeclaration(context, schema)))
+      .toMatchInlineSnapshot(`
 "export type Unknown = {
     "1.0"?: number;
     "5.0"?: number;
@@ -1289,7 +1288,7 @@ describe('generateTypeDeclaration()', () => {
           },
         },
       },
-    } as OpenAPIV3.Document;
+    } as OpenAPIV3_1.Document;
 
     expect(
       toSource(
@@ -1349,7 +1348,7 @@ declare namespace Components {
           },
         },
       },
-    } as OpenAPIV3.Document;
+    } as OpenAPIV3_1.Document;
 
     expect(
       toSource(

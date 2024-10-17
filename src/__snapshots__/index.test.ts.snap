@@ -3909,6 +3909,114 @@ export namespace Enums {
 }"
 `;
 
+exports[`generateOpenAPITypes() with OpenAPI samples should work with webhook_example.json 1`] = `
+"declare namespace API {
+    export namespace PostWebhooksNewPet {
+        export type Body = Components.RequestBodies.PostWebhooksNewPetRequestBody;
+        export type Output = Responses.$200;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export namespace Responses {
+            export type $200 = Components.Responses.PostWebhooksNewPetResponse200<200>;
+        }
+    }
+}
+declare namespace Components {
+    export namespace RequestBodies {
+        export type PostWebhooksNewPetRequestBody = Components.Schemas.Pet;
+    }
+    export namespace Responses {
+        export type PostWebhooksNewPetResponse200<S extends number> = {
+            readonly status: S;
+            readonly headers?: {
+                readonly [name: string]: unknown;
+            };
+            readonly body?: unknown;
+        };
+    }
+    export namespace Schemas {
+        export type Pet = {
+            id: number;
+            name: string;
+            tag?: string;
+        };
+    }
+}"
+`;
+
+exports[`generateOpenAPITypes() with OpenAPI samples should work with webhook_example.json and filterStatuses 200/201/202/300 and brandedTypes 1`] = `
+"declare namespace API {
+    export namespace PostWebhooksNewPet {
+        export type Body = Components.RequestBodies.PostWebhooksNewPetRequestBody;
+        export type Output = Responses.$200;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export namespace Responses {
+            export type $200 = Components.Responses.PostWebhooksNewPetResponse200<200>;
+        }
+    }
+}
+declare namespace Components {
+    export namespace RequestBodies {
+        export type PostWebhooksNewPetRequestBody = Components.Schemas.Pet;
+    }
+    export namespace Responses {
+        export type PostWebhooksNewPetResponse200<S extends number> = {
+            readonly status: S;
+            readonly headers?: {
+                readonly [name: string]: unknown;
+            };
+            readonly body?: unknown;
+        };
+    }
+    export namespace Schemas {
+        export type Pet = {
+            id: number;
+            name: string;
+            tag?: string;
+        };
+    }
+}"
+`;
+
+exports[`generateOpenAPITypes() with OpenAPI samples should work with webhook_example.json and generateUnusedSchemas option to true 1`] = `
+"export namespace AnotherAPI {
+    export namespace PostWebhooksNewPet {
+        export type Body = Components.RequestBodies.PostWebhooksNewPetRequestBody;
+        export type Output = Responses.$200;
+        export type Input = {
+            readonly body?: Body;
+        };
+        export namespace Responses {
+            export type $200 = Components.Responses.PostWebhooksNewPetResponse200<200>;
+        }
+    }
+}
+export namespace Components {
+    export namespace RequestBodies {
+        export type PostWebhooksNewPetRequestBody = Components.Schemas.Pet;
+    }
+    export namespace Responses {
+        export type PostWebhooksNewPetResponse200<S extends number> = {
+            readonly status: S;
+            readonly headers?: {
+                readonly [name: string]: unknown;
+            };
+            readonly body?: unknown;
+        };
+    }
+    export namespace Schemas {
+        export type Pet = {
+            id: number;
+            name: string;
+            tag?: string;
+        };
+    }
+}"
+`;
+
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json 1`] = `
 "declare namespace API {
     export namespace GetDelay {
