@@ -1,0 +1,51 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Parameters"
+  },
+  "paths": {
+    "/delay": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/durationUnit"
+        }
+      ],
+      "get": {
+        "operationId": "getDelay",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/durationTime"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delay expired"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "durationUnit": {
+        "in": "query",
+        "name": "unit",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": ["s", "m", "h"]
+        }
+      },
+      "durationTime": {
+        "in": "query",
+        "name": "duration",
+        "required": true,
+        "description": "Duration in milliseconds",
+        "schema": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

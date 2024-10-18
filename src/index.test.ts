@@ -82,35 +82,40 @@ describe('generateOpenAPITypes()', () => {
     } as OpenAPIV3_1.Document;
 
     expect(
-      toSource(
-        await generateOpenAPITypes(schema, {
-          generateRealEnums: true,
-          exportNamespaces: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-        }),
-      ),
-    ).toMatchInlineSnapshot(`
-"export namespace API {
-    export namespace GetPing {
-        export type Body = Components.RequestBodies.GetPingRequestBody;
-        export type Output = Responses.$200;
-        export type Input = {
-            readonly body?: Body;
-            readonly xAHeader?: Parameters.XAHeader;
-            readonly xApiVersion?: Parameters.XAPIVersion;
-        };
-        export namespace Responses {
-            export type $200 = Components.Responses.GetPingResponse200<200>;
-        }
-        export namespace Parameters {
-            export type XAHeader = Components.Parameters.GetPing0;
-            export type XAPIVersion = Components.Parameters.GetPing1;
+  toSource(
+    await generateOpenAPITypes(schema, {
+      generateRealEnums: true,
+      exportNamespaces: true,
+      tuplesFromFixedArraysLengthLimit: 5
+    })
+  )
+).toMatchInlineSnapshot(`
+"export namespace Components {
+    export namespace Operations {
+        export namespace GetPing {
+            export type Body = Components.RequestBodies.GetPing;
+            export type Output = Responses.$200;
+            export type Input = {
+                readonly body?: Body;
+                readonly xAHeader?: Parameters.XAHeader;
+                readonly xApiVersion?: Parameters.XAPIVersion;
+            };
+            export namespace Responses {
+                export type $200 = Components.Responses.GetPingResponse200<200>;
+            }
+            export namespace Parameters {
+                export type XAHeader = Components.Parameters.GetPing0;
+                export type XAPIVersion = Components.Parameters.GetPing1;
+            }
         }
     }
-}
-export namespace Components {
+    export namespace PathItems {
+        export namespace Test {
+            export import Get = Components.Operations.GetPing;
+        }
+    }
     export namespace RequestBodies {
-        export type GetPingRequestBody = Components.Schemas.RequestBodiesGetPingRequestBodyBody0;
+        export type GetPing = Components.Schemas.RequestBodiesGetPingBody0;
     }
     export namespace Parameters {
         export type GetPing0 = number;
@@ -132,9 +137,12 @@ export namespace Components {
         export type GetPingResponse200HeadersXSDKVersion = string;
     }
     export namespace Schemas {
-        export type RequestBodiesGetPingRequestBodyBody0 = string;
+        export type RequestBodiesGetPingBody0 = string;
         export type ResponsesGetPingResponse200Body0 = string;
     }
+}
+export namespace API {
+    export import GetPing = Components.Operations.GetPing;
 }"
 `);
   });
@@ -234,32 +242,37 @@ export namespace Components {
     } as OpenAPIV3_1.Document;
 
     expect(
-      toSource(
-        await generateOpenAPITypes(schema, {
-          brandedTypes: ['TheSchema', 'TheSchemaClone'],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: false,
-        }),
-      ),
-    ).toMatchInlineSnapshot(`
-"declare namespace API {
-    export namespace GetTest {
-        export type Body = Components.RequestBodies.TheBody;
-        export type Output = Responses.$200;
-        export type Input = {
-            readonly body?: Body;
-            readonly testParam?: Parameters.TestParam;
-        };
-        export namespace Responses {
-            export type $200 = Components.Responses.TheResponse<200>;
-        }
-        export namespace Parameters {
-            export type TestParam = Components.Parameters.TheTestParam;
+  toSource(
+    await generateOpenAPITypes(schema, {
+      brandedTypes: ['TheSchema', 'TheSchemaClone'],
+      generateRealEnums: true,
+      tuplesFromFixedArraysLengthLimit: 5,
+      exportNamespaces: false
+    })
+  )
+).toMatchInlineSnapshot(`
+"declare namespace Components {
+    export namespace Operations {
+        export namespace GetTest {
+            export type Body = Components.RequestBodies.TheBody;
+            export type Output = Responses.$200;
+            export type Input = {
+                readonly body?: Body;
+                readonly testParam?: Parameters.TestParam;
+            };
+            export namespace Responses {
+                export type $200 = Components.Responses.TheResponse<200>;
+            }
+            export namespace Parameters {
+                export type TestParam = Components.Parameters.TheTestParam;
+            }
         }
     }
-}
-declare namespace Components {
+    export namespace PathItems {
+        export namespace Test {
+            export import Get = Components.Operations.GetTest;
+        }
+    }
     export namespace RequestBodies {
         export type TheBodyClone = Components.RequestBodies.TheBody;
         export type TheBody = Components.Schemas.TheSchemaClone;
@@ -269,7 +282,7 @@ declare namespace Components {
         export type TheTestParam = Components.Schemas.TheSchema;
     }
     export namespace Responses {
-        export type TheResponseClone = Components.Responses.TheResponse;
+        export type TheResponseClone<S extends number> = Components.Responses.TheResponse<S>;
         export type TheResponse<S extends number> = {
             readonly status: S;
             readonly headers?: {
@@ -288,6 +301,9 @@ declare namespace Components {
             _type?: "TheSchema";
         };
     }
+}
+declare namespace API {
+    export import GetTest = Components.Operations.GetTest;
 }"
 `);
   });
@@ -1291,30 +1307,38 @@ describe('generateTypeDeclaration()', () => {
     } as OpenAPIV3_1.Document;
 
     expect(
-      toSource(
-        await generateOpenAPITypes(schema, {
-          camelizeInputs: false,
-          generateRealEnums: false,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: false,
-        }),
-      ),
-    ).toMatchInlineSnapshot(`
-"declare namespace API {
-    export namespace Test {
-        export type Output = unknown;
-        export type Input = {
-            readonly foo_bar?: Parameters.FooBar;
-        };
-        export namespace Parameters {
-            export type FooBar = Components.Parameters.Test0;
+  toSource(
+    await generateOpenAPITypes(schema, {
+      camelizeInputs: false,
+      generateRealEnums: false,
+      tuplesFromFixedArraysLengthLimit: 5,
+      exportNamespaces: false
+    })
+  )
+).toMatchInlineSnapshot(`
+"declare namespace Components {
+    export namespace Operations {
+        export namespace Test {
+            export type Output = unknown;
+            export type Input = {
+                readonly foo_bar?: Parameters.FooBar;
+            };
+            export namespace Parameters {
+                export type FooBar = Components.Parameters.Test0;
+            }
         }
     }
-}
-declare namespace Components {
+    export namespace PathItems {
+        export namespace Test {
+            export import Get = Components.Operations.Test;
+        }
+    }
     export namespace Parameters {
         export type Test0 = string;
     }
+}
+declare namespace API {
+    export import Test = Components.Operations.Test;
 }"
 `);
   });
@@ -1351,30 +1375,38 @@ declare namespace Components {
     } as OpenAPIV3_1.Document;
 
     expect(
-      toSource(
-        await generateOpenAPITypes(schema, {
-          camelizeInputs: false,
-          generateRealEnums: false,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: false,
-        }),
-      ),
-    ).toMatchInlineSnapshot(`
-"declare namespace API {
-    export namespace GetTest {
-        export type Output = unknown;
-        export type Input = {
-            readonly foo_bar?: Parameters.FooBar;
-        };
-        export namespace Parameters {
-            export type FooBar = Components.Parameters.GetTest0;
+  toSource(
+    await generateOpenAPITypes(schema, {
+      camelizeInputs: false,
+      generateRealEnums: false,
+      tuplesFromFixedArraysLengthLimit: 5,
+      exportNamespaces: false
+    })
+  )
+).toMatchInlineSnapshot(`
+"declare namespace Components {
+    export namespace Operations {
+        export namespace GetTest {
+            export type Output = unknown;
+            export type Input = {
+                readonly foo_bar?: Parameters.FooBar;
+            };
+            export namespace Parameters {
+                export type FooBar = Components.Parameters.GetTest0;
+            }
         }
     }
-}
-declare namespace Components {
+    export namespace PathItems {
+        export namespace Test {
+            export import Get = Components.Operations.GetTest;
+        }
+    }
     export namespace Parameters {
         export type GetTest0 = string;
     }
+}
+declare namespace API {
+    export import GetTest = Components.Operations.GetTest;
 }"
 `);
   });

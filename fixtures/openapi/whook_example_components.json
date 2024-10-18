@@ -18,7 +18,7 @@
         "tags": ["example"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/duration"
+            "$ref": "#/components/parameters/durationClone"
           }
         ],
         "responses": {
@@ -243,6 +243,9 @@
       }
     },
     "requestBodies": {
+      "EchoBodyClone": {
+        "$ref": "#/components/requestBodies/EchoBody"
+      },
       "EchoBody": {
         "description": "The input sentence",
         "required": true,
@@ -287,6 +290,7 @@
       }
     },
     "parameters": {
+      "durationClone": { "$ref": "#/components/parameters/duration" },
       "duration": {
         "in": "query",
         "name": "duration",

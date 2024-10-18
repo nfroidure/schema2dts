@@ -76,13 +76,13 @@ async function resolve<T, U>(root: T, namespaceParts: string[]): Promise<U> {
 }
 
 async function ensureResolved<T>(
-  root: OpenAPIV3_1.Document,
+  root: IngestedDocument,
   object: T | OpenAPIV3_1.ReferenceObject,
 ): Promise<T> {
   let resolvedObject = object;
 
   while ('$ref' in (resolvedObject as OpenAPIV3_1.ReferenceObject)) {
-    resolvedObject = await resolve<OpenAPIV3_1.Document, T>(
+    resolvedObject = await resolve<IngestedDocument, T>(
       root,
       splitRef((resolvedObject as OpenAPIV3_1.ReferenceObject).$ref),
     );
@@ -122,22 +122,33 @@ export type OpenAPITypesGenerationOptions = {
   requireCleanAPI?: boolean;
 };
 
-type Components = {
-  schemas: NonNullable<
-    NonNullable<OpenAPIV3_1.Document['components']>['schemas']
-  >;
-  requestBodies: NonNullable<
-    NonNullable<OpenAPIV3_1.Document['components']>['requestBodies']
-  >;
-  parameters: NonNullable<
-    NonNullable<OpenAPIV3_1.Document['components']>['parameters']
-  >;
-  responses: NonNullable<
-    NonNullable<OpenAPIV3_1.Document['components']>['responses']
-  >;
-  headers: NonNullable<
-    NonNullable<OpenAPIV3_1.Document['components']>['headers']
-  >;
+type IngestedDocument = {
+  components: {
+    schemas: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['schemas']
+    >;
+    requestBodies: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['requestBodies']
+    >;
+    parameters: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['parameters']
+    >;
+    responses: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['responses']
+    >;
+    headers: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['headers']
+    >;
+    pathItems: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['pathItems']
+    >;
+    callbacks: NonNullable<
+      NonNullable<OpenAPIV3_1.Document['components']>['callbacks']
+    >;
+    operations: Record<string, NonNullable<OpenAPIV3_1.OperationObject>>;
+  };
+  webhooks: NonNullable<NonNullable<OpenAPIV3_1.Document['webhooks']>>;
+  paths: NonNullable<NonNullable<OpenAPIV3_1.Document['paths']>>;
 };
 
 /**
@@ -155,7 +166,7 @@ type Components = {
  * @returns {TypeScript.NodeArray}
  */
 export async function generateOpenAPITypes(
-  root: OpenAPIV3_1.Document,
+  inputRoot: OpenAPIV3_1.Document,
   {
     baseName = DEFAULT_OPEN_API_OPTIONS.baseName,
     filterStatuses = DEFAULT_OPEN_API_OPTIONS.filterStatuses,
@@ -171,14 +182,20 @@ export async function generateOpenAPITypes(
       Pick<OpenAPITypesGenerationOptions, 'baseName' | 'brandedTypes'>
     > = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<NodeArray<Statement>> {
-  const components: Components = {
-    schemas: root.components?.schemas || {},
-    requestBodies: root.components?.requestBodies || {},
-    parameters: root.components?.parameters || {},
-    responses: root.components?.responses || {},
-    headers: root.components?.headers || {},
+  const root: IngestedDocument = {
+    components: {
+      schemas: inputRoot.components?.schemas || {},
+      requestBodies: inputRoot.components?.requestBodies || {},
+      parameters: inputRoot.components?.parameters || {},
+      responses: inputRoot.components?.responses || {},
+      headers: inputRoot.components?.headers || {},
+      callbacks: inputRoot.components?.callbacks || {},
+      pathItems: inputRoot.components?.pathItems || {},
+      operations: {},
+    },
+    webhooks: inputRoot.webhooks || {},
+    paths: inputRoot.paths || {},
   };
-  root.components = components;
 
   const context: OASContext = {
     nameResolver: async (ref) => {
@@ -192,7 +209,7 @@ export async function generateOpenAPITypes(
       brandedTypes:
         brandedTypes !== 'schemas'
           ? brandedTypes
-          : Object.keys(components.schemas).map(buildIdentifier),
+          : Object.keys(root.components.schemas).map(buildIdentifier),
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
@@ -224,332 +241,895 @@ export async function generateOpenAPITypes(
     });
   }
 
-  for (const [webhook, pathObject] of Object.entries(root.webhooks || {})) {
-    for (const [method, operationObject] of Object.entries(pathObject)) {
-      await generatePathItemTypes(
-        root,
-        components,
-        context,
-        operationObject as OpenAPIV3_1.OperationObject,
-        `__webhooks/${webhook}`,
-        method,
-      );
-    }
-  }
+  let hasUnreferenced = true;
 
-  for (const [path, pathObject] of Object.entries(root.paths || {})) {
-    for (const [method, operationObject] of Object.entries(
-      pathObject as OpenAPIV3_1.PathItemObject,
+  while (hasUnreferenced) {
+    hasUnreferenced = false;
+    for (const [webhook, pathItem] of Object.entries(root.webhooks)) {
+      if ('$ref' in pathItem) {
+        continue;
+      }
+
+      const identifier = ['webhook', camelCase(webhook)]
+        .map(context.buildIdentifier)
+        .join('');
+
+      root.components.pathItems[identifier] = pathItem;
+      root.webhooks[webhook] = {
+        $ref: `#/components/pathItems/${identifier}`,
+      };
+
+      hasUnreferenced = true;
+    }
+
+    for (const [callbackName, callback] of Object.entries(
+      root.components.callbacks,
     )) {
-      await generatePathItemTypes(
-        root,
-        components,
-        context,
-        operationObject as OpenAPIV3_1.OperationObject,
-        path,
-        method,
-      );
+      if ('$ref' in callback) {
+        continue;
+      }
+
+      for (const [expression, pathItem] of Object.entries(callback)) {
+        if ('$ref' in pathItem) {
+          continue;
+        }
+
+        const identifier = [
+          'Callbacks',
+          camelCase(callbackName),
+          camelCase(expression),
+        ]
+          .map(context.buildIdentifier)
+          .join('');
+
+        root.components.pathItems[identifier] = pathItem;
+        root.components.callbacks[callbackName][expression] = {
+          $ref: `#/components/pathItems/${identifier}`,
+        };
+
+        hasUnreferenced = true;
+      }
+    }
+
+    for (const [path, pathItem] of Object.entries(root.paths)) {
+      if (!pathItem) {
+        continue;
+      }
+      if ('$ref' in pathItem) {
+        continue;
+      }
+
+      const identifier = context.buildIdentifier(camelCase(path));
+
+      root.components.pathItems[identifier] = pathItem;
+      root.paths[path] = {
+        $ref: `#/components/pathItems/${identifier}`,
+      };
+
+      hasUnreferenced = true;
+    }
+
+    for (const [pathId, pathItem] of Object.entries(
+      root.components.pathItems,
+    )) {
+      if ('$ref' in pathItem) {
+        continue;
+      }
+
+      if ('parameters' in pathItem && pathItem.parameters) {
+        for (const name of Object.keys(pathItem.parameters || {})) {
+          if ('$ref' in pathItem.parameters[name]) {
+            continue;
+          }
+
+          const parameterIdentifier = pathId + context.buildIdentifier(name);
+
+          root.components.parameters[parameterIdentifier] =
+            pathItem.parameters[name];
+          pathItem.parameters = pathItem.parameters || {};
+          pathItem.parameters[parameterIdentifier] = {
+            $ref: `#/components/parameters/${parameterIdentifier}`,
+          };
+        }
+      }
+
+      for (const [method, pathItemProperty] of Object.entries(pathItem)) {
+        const maybeOperationObject = pickOperationObject(
+          method,
+          pathItemProperty,
+        );
+
+        if (!maybeOperationObject) {
+          continue;
+        }
+
+        const finalOperationObject =
+          await ensureResolved<OpenAPIV3_1.OperationObject>(
+            root,
+            maybeOperationObject,
+          );
+
+        const operationId =
+          (finalOperationObject.operationId as string) ||
+          (context.oasOptions.requireCleanAPI
+            ? ''
+            : [method, pathId]
+                .filter((id) => id)
+                .map(context.buildIdentifier)
+                .join(''));
+
+        if (!operationId) {
+          throw new YError('E_OPERATION_ID_REQUIRED', pathId, method);
+        }
+
+        if (!('$ref' in maybeOperationObject)) {
+          root.components.operations[operationId] = finalOperationObject;
+          pathItem[method] = {
+            $ref: `#/components/operations/${operationId}`,
+          };
+          hasUnreferenced = true;
+        }
+      }
+    }
+
+    for (const [operationId, operation] of Object.entries(
+      root.components.operations,
+    )) {
+      if ('$ref' in operation) {
+        continue;
+      }
+
+      if ('requestBody' in operation && operation.requestBody) {
+        if (!('$ref' in operation.requestBody)) {
+          root.components.requestBodies[operationId] = operation.requestBody;
+          operation.requestBody = {
+            $ref: `#/components/requestBodies/${operationId}`,
+          };
+          hasUnreferenced = true;
+        }
+      }
+
+      if ('callbacks' in operation) {
+        for (const [callbackName, callback] of Object.entries(
+          operation.callbacks || {},
+        )) {
+          if ('$ref' in callback) {
+            continue;
+          }
+
+          const uniquePrefix = [
+            operationId,
+            'Callbacks',
+            camelCase(callbackName),
+          ]
+            .map(context.buildIdentifier)
+            .join('');
+
+          root.components.callbacks[uniquePrefix] =
+            root.components.callbacks[uniquePrefix] || {};
+          root.components.callbacks[uniquePrefix] = callback;
+          operation.callbacks = operation.callbacks || {};
+          operation.callbacks[callbackName] = {
+            $ref: `#/components/callbacks/${uniquePrefix}`,
+          };
+          hasUnreferenced = true;
+        }
+      }
     }
   }
 
-  await Promise.all(
-    Object.keys(components.requestBodies).map(async (name) => {
-      const requestBody = components.requestBodies[name];
-      let statement: Statement;
-      if ('$ref' in requestBody) {
-        statement = ts.factory.createTypeAliasDeclaration(
+  for (const [operationId, operation] of Object.entries(
+    root.components.operations,
+  )) {
+    const allInputs: {
+      name: string;
+      path: string[];
+      required: boolean;
+    }[] = [];
+
+    if ('callbacks' in operation && operation.callbacks) {
+      for (const callbackName of Object.keys(operation.callbacks)) {
+        const callbackRef = operation.callbacks[
+          callbackName
+        ] as OpenAPIV3_1.ReferenceObject;
+        const identifier = context.buildIdentifier(camelCase(callbackName));
+
+        context.sideTypeDeclarations.push({
+          namespaceParts: [
+            'Components',
+            'Operations',
+            operationId,
+            'Callbacks',
+            identifier,
+          ],
+          statement: ts.factory.createImportEqualsDeclaration(
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            false,
+            identifier,
+            buildTypeReference(context, [
+              'Components',
+              'Callbacks',
+              context.buildIdentifier(
+                splitRef(callbackRef.$ref).pop() as string,
+              ),
+            ]) as unknown as ts.ModuleReference,
+          ),
+        });
+      }
+    }
+
+    if ('requestBody' in operation && operation.requestBody) {
+      const requestBodyRef =
+        operation.requestBody as OpenAPIV3_1.ReferenceObject;
+      const requestBody = await ensureResolved<OpenAPIV3_1.RequestBodyObject>(
+        root,
+        requestBodyRef,
+      );
+
+      allInputs.push({
+        name: 'body',
+        path: ['Body'],
+        required: !!requestBody.required,
+      });
+
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Operations', operationId, 'Body'],
+        statement: ts.factory.createTypeAliasDeclaration(
           [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          name,
-          [],
+          'Body',
+          undefined,
           buildTypeReference(context, [
             'Components',
             'RequestBodies',
-            splitRef(requestBody.$ref).pop() as string,
+            context.buildIdentifier(
+              splitRef(requestBodyRef.$ref).pop() as string,
+            ),
           ]),
+        ),
+      });
+    }
+
+    if ('responses' in operation && operation.responses) {
+      const responses = operation.responses;
+      const uniquePrefix = `${operationId}Response`;
+      let responsesCodes = Object.keys(operation.responses);
+
+      // We filter only if filterStatuses got at least one status code
+      if (context.oasOptions.filterStatuses?.length) {
+        responsesCodes = responsesCodes.filter((code) =>
+          (context.oasOptions.filterStatuses || []).includes(
+            code === 'default' ? 'default' : parseInt(code, 10),
+          ),
+        );
+      }
+
+      for (const code of responsesCodes) {
+        const uniqueKey = `${uniquePrefix + code}`;
+
+        if (!('$ref' in responses[code])) {
+          root.components.responses[uniqueKey] = responses[code];
+          responses[code] = {
+            $ref: `#/components/responses/${uniqueKey}`,
+          };
+        }
+
+        context.sideTypeDeclarations.push({
+          namespaceParts: [
+            'Components',
+            'Operations',
+            operationId,
+            'Responses',
+            `$${code}`,
+          ],
+          statement: ts.factory.createTypeAliasDeclaration(
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            `$${code}`,
+            [],
+            ts.factory.createTypeReferenceNode(
+              ts.factory.createQualifiedName(
+                ts.factory.createQualifiedName(
+                  ts.factory.createIdentifier('Components'),
+                  'Responses',
+                ),
+                splitRef(
+                  (responses[code] as OpenAPIV3_1.ReferenceObject).$ref,
+                ).pop() as string,
+              ),
+              [
+                code === 'default'
+                  ? ts.factory.createKeywordTypeNode(
+                      ts.SyntaxKind.NumberKeyword,
+                    )
+                  : ts.factory.createLiteralTypeNode(
+                      ts.factory.createNumericLiteral(code),
+                    ),
+              ],
+            ),
+          ),
+        });
+      }
+
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Operations', operationId, 'Output'],
+        statement: ts.factory.createTypeAliasDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          'Output',
+          undefined,
+          responsesCodes.length
+            ? ts.factory.createUnionTypeNode(
+                responsesCodes.map((responsesCode) =>
+                  ts.factory.createTypeReferenceNode(
+                    ts.factory.createQualifiedName(
+                      ts.factory.createIdentifier('Responses'),
+                      `$${responsesCode}`,
+                    ),
+                    [],
+                  ),
+                ),
+              )
+            : ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+        ),
+      });
+    }
+
+    if (operation.parameters && operation.parameters.length) {
+      await Promise.all(
+        operation.parameters.map(async (parameter, index) => {
+          const uniqueKey = operationId + index;
+
+          if (!('$ref' in parameter)) {
+            root.components.parameters[uniqueKey] = parameter;
+            (
+              operation.parameters as (
+                | OpenAPIV3_1.ReferenceObject
+                | OpenAPIV3_1.ParameterObject
+              )[]
+            )[index] = {
+              $ref: `#/components/parameters/${uniqueKey}`,
+            };
+          }
+
+          const parameterKey = context.buildIdentifier(
+            splitRef(
+              (
+                (
+                  operation.parameters as (
+                    | OpenAPIV3_1.ReferenceObject
+                    | OpenAPIV3_1.ParameterObject
+                  )[]
+                )[index] as OpenAPIV3_1.ReferenceObject
+              ).$ref,
+            ).pop() as string,
+          );
+          const resolvedParameter =
+            await ensureResolved<OpenAPIV3_1.ParameterObject>(root, parameter);
+
+          allInputs.push({
+            name: resolvedParameter.name,
+            path: ['Parameters', resolvedParameter.name],
+            required: !!resolvedParameter.required,
+          });
+          context.sideTypeDeclarations.push({
+            namespaceParts: [
+              'Components',
+              'Operations',
+              operationId,
+              'Parameters',
+              parameterKey,
+            ],
+            statement: ts.factory.createTypeAliasDeclaration(
+              [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+              context.buildIdentifier(resolvedParameter.name),
+              undefined,
+              buildTypeReference(context, [
+                'Components',
+                'Parameters',
+                parameterKey,
+              ]),
+            ),
+          });
+        }),
+      );
+    }
+
+    context.sideTypeDeclarations.push({
+      namespaceParts: ['Components', 'Operations', operationId, 'Input'],
+      statement: ts.factory.createTypeAliasDeclaration(
+        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+        'Input',
+        undefined,
+        ts.factory.createTypeLiteralNode(
+          allInputs.map(({ name, path, required }) => {
+            return ts.factory.createPropertySignature(
+              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              context.oasOptions.camelizeInputs ? camelCase(name) : name,
+              required
+                ? undefined
+                : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+              buildTypeReference(context, path),
+            );
+          }),
+        ),
+      ),
+    });
+  }
+
+  for (const [pathId, pathItem] of Object.entries(root.components.pathItems)) {
+    if ('$ref' in pathItem) {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'PathItems', pathId],
+        statement: ts.factory.createImportEqualsDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          false,
+          pathId,
+          buildTypeReference(context, [
+            'Components',
+            'PathItems',
+            splitRef(
+              (pathItem as OpenAPIV3_1.ReferenceObject).$ref,
+            ).pop() as string,
+          ]) as unknown as ts.ModuleReference,
+        ),
+      });
+      continue;
+    }
+
+    const finalPathItem = await ensureResolved<OpenAPIV3_1.PathItemObject>(
+      root,
+      pathItem,
+    );
+
+    for (const [method, pathItemProperty] of Object.entries(finalPathItem)) {
+      const maybeOperationObject = pickOperationObject(
+        method,
+        pathItemProperty,
+      );
+
+      if (!maybeOperationObject) {
+        continue;
+      }
+
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'PathItems', pathId, method],
+        statement: ts.factory.createImportEqualsDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          false,
+          context.buildIdentifier(method),
+          buildTypeReference(context, [
+            'Components',
+            'Operations',
+            splitRef(
+              (maybeOperationObject as OpenAPIV3_1.ReferenceObject).$ref,
+            ).pop() as string,
+          ]) as unknown as ts.ModuleReference,
+        ),
+      });
+    }
+  }
+
+  for (const path of Object.keys(root.paths)) {
+    const pathItemRef = root.paths[path] as OpenAPIV3_1.ReferenceObject;
+    const pathItem = await ensureResolved<OpenAPIV3_1.RequestBodyObject>(
+      root,
+      pathItemRef,
+    );
+
+    for (const method of Object.keys(pathItem)) {
+      const maybeOperationObject = pickOperationObject(
+        method,
+        pathItem[method],
+      );
+
+      if (!maybeOperationObject) {
+        continue;
+      }
+
+      const operationObjectRef =
+        maybeOperationObject as OpenAPIV3_1.ReferenceObject;
+
+      context.sideTypeDeclarations.push({
+        namespaceParts: [
+          context.oasOptions.baseName,
+          splitRef(operationObjectRef.$ref).pop() as string,
+        ],
+        statement: ts.factory.createImportEqualsDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          false,
+          splitRef(operationObjectRef.$ref).pop() as string,
+          buildTypeReference(context, [
+            'Components',
+            'Operations',
+            context.buildIdentifier(
+              splitRef(operationObjectRef.$ref).pop() as string,
+            ),
+          ]) as unknown as ts.ModuleReference,
+        ),
+      });
+    }
+  }
+
+  for (const callbackId of Object.keys(root.components.callbacks)) {
+    const callback = root.components.callbacks[callbackId];
+
+    if ('$ref' in callback) {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Callbacks', callbackId],
+        statement: ts.factory.createImportEqualsDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          false,
+          callbackId,
+          buildTypeReference(context, [
+            'Components',
+            'Callbacks',
+            splitRef(
+              (callback as OpenAPIV3_1.ReferenceObject).$ref,
+            ).pop() as string,
+          ]) as unknown as ts.ModuleReference,
+        ),
+      });
+    } else {
+      for (const expression of Object.keys(
+        callback as OpenAPIV3_1.CallbackObject,
+      )) {
+        const pathItem = callback[expression] as OpenAPIV3_1.ReferenceObject;
+
+        context.sideTypeDeclarations.push({
+          namespaceParts: [
+            'Components',
+            'Callbacks',
+            callbackId,
+            context.buildIdentifier(camelCase(expression)),
+          ],
+          statement: ts.factory.createImportEqualsDeclaration(
+            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+            false,
+            context.buildIdentifier(camelCase(expression)),
+            ts.factory.createTypeReferenceNode(
+              ts.factory.createQualifiedName(
+                ts.factory.createQualifiedName(
+                  ts.factory.createIdentifier('Components'),
+                  'PathItems',
+                ),
+                splitRef(
+                  (pathItem as OpenAPIV3_1.ReferenceObject).$ref,
+                ).pop() as string,
+              ),
+              [],
+            ) as unknown as ts.ModuleReference,
+          ),
+        });
+      }
+    }
+  }
+
+  for (const webhookName of Object.keys(root.webhooks)) {
+    const webhook = root.webhooks[webhookName];
+
+    if ('$ref' in webhook) {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['WebHooks', webhookName],
+        statement: ts.factory.createImportEqualsDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          false,
+          webhookName,
+          buildTypeReference(context, [
+            'Components',
+            'PathItems',
+            splitRef(
+              (webhook as OpenAPIV3_1.ReferenceObject).$ref,
+            ).pop() as string,
+          ]) as unknown as ts.ModuleReference,
+        ),
+      });
+    }
+  }
+
+  for (const requestBodyId of Object.keys(root.components.requestBodies)) {
+    const requestBody = root.components.requestBodies[requestBodyId];
+    let statement: Statement;
+
+    if ('$ref' in requestBody) {
+      statement = ts.factory.createTypeAliasDeclaration(
+        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+        requestBodyId,
+        [],
+        buildTypeReference(context, [
+          'Components',
+          'RequestBodies',
+          splitRef(requestBody.$ref).pop() as string,
+        ]),
+      );
+    } else {
+      const requestBodySchemas = requestBody
+        ? Object.keys(requestBody.content)
+            .filter(
+              (contentType) => 'schema' in requestBody.content[contentType],
+            )
+            .map((contentType) => {
+              return requestBody.content[contentType].schema;
+            })
+        : [];
+
+      if (!requestBodySchemas.length) {
+        statement = await generateTypeDeclaration(
+          {
+            ...context,
+            candidateName: requestBodyId,
+          },
+          { type: 'any' },
         );
       } else {
-        const requestBodySchemas = requestBody
-          ? Object.keys(requestBody.content)
-              .filter(
-                (contentType) => 'schema' in requestBody.content[contentType],
-              )
-              .map((contentType) => {
-                return requestBody.content[contentType].schema;
-              })
-          : [];
+        const requestBodySchemasReferences: OpenAPIV3_1.ReferenceObject[] = (
+          requestBodySchemas as (
+            | OpenAPIV3_1.ReferenceObject
+            | OpenAPIV3_1.ArraySchemaObject
+            | OpenAPIV3_1.NonArraySchemaObject
+          )[]
+        ).map((schema, index) => {
+          let ref;
 
-        if (!requestBodySchemas.length) {
-          statement = await generateTypeDeclaration(
-            {
-              ...context,
-              candidateName: name,
-            },
-            { type: 'any' },
-          );
-        } else {
-          const requestBodySchemasReferences: OpenAPIV3_1.ReferenceObject[] = (
-            requestBodySchemas as (
-              | OpenAPIV3_1.ReferenceObject
-              | OpenAPIV3_1.ArraySchemaObject
-              | OpenAPIV3_1.NonArraySchemaObject
-            )[]
-          ).map((schema, index) => {
-            let ref;
+          if ('$ref' in schema) {
+            ref = schema.$ref;
+          } else {
+            ref = `#/components/schemas/RequestBodies${requestBodyId}Body${index}`;
+            root.components.schemas[
+              `RequestBodies${requestBodyId}Body${index}`
+            ] = schema;
+          }
+          context.seenSchemas[ref] = true;
+          return { $ref: ref };
+        });
 
-            if ('$ref' in schema) {
-              ref = schema.$ref;
-            } else {
-              ref = `#/components/schemas/RequestBodies${name}Body${index}`;
-              components.schemas[`RequestBodies${name}Body${index}`] = schema;
-            }
-            context.seenSchemas[ref] = true;
-            return { $ref: ref };
-          });
-
-          statement = await generateTypeDeclaration(
-            {
-              ...context,
-              candidateName: name,
-            },
-            {
-              oneOf: requestBodySchemasReferences,
-            },
-          );
-        }
+        statement = await generateTypeDeclaration(
+          {
+            ...context,
+            candidateName: requestBodyId,
+          },
+          {
+            oneOf: requestBodySchemasReferences,
+          },
+        );
       }
+    }
+    context.sideTypeDeclarations.push({
+      namespaceParts: ['Components', 'RequestBodies', requestBodyId],
+      statement,
+    });
+  }
+
+  for (const parameterId of Object.keys(root.components.parameters)) {
+    const parameter = root.components.parameters[parameterId];
+
+    if ('$ref' in parameter) {
       context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'RequestBodies', name],
-        statement,
+        namespaceParts: ['Components', 'Parameters', parameterId],
+        statement: ts.factory.createTypeAliasDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          context.buildIdentifier(parameterId),
+          [],
+          buildTypeReference(context, [
+            'Components',
+            'Parameters',
+            splitRef(parameter.$ref).pop() as string,
+          ]),
+        ),
       });
-    }),
-  );
-  await Promise.all(
-    Object.keys(components.parameters).map(async (name) => {
-      const parameter = components.parameters[name];
+    } else {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Parameters', parameterId],
+        statement: await generateTypeDeclaration(
+          {
+            ...context,
+            candidateName: parameterId,
+          },
+          parameter.schema || { type: 'any' },
+        ),
+      });
+    }
+  }
 
-      if ('$ref' in parameter) {
-        context.sideTypeDeclarations.push({
-          namespaceParts: ['Components', 'Parameters', name],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            name,
-            [],
-            buildTypeReference(context, [
-              'Components',
-              'Parameters',
-              splitRef(parameter.$ref).pop() as string,
-            ]),
-          ),
-        });
-      } else {
-        context.sideTypeDeclarations.push({
-          namespaceParts: ['Components', 'Parameters', name],
-          statement: await generateTypeDeclaration(
-            {
-              ...context,
-              candidateName: name,
-            },
-            parameter.schema || { type: 'any' },
-          ),
-        });
-      }
-    }),
-  );
-  await Promise.all(
-    Object.keys(components.responses).map(async (name) => {
-      const response = components.responses[name];
-      let schemasType: ts.TypeNode;
+  for (const responseId of Object.keys(root.components.responses)) {
+    const response = root.components.responses[responseId];
+    let schemasType: ts.TypeNode;
 
-      if ('$ref' in response) {
-        context.sideTypeDeclarations.push({
-          namespaceParts: ['Components', 'Responses', name],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            name,
-            undefined,
-            buildTypeReference(context, [
+    if ('$ref' in response) {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Responses', responseId],
+        statement: ts.factory.createTypeAliasDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          responseId,
+          [
+            ts.factory.createTypeParameterDeclaration(
+              [],
+              'S',
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+            ),
+          ],
+          buildTypeReference(
+            context,
+            [
               'Components',
               'Responses',
               splitRef(response.$ref).pop() as string,
-            ]),
-          ),
-        });
-      } else {
-        const responseSchemas =
-          response && response.content
-            ? Object.keys(response.content)
-                .filter(
-                  (contentType) =>
-                    'schema' in (response.content || {})[contentType],
-                )
-                .map((contentType) => {
-                  return response.content?.[contentType].schema;
-                })
-            : [];
-
-        if (!responseSchemas.length) {
-          schemasType = await schemaToTypeNode(context, { type: 'any' });
-        } else {
-          const responseSchemasReferences: OpenAPIV3_1.ReferenceObject[] = (
-            responseSchemas as (
-              | OpenAPIV3_1.ReferenceObject
-              | OpenAPIV3_1.ArraySchemaObject
-              | OpenAPIV3_1.NonArraySchemaObject
-            )[]
-          ).map((schema, index) => {
-            let ref;
-
-            if ('$ref' in schema) {
-              ref = schema.$ref;
-            } else {
-              ref = `#/components/schemas/Responses${name}Body${index}`;
-              components.schemas[`Responses${name}Body${index}`] = schema;
-            }
-            context.seenSchemas[ref] = true;
-            return { $ref: ref };
-          });
-
-          schemasType = await schemaToTypeNode(context, {
-            oneOf: responseSchemasReferences,
-          });
-        }
-        let hasRequiredHeaders = false;
-        const headersTypes = await Promise.all(
-          Object.keys(response.headers || {}).map(async (headerName) => {
-            const header = response.headers?.[headerName] as
-              | OpenAPIV3_1.ReferenceObject
-              | OpenAPIV3_1.HeaderObject;
-            const uniqueKey = `${name}Headers${context.buildIdentifier(
-              headerName,
-            )}`;
-            const resolvedHeader = await ensureResolved(root, header);
-
-            hasRequiredHeaders =
-              hasRequiredHeaders || !!resolvedHeader.required;
-
-            if (!('$ref' in header)) {
-              components.headers[uniqueKey] = header;
-              (response.headers || {})[headerName] = {
-                $ref: `#/components/headers/${uniqueKey}`,
-              };
-            }
-
-            return ts.factory.createPropertySignature(
-              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-              ts.factory.createStringLiteral(headerName.toLowerCase()),
-              resolvedHeader.required
-                ? undefined
-                : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-              buildTypeReference(context, [
-                'Components',
-                'Headers',
-                context.buildIdentifier(
-                  splitRef(
-                    (
-                      (response.headers || {})[
-                        headerName
-                      ] as OpenAPIV3_1.ReferenceObject
-                    ).$ref,
-                  ).pop() as string,
-                ),
-              ]),
-            );
-          }),
-        );
-
-        context.sideTypeDeclarations.push({
-          namespaceParts: ['Components', 'Responses', name],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            name,
-            [
-              ts.factory.createTypeParameterDeclaration(
-                [],
-                'S',
-                ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-              ),
             ],
-            ts.factory.createTypeLiteralNode([
-              ts.factory.createPropertySignature(
-                [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-                'status',
-                undefined,
-                ts.factory.createTypeReferenceNode('S'),
-              ),
-              ts.factory.createPropertySignature(
-                [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-                'headers',
-                hasRequiredHeaders
-                  ? undefined
-                  : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-                ts.factory.createTypeLiteralNode([
-                  ...headersTypes,
-                  ts.factory.createIndexSignature(
-                    [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-                    [
-                      ts.factory.createParameterDeclaration(
-                        [],
-                        undefined,
-                        ts.factory.createIdentifier('name'),
-                        undefined,
-                        ts.factory.createKeywordTypeNode(
-                          ts.SyntaxKind.StringKeyword,
-                        ),
-                        undefined,
-                      ),
-                    ],
-                    ts.factory.createKeywordTypeNode(
-                      ts.SyntaxKind.UnknownKeyword,
-                    ),
-                  ),
-                ]),
-              ),
-              ts.factory.createPropertySignature(
-                [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-                'body',
-                !responseSchemas.length
-                  ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
-                  : undefined,
-                schemasType,
-              ),
-            ]),
+            ['S'],
           ),
+        ),
+      });
+    } else {
+      const responseSchemas =
+        response && response.content
+          ? Object.keys(response.content)
+              .filter(
+                (contentType) =>
+                  'schema' in (response.content || {})[contentType],
+              )
+              .map((contentType) => {
+                return response.content?.[contentType].schema;
+              })
+          : [];
+
+      if (!responseSchemas.length) {
+        schemasType = await schemaToTypeNode(context, { type: 'any' });
+      } else {
+        const responseSchemasReferences: OpenAPIV3_1.ReferenceObject[] = (
+          responseSchemas as (
+            | OpenAPIV3_1.ReferenceObject
+            | OpenAPIV3_1.ArraySchemaObject
+            | OpenAPIV3_1.NonArraySchemaObject
+          )[]
+        ).map((schema, index) => {
+          let ref;
+
+          if ('$ref' in schema) {
+            ref = schema.$ref;
+          } else {
+            ref = `#/components/schemas/Responses${responseId}Body${index}`;
+            root.components.schemas[`Responses${responseId}Body${index}`] =
+              schema;
+          }
+          context.seenSchemas[ref] = true;
+          return { $ref: ref };
+        });
+
+        schemasType = await schemaToTypeNode(context, {
+          oneOf: responseSchemasReferences,
         });
       }
-    }),
-  );
-  await Promise.all(
-    Object.keys(components.headers).map(async (name) => {
-      const header = components.headers[name];
+      let hasRequiredHeaders = false;
+      const headersTypes = await Promise.all(
+        Object.keys(response.headers || {}).map(async (headerName) => {
+          const header = response.headers?.[headerName] as
+            | OpenAPIV3_1.ReferenceObject
+            | OpenAPIV3_1.HeaderObject;
+          const uniqueKey = `${responseId}Headers${context.buildIdentifier(
+            headerName,
+          )}`;
+          const resolvedHeader = await ensureResolved(root, header);
 
-      if ('$ref' in header) {
-        context.sideTypeDeclarations.push({
-          namespaceParts: ['Components', 'Headers', name],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            name,
-            undefined,
+          hasRequiredHeaders = hasRequiredHeaders || !!resolvedHeader.required;
+
+          if (!('$ref' in header)) {
+            root.components.headers[uniqueKey] = header;
+            (response.headers || {})[headerName] = {
+              $ref: `#/components/headers/${uniqueKey}`,
+            };
+          }
+
+          return ts.factory.createPropertySignature(
+            [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+            ts.factory.createStringLiteral(headerName.toLowerCase()),
+            resolvedHeader.required
+              ? undefined
+              : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
             buildTypeReference(context, [
               'Components',
               'Headers',
-              splitRef(header.$ref).pop() as string,
+              context.buildIdentifier(
+                splitRef(
+                  (
+                    (response.headers || {})[
+                      headerName
+                    ] as OpenAPIV3_1.ReferenceObject
+                  ).$ref,
+                ).pop() as string,
+              ),
             ]),
-          ),
-        });
-      } else {
-        context.sideTypeDeclarations.push({
-          namespaceParts: ['Components', 'Headers', name],
-          statement: await generateTypeDeclaration(
-            {
-              ...context,
-              candidateName: name,
-            },
-            header.schema || { type: 'any' },
-          ),
-        });
-      }
-    }),
-  );
+          );
+        }),
+      );
+
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Responses', responseId],
+        statement: ts.factory.createTypeAliasDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          responseId,
+          [
+            ts.factory.createTypeParameterDeclaration(
+              [],
+              'S',
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+            ),
+          ],
+          ts.factory.createTypeLiteralNode([
+            ts.factory.createPropertySignature(
+              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              'status',
+              undefined,
+              ts.factory.createTypeReferenceNode('S'),
+            ),
+            ts.factory.createPropertySignature(
+              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              'headers',
+              hasRequiredHeaders
+                ? undefined
+                : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+              ts.factory.createTypeLiteralNode([
+                ...headersTypes,
+                ts.factory.createIndexSignature(
+                  [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                  [
+                    ts.factory.createParameterDeclaration(
+                      [],
+                      undefined,
+                      ts.factory.createIdentifier('name'),
+                      undefined,
+                      ts.factory.createKeywordTypeNode(
+                        ts.SyntaxKind.StringKeyword,
+                      ),
+                      undefined,
+                    ),
+                  ],
+                  ts.factory.createKeywordTypeNode(
+                    ts.SyntaxKind.UnknownKeyword,
+                  ),
+                ),
+              ]),
+            ),
+            ts.factory.createPropertySignature(
+              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+              'body',
+              !responseSchemas.length
+                ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
+                : undefined,
+              schemasType,
+            ),
+          ]),
+        ),
+      });
+    }
+  }
+
+  for (const headerId of Object.keys(root.components.headers)) {
+    const header = root.components.headers[headerId];
+
+    if ('$ref' in header) {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Headers', headerId],
+        statement: ts.factory.createTypeAliasDeclaration(
+          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          headerId,
+          undefined,
+          buildTypeReference(context, [
+            'Components',
+            'Headers',
+            splitRef(header.$ref).pop() as string,
+          ]),
+        ),
+      });
+    } else {
+      context.sideTypeDeclarations.push({
+        namespaceParts: ['Components', 'Headers', headerId],
+        statement: await generateTypeDeclaration(
+          {
+            ...context,
+            candidateName: headerId,
+          },
+          header.schema || { type: 'any' },
+        ),
+      });
+    }
+  }
 
   return gatherStatements(context, root, []);
 }
@@ -1239,7 +1819,11 @@ function buildTree(
   child.types.push(type);
 }
 
-function buildTypeReference(context: Context, namespaceParts: string[]) {
+function buildTypeReference(
+  context: Context,
+  namespaceParts: string[],
+  withTypeRefs: string[] = [],
+) {
   return ts.factory.createTypeReferenceNode(
     namespaceParts.reduce<ts.EntityName>(
       (curNode: ts.EntityName | null, referencePart: string) => {
@@ -1253,235 +1837,29 @@ function buildTypeReference(context: Context, namespaceParts: string[]) {
       },
       null as unknown as ts.EntityName,
     ),
-    undefined,
+    withTypeRefs.map((typeRef) => ts.factory.createTypeReferenceNode(typeRef)),
   );
 }
 
-async function generatePathItemTypes(
-  root: OpenAPIV3_1.Document,
-  components: Components,
-  context: OASContext,
-  operation: OpenAPIV3_1.OperationObject,
-  path: string,
-  method: string,
-) {
-  const allInputs: {
-    name: string;
-    path: string[];
-    required: boolean;
-  }[] = [];
-  const operationId =
-    (operation.operationId as string) ||
-    (context.oasOptions.requireCleanAPI
-      ? ''
-      : [method, ...path.split(/\//)]
-          .filter((id) => id)
-          .map(context.buildIdentifier)
-          .join(''));
-
-  if (!operationId) {
-    throw new YError('E_OPERATION_ID_REQUIRED', path, method);
+function pickOperationObject(
+  maybeMethod: string,
+  maybeOperationObject: OpenAPIV3_1.PathItemObject[keyof OpenAPIV3_1.PathItemObject],
+): OpenAPIV3_1.OperationObject | OpenAPIV3_1.ReferenceObject | undefined {
+  if (
+    [
+      'head',
+      'options',
+      'get',
+      'put',
+      'post',
+      'delete',
+      'patch',
+      'trace',
+    ].includes(maybeMethod)
+  ) {
+    return maybeOperationObject as
+      | OpenAPIV3_1.OperationObject
+      | OpenAPIV3_1.ReferenceObject;
   }
-
-  if (operation.requestBody) {
-    const uniquePrefix = `${operationId}RequestBody`;
-    const requestBody = await ensureResolved<OpenAPIV3_1.RequestBodyObject>(
-      root,
-      operation.requestBody,
-    );
-
-    if (!('$ref' in operation.requestBody)) {
-      components.requestBodies[uniquePrefix] = operation.requestBody;
-      operation.requestBody = {
-        $ref: `#/components/requestBodies/${uniquePrefix}`,
-      };
-    }
-
-    allInputs.push({
-      name: 'body',
-      path: ['Body'],
-      required: !!requestBody.required,
-    });
-
-    context.sideTypeDeclarations.push({
-      namespaceParts: [context.oasOptions.baseName, operationId, 'Body'],
-      statement: ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        'Body',
-        undefined,
-        buildTypeReference(context, [
-          'Components',
-          'RequestBodies',
-          context.buildIdentifier(
-            splitRef(operation?.requestBody?.$ref as string).pop() as string,
-          ),
-        ]),
-      ),
-    });
-  }
-
-  if ('responses' in operation && operation.responses) {
-    const responses = operation.responses as OpenAPIV3_1.ResponsesObject;
-    const uniquePrefix = `${operationId}Response`;
-    let responsesCodes = Object.keys(operation.responses);
-
-    // We filter only if filterStatuses got at least one status code
-    if (context.oasOptions.filterStatuses?.length) {
-      responsesCodes = responsesCodes.filter((code) =>
-        (context.oasOptions.filterStatuses || []).includes(
-          code === 'default' ? 'default' : parseInt(code, 10),
-        ),
-      );
-    }
-
-    await Promise.all(
-      responsesCodes.map(async (code) => {
-        const uniqueKey = `${uniquePrefix + code}`;
-
-        if (!('$ref' in responses[code])) {
-          components.responses[uniqueKey] = responses[code];
-          responses[code] = {
-            $ref: `#/components/responses/${uniqueKey}`,
-          };
-        }
-
-        context.sideTypeDeclarations.push({
-          namespaceParts: [
-            context.oasOptions.baseName,
-            operationId,
-            'Responses',
-            `$${code}`,
-          ],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            `$${code}`,
-            [],
-            ts.factory.createTypeReferenceNode(
-              ts.factory.createQualifiedName(
-                ts.factory.createQualifiedName(
-                  ts.factory.createIdentifier('Components'),
-                  'Responses',
-                ),
-                splitRef(
-                  (responses[code] as OpenAPIV3_1.ReferenceObject).$ref,
-                ).pop() as string,
-              ),
-              [
-                code === 'default'
-                  ? ts.factory.createKeywordTypeNode(
-                      ts.SyntaxKind.NumberKeyword,
-                    )
-                  : ts.factory.createLiteralTypeNode(
-                      ts.factory.createNumericLiteral(code),
-                    ),
-              ],
-            ),
-          ),
-        });
-        return uniqueKey;
-      }),
-    );
-
-    context.sideTypeDeclarations.push({
-      namespaceParts: [context.oasOptions.baseName, operationId, 'Output'],
-      statement: ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        'Output',
-        undefined,
-        responsesCodes.length
-          ? ts.factory.createUnionTypeNode(
-              responsesCodes.map((responsesCode) =>
-                ts.factory.createTypeReferenceNode(
-                  ts.factory.createQualifiedName(
-                    ts.factory.createIdentifier('Responses'),
-                    `$${responsesCode}`,
-                  ),
-                  [],
-                ),
-              ),
-            )
-          : ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
-      ),
-    });
-  }
-
-  if (operation.parameters && operation.parameters.length) {
-    await Promise.all(
-      operation.parameters.map(async (parameter, index) => {
-        const uniqueKey = operationId + index;
-
-        if (!('$ref' in parameter)) {
-          components.parameters[uniqueKey] = parameter;
-          (
-            operation.parameters as (
-              | OpenAPIV3_1.ReferenceObject
-              | OpenAPIV3_1.ParameterObject
-            )[]
-          )[index] = {
-            $ref: `#/components/parameters/${uniqueKey}`,
-          };
-        }
-
-        const parameterKey = context.buildIdentifier(
-          splitRef(
-            (
-              (
-                operation.parameters as (
-                  | OpenAPIV3_1.ReferenceObject
-                  | OpenAPIV3_1.ParameterObject
-                )[]
-              )[index] as OpenAPIV3_1.ReferenceObject
-            ).$ref,
-          ).pop() as string,
-        );
-        const resolvedParameter =
-          await ensureResolved<OpenAPIV3_1.ParameterObject>(root, parameter);
-
-        allInputs.push({
-          name: resolvedParameter.name,
-          path: ['Parameters', resolvedParameter.name],
-          required: !!resolvedParameter.required,
-        });
-        context.sideTypeDeclarations.push({
-          namespaceParts: [
-            context.oasOptions.baseName,
-            operationId,
-            'Parameters',
-            parameterKey,
-          ],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            context.buildIdentifier(resolvedParameter.name),
-            undefined,
-            buildTypeReference(context, [
-              'Components',
-              'Parameters',
-              parameterKey,
-            ]),
-          ),
-        });
-      }),
-    );
-  }
-
-  context.sideTypeDeclarations.push({
-    namespaceParts: [context.oasOptions.baseName, operationId, 'Input'],
-    statement: ts.factory.createTypeAliasDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      'Input',
-      undefined,
-      ts.factory.createTypeLiteralNode(
-        allInputs.map(({ name, path, required }) => {
-          return ts.factory.createPropertySignature(
-            [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-            context.oasOptions.camelizeInputs ? camelCase(name) : name,
-            required
-              ? undefined
-              : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-            buildTypeReference(context, path),
-          );
-        }),
-      ),
-    ),
-  });
+  return undefined;
 }
