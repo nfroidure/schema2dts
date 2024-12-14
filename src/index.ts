@@ -1,98 +1,84 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import camelCase from 'camelcase';
-import type {
-  JSONSchema4,
-  JSONSchema6,
-  JSONSchema6Definition,
-  JSONSchema6TypeName,
-  JSONSchema7,
-  JSONSchema7Definition,
+import initDebug from 'debug';
+import {
+  type JSONSchema4,
+  type JSONSchema6Definition,
+  type JSONSchema6TypeName,
+  type JSONSchema7,
+  type JSONSchema7Definition,
 } from 'json-schema';
-import type { OpenAPIV3_1 } from 'openapi-types';
-import ts from 'typescript';
+import { type OpenAPIV3_1 } from 'openapi-types';
+import {
+  SyntaxKind,
+  NodeFlags,
+  ListFormat,
+  NewLineKind,
+  ScriptTarget,
+  ScriptKind,
+  factory,
+  isPropertySignature,
+  isTypeLiteralNode,
+  isModuleDeclaration,
+  createPrinter,
+  createSourceFile,
+  type InterfaceDeclaration,
+  type PropertySignature,
+  type TypeElement,
+  type Statement,
+  type NodeArray,
+  type Identifier,
+  type ModuleDeclaration,
+  type ModuleBlock,
+  type TypeNode,
+  type Node,
+  type ModuleReference,
+} from 'typescript';
 import { YError } from 'yerror';
-import type { Statement, NodeArray } from 'typescript';
+import {
+  buildLiteralType,
+  buildTypeReference,
+  buildIdentifier,
+  buildInterfaceReference,
+} from './utils/typeDefinitions.js';
+import {
+  ensureResolved,
+  eventuallyIdentifySchema,
+  resolve,
+  splitRef,
+  type JSONSchema,
+} from './utils/schema.js';
+import initTypeDefinitionBuilder, {
+  type TypeDefinitionBuilderService,
+} from './services/typeDefinitionBuilder.js';
+import {
+  buildAliasFragment,
+  buildLinkFragment,
+  buildTypeFragment,
+  type ComponentFragment,
+  type FragmentLocation,
+  type StatementFragment,
+} from './utils/fragments.js';
 
-type SeenReferencesHash = { [refName: string]: boolean };
-
-export type Context = {
-  nameResolver: (ref: string) => Promise<string[]>;
-  buildIdentifier: (part: string) => string;
-  root?: boolean;
-  sideTypeDeclarations: { statement: Statement; namespaceParts: string[] }[];
+export type JSONSchemaContext = {
+  baseLocation: Pick<FragmentLocation, 'path' | 'kind' | 'type'>;
+  rootSchema?: IngestedDocument | JSONSchema;
   jsonSchemaOptions: JSONSchemaOptions;
-  seenSchemas: SeenReferencesHash;
-  candidateName?: string;
+  typeDefinitionBuilder: TypeDefinitionBuilderService;
 };
-export type OASContext = Context & {
+export type OASContext = JSONSchemaContext & {
   oasOptions: OpenAPITypesGenerationOptions;
 };
-
-type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 type SchemaDefinition =
   | JSONSchema4
   | JSONSchema6Definition
   | JSONSchema7Definition;
-type PackageTreeNode = {
-  name: string;
-  childs: PackageTreeNode[];
-  types: Statement[];
-};
-const ALL_TYPES = 'all' as const;
 
-export function splitRef(ref: string): string[] {
-  return ref
-    .replace(/^#\//, '')
-    .split('/')
-    .filter((s) => s);
-}
+const debug = initDebug('schema2dts');
 
-export function buildIdentifier(part: string): string {
-  const identifier = part
-    .replace(/[^a-z0-9-_ ]/gi, '')
-    .replace(/(?:^|[^a-z0-9]+)([a-z])/gi, (_: unknown, $1: string) =>
-      $1.toUpperCase(),
-    )
-    .replace(
-      /([^a-z]+)([a-z])/gi,
-      (_: unknown, $1: string, $2: string) => $1 + $2.toUpperCase(),
-    )
-    .replace(/[^a-z0-9]/gi, '')
-    .replace(/^([0-9])/, (_: unknown, $1: string) => '_' + $1);
-
-  return identifier || 'Unknown';
-}
-
-async function resolve<T, U>(root: T, namespaceParts: string[]): Promise<U> {
-  return namespaceParts.reduce(
-    (curSchema, part) => {
-      if (!curSchema) {
-        throw new YError('E_RESOLVE', namespaceParts, part);
-      }
-      return curSchema[part];
-    },
-    root as unknown as U,
-  ) as U;
-}
-
-async function ensureResolved<T>(
-  root: IngestedDocument,
-  object: T | OpenAPIV3_1.ReferenceObject,
-): Promise<T> {
-  let resolvedObject = object;
-
-  while ('$ref' in (resolvedObject as OpenAPIV3_1.ReferenceObject)) {
-    resolvedObject = await resolve<IngestedDocument, T>(
-      root,
-      splitRef((resolvedObject as OpenAPIV3_1.ReferenceObject).$ref),
-    );
-  }
-
-  return resolvedObject as T;
-}
-
+export const ALL_TYPES = 'all' as const;
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   baseName: 'Main',
+  basePath: 'schema.d.ts',
   brandedTypes: [],
   generateRealEnums: false,
   tuplesFromFixedArraysLengthLimit: 5,
@@ -100,6 +86,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
 };
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   baseName: 'API',
+  basePath: 'openapi.d.ts',
   filterStatuses: [],
   brandedTypes: [],
   generateUnusedSchemas: false,
@@ -112,6 +99,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
 
 export type OpenAPITypesGenerationOptions = {
   baseName: string;
+  basePath: string;
   filterStatuses?: (number | 'default')[];
   generateUnusedSchemas?: boolean;
   camelizeInputs?: boolean;
@@ -166,9 +154,10 @@ type IngestedDocument = {
  * @returns {TypeScript.NodeArray}
  */
 export async function generateOpenAPITypes(
-  inputRoot: OpenAPIV3_1.Document,
+  rootOpenAPI: OpenAPIV3_1.Document,
   {
     baseName = DEFAULT_OPEN_API_OPTIONS.baseName,
+    basePath = DEFAULT_OPEN_API_OPTIONS.basePath,
     filterStatuses = DEFAULT_OPEN_API_OPTIONS.filterStatuses,
     generateUnusedSchemas = DEFAULT_OPEN_API_OPTIONS.generateUnusedSchemas,
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
@@ -177,35 +166,44 @@ export async function generateOpenAPITypes(
     tuplesFromFixedArraysLengthLimit = DEFAULT_OPEN_API_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
-  }: Omit<OpenAPITypesGenerationOptions, 'baseName' | 'brandedTypes'> &
+  }: Omit<
+    OpenAPITypesGenerationOptions,
+    'baseName' | 'basePath' | 'brandedTypes'
+  > &
     Partial<
-      Pick<OpenAPITypesGenerationOptions, 'baseName' | 'brandedTypes'>
+      Pick<
+        OpenAPITypesGenerationOptions,
+        'baseName' | 'basePath' | 'brandedTypes'
+      >
     > = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<NodeArray<Statement>> {
   const root: IngestedDocument = {
     components: {
-      schemas: inputRoot.components?.schemas || {},
-      requestBodies: inputRoot.components?.requestBodies || {},
-      parameters: inputRoot.components?.parameters || {},
-      responses: inputRoot.components?.responses || {},
-      headers: inputRoot.components?.headers || {},
-      callbacks: inputRoot.components?.callbacks || {},
-      pathItems: inputRoot.components?.pathItems || {},
+      schemas: rootOpenAPI.components?.schemas || {},
+      requestBodies: rootOpenAPI.components?.requestBodies || {},
+      parameters: rootOpenAPI.components?.parameters || {},
+      responses: rootOpenAPI.components?.responses || {},
+      headers: rootOpenAPI.components?.headers || {},
+      callbacks: rootOpenAPI.components?.callbacks || {},
+      pathItems: rootOpenAPI.components?.pathItems || {},
       operations: {},
     },
-    webhooks: inputRoot.webhooks || {},
-    paths: inputRoot.paths || {},
+    webhooks: rootOpenAPI.webhooks || {},
+    paths: rootOpenAPI.paths || {},
   };
-
+  const typeDefinitionBuilder = await initTypeDefinitionBuilder({
+    log: debug,
+  });
   const context: OASContext = {
-    nameResolver: async (ref) => {
-      context.seenSchemas[ref] = true;
-
-      return splitRef(ref);
+    baseLocation: {
+      path: basePath,
+      type: exportNamespaces ? 'exported' : 'declared',
+      kind: 'type',
     },
-    buildIdentifier,
-    sideTypeDeclarations: [],
+    typeDefinitionBuilder,
+    rootSchema: root,
     jsonSchemaOptions: {
+      baseName,
       brandedTypes:
         brandedTypes !== 'schemas'
           ? brandedTypes
@@ -216,6 +214,7 @@ export async function generateOpenAPITypes(
     },
     oasOptions: {
       baseName,
+      basePath,
       filterStatuses,
       generateUnusedSchemas,
       camelizeInputs,
@@ -225,7 +224,6 @@ export async function generateOpenAPITypes(
       exportNamespaces,
       requireCleanAPI,
     },
-    seenSchemas: {},
   };
 
   if (generateUnusedSchemas) {
@@ -235,9 +233,11 @@ export async function generateOpenAPITypes(
       ] as OpenAPIV3_1.ReferenceObject;
 
       if ('$ref' in schema) {
-        context.seenSchemas[schema.$ref] = true;
+        context.typeDefinitionBuilder.assume(schema.$ref);
       }
-      context.seenSchemas[`#/components/schemas/${schemaName}`] = true;
+      context.typeDefinitionBuilder.assume(
+        `#/components/schemas/${schemaName}`,
+      );
     });
   }
 
@@ -251,7 +251,7 @@ export async function generateOpenAPITypes(
       }
 
       const identifier = ['webhook', camelCase(webhook)]
-        .map(context.buildIdentifier)
+        .map(buildIdentifier)
         .join('');
 
       root.components.pathItems[identifier] = pathItem;
@@ -279,7 +279,7 @@ export async function generateOpenAPITypes(
           camelCase(callbackName),
           camelCase(expression),
         ]
-          .map(context.buildIdentifier)
+          .map(buildIdentifier)
           .join('');
 
         root.components.pathItems[identifier] = pathItem;
@@ -299,7 +299,7 @@ export async function generateOpenAPITypes(
         continue;
       }
 
-      const identifier = context.buildIdentifier(camelCase(path));
+      const identifier = buildIdentifier(camelCase(path));
 
       root.components.pathItems[identifier] = pathItem;
       root.paths[path] = {
@@ -322,7 +322,7 @@ export async function generateOpenAPITypes(
             continue;
           }
 
-          const parameterIdentifier = pathId + context.buildIdentifier(name);
+          const parameterIdentifier = pathId + buildIdentifier(name);
 
           root.components.parameters[parameterIdentifier] =
             pathItem.parameters[name];
@@ -343,11 +343,10 @@ export async function generateOpenAPITypes(
           continue;
         }
 
-        const finalOperationObject =
-          await ensureResolved<OpenAPIV3_1.OperationObject>(
-            root,
-            maybeOperationObject,
-          );
+        const finalOperationObject = await ensureResolved<
+          IngestedDocument,
+          OpenAPIV3_1.OperationObject
+        >(root, maybeOperationObject);
 
         const operationId =
           (finalOperationObject.operationId as string) ||
@@ -355,7 +354,7 @@ export async function generateOpenAPITypes(
             ? ''
             : [method, pathId]
                 .filter((id) => id)
-                .map(context.buildIdentifier)
+                .map(buildIdentifier)
                 .join(''));
 
         if (!operationId) {
@@ -402,7 +401,7 @@ export async function generateOpenAPITypes(
             'Callbacks',
             camelCase(callbackName),
           ]
-            .map(context.buildIdentifier)
+            .map(buildIdentifier)
             .join('');
 
           root.components.callbacks[uniquePrefix] =
@@ -427,44 +426,48 @@ export async function generateOpenAPITypes(
       required: boolean;
     }[] = [];
 
+    context.typeDefinitionBuilder.register(
+      buildAliasFragment(
+        {
+          ...context.baseLocation,
+          namespace: ['Components', 'Operations', buildIdentifier(operationId)],
+        },
+        `#/components/operations/${operationId}`,
+      ),
+    );
+
     if ('callbacks' in operation && operation.callbacks) {
       for (const callbackName of Object.keys(operation.callbacks)) {
         const callbackRef = operation.callbacks[
           callbackName
         ] as OpenAPIV3_1.ReferenceObject;
-        const identifier = context.buildIdentifier(camelCase(callbackName));
+        const identifier = buildIdentifier(camelCase(callbackName));
 
-        context.sideTypeDeclarations.push({
-          namespaceParts: [
-            'Components',
-            'Operations',
-            operationId,
-            'Callbacks',
-            identifier,
-          ],
-          statement: ts.factory.createImportEqualsDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            false,
-            identifier,
-            buildTypeReference(context, [
-              'Components',
-              'Callbacks',
-              context.buildIdentifier(
-                splitRef(callbackRef.$ref).pop() as string,
-              ),
-            ]) as unknown as ts.ModuleReference,
+        context.typeDefinitionBuilder.register(
+          buildLinkFragment(
+            {
+              ...context.baseLocation,
+              namespace: [
+                'Components',
+                'Operations',
+                buildIdentifier(operationId),
+                'Callbacks',
+                identifier,
+              ],
+            },
+            callbackRef.$ref,
           ),
-        });
+        );
       }
     }
 
     if ('requestBody' in operation && operation.requestBody) {
       const requestBodyRef =
         operation.requestBody as OpenAPIV3_1.ReferenceObject;
-      const requestBody = await ensureResolved<OpenAPIV3_1.RequestBodyObject>(
-        root,
-        requestBodyRef,
-      );
+      const requestBody = await ensureResolved<
+        IngestedDocument,
+        OpenAPIV3_1.RequestBodyObject
+      >(root, requestBodyRef);
 
       allInputs.push({
         name: 'body',
@@ -472,26 +475,24 @@ export async function generateOpenAPITypes(
         required: !!requestBody.required,
       });
 
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Operations', operationId, 'Body'],
-        statement: ts.factory.createTypeAliasDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          'Body',
-          undefined,
-          buildTypeReference(context, [
-            'Components',
-            'RequestBodies',
-            context.buildIdentifier(
-              splitRef(requestBodyRef.$ref).pop() as string,
-            ),
-          ]),
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: [
+              'Components',
+              'Operations',
+              buildIdentifier(operationId),
+              'Body',
+            ],
+          },
+          requestBodyRef.$ref,
         ),
-      });
+      );
     }
 
     if ('responses' in operation && operation.responses) {
       const responses = operation.responses;
-      const uniquePrefix = `${operationId}Response`;
       let responsesCodes = Object.keys(operation.responses);
 
       // We filter only if filterStatuses got at least one status code
@@ -504,72 +505,75 @@ export async function generateOpenAPITypes(
       }
 
       for (const code of responsesCodes) {
-        const uniqueKey = `${uniquePrefix + code}`;
-
         if (!('$ref' in responses[code])) {
+          const uniqueKey = `${operationId}${code}`;
+
           root.components.responses[uniqueKey] = responses[code];
           responses[code] = {
             $ref: `#/components/responses/${uniqueKey}`,
           };
         }
 
-        context.sideTypeDeclarations.push({
-          namespaceParts: [
-            'Components',
-            'Operations',
-            operationId,
-            'Responses',
-            `$${code}`,
-          ],
-          statement: ts.factory.createTypeAliasDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            `$${code}`,
-            [],
-            ts.factory.createTypeReferenceNode(
-              ts.factory.createQualifiedName(
-                ts.factory.createQualifiedName(
-                  ts.factory.createIdentifier('Components'),
-                  'Responses',
-                ),
-                splitRef(
-                  (responses[code] as OpenAPIV3_1.ReferenceObject).$ref,
-                ).pop() as string,
-              ),
-              [
-                code === 'default'
-                  ? ts.factory.createKeywordTypeNode(
-                      ts.SyntaxKind.NumberKeyword,
-                    )
-                  : ts.factory.createLiteralTypeNode(
-                      ts.factory.createNumericLiteral(code),
-                    ),
+        const ref = (responses[code] as OpenAPIV3_1.ReferenceObject).$ref;
+
+        context.typeDefinitionBuilder.register(
+          buildLinkFragment(
+            {
+              ...context.baseLocation,
+              namespace: [
+                'Components',
+                'Operations',
+                buildIdentifier(operationId),
+                'Responses',
+                `$${code}`,
               ],
-            ),
+            },
+            ref,
+            [code],
           ),
-        });
+        );
+        context.typeDefinitionBuilder.register(
+          buildAliasFragment(
+            {
+              ...context.baseLocation,
+              namespace: [
+                'Components',
+                'Responses',
+                buildIdentifier(splitRef(ref).pop() as string),
+              ],
+            },
+            ref,
+            ['S'],
+          ),
+        );
       }
 
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Operations', operationId, 'Output'],
-        statement: ts.factory.createTypeAliasDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          'Output',
-          undefined,
+      context.typeDefinitionBuilder.register(
+        buildTypeFragment(
+          {
+            ...context.baseLocation,
+            namespace: [
+              'Components',
+              'Operations',
+              buildIdentifier(operationId),
+              'Output',
+            ],
+          },
           responsesCodes.length
-            ? ts.factory.createUnionTypeNode(
+            ? factory.createUnionTypeNode(
                 responsesCodes.map((responsesCode) =>
-                  ts.factory.createTypeReferenceNode(
-                    ts.factory.createQualifiedName(
-                      ts.factory.createIdentifier('Responses'),
+                  factory.createTypeReferenceNode(
+                    factory.createQualifiedName(
+                      factory.createIdentifier('Responses'),
                       `$${responsesCode}`,
                     ),
                     [],
                   ),
                 ),
               )
-            : ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+            : factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
         ),
-      });
+      );
     }
 
     if (operation.parameters && operation.parameters.length) {
@@ -589,7 +593,7 @@ export async function generateOpenAPITypes(
             };
           }
 
-          const parameterKey = context.buildIdentifier(
+          const parameterKey = buildIdentifier(
             splitRef(
               (
                 (
@@ -601,83 +605,102 @@ export async function generateOpenAPITypes(
               ).$ref,
             ).pop() as string,
           );
-          const resolvedParameter =
-            await ensureResolved<OpenAPIV3_1.ParameterObject>(root, parameter);
+          const resolvedParameter = await ensureResolved<
+            IngestedDocument,
+            OpenAPIV3_1.ParameterObject
+          >(root, parameter);
 
           allInputs.push({
             name: resolvedParameter.name,
             path: ['Parameters', resolvedParameter.name],
             required: !!resolvedParameter.required,
           });
-          context.sideTypeDeclarations.push({
-            namespaceParts: [
-              'Components',
-              'Operations',
-              operationId,
-              'Parameters',
-              parameterKey,
-            ],
-            statement: ts.factory.createTypeAliasDeclaration(
-              [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-              context.buildIdentifier(resolvedParameter.name),
-              undefined,
-              buildTypeReference(context, [
-                'Components',
-                'Parameters',
-                parameterKey,
-              ]),
+
+          context.typeDefinitionBuilder.register(
+            buildAliasFragment(
+              {
+                ...context.baseLocation,
+                namespace: ['Components', 'Parameters', parameterKey],
+              },
+              `#/components/parameters/${uniqueKey}`,
             ),
-          });
+          );
+          context.typeDefinitionBuilder.register(
+            buildLinkFragment(
+              {
+                ...context.baseLocation,
+                namespace: [
+                  'Components',
+                  'Operations',
+                  buildIdentifier(operationId),
+                  'Parameters',
+                  buildIdentifier(resolvedParameter.name),
+                ],
+              },
+              `#/components/parameters/${uniqueKey}`,
+            ),
+          );
         }),
       );
     }
 
-    context.sideTypeDeclarations.push({
-      namespaceParts: ['Components', 'Operations', operationId, 'Input'],
-      statement: ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        'Input',
-        undefined,
-        ts.factory.createTypeLiteralNode(
+    context.typeDefinitionBuilder.register(
+      buildTypeFragment(
+        {
+          ...context.baseLocation,
+          namespace: [
+            'Components',
+            'Operations',
+            buildIdentifier(operationId),
+            'Input',
+          ],
+        },
+        factory.createTypeLiteralNode(
           allInputs.map(({ name, path, required }) => {
-            return ts.factory.createPropertySignature(
-              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+            return factory.createPropertySignature(
+              [factory.createModifier(SyntaxKind.ReadonlyKeyword)],
               context.oasOptions.camelizeInputs ? camelCase(name) : name,
               required
                 ? undefined
-                : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-              buildTypeReference(context, path),
+                : factory.createToken(SyntaxKind.QuestionToken),
+              buildTypeReference(path.map(buildIdentifier)),
             );
           }),
         ),
       ),
-    });
+    );
   }
 
   for (const [pathId, pathItem] of Object.entries(root.components.pathItems)) {
     if ('$ref' in pathItem) {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'PathItems', pathId],
-        statement: ts.factory.createImportEqualsDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          false,
-          pathId,
-          buildTypeReference(context, [
-            'Components',
-            'PathItems',
-            splitRef(
-              (pathItem as OpenAPIV3_1.ReferenceObject).$ref,
-            ).pop() as string,
-          ]) as unknown as ts.ModuleReference,
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'PathItems', pathId],
+            type: 'imported',
+          },
+          (pathItem as OpenAPIV3_1.ReferenceObject).$ref,
         ),
-      });
+      );
       continue;
     }
 
-    const finalPathItem = await ensureResolved<OpenAPIV3_1.PathItemObject>(
-      root,
-      pathItem,
+    context.typeDefinitionBuilder.register(
+      buildAliasFragment(
+        {
+          ...context.baseLocation,
+          namespace: ['Components', 'PathItems', pathId],
+          type: 'imported',
+        },
+        `#/components/pathItems/${pathId}`,
+      ),
     );
+
+    const finalPathItem = await ensureResolved<
+      IngestedDocument,
+      OpenAPIV3_1.PathItemObject
+    >(root, pathItem);
 
     for (const [method, pathItemProperty] of Object.entries(finalPathItem)) {
       const maybeOperationObject = pickOperationObject(
@@ -689,30 +712,30 @@ export async function generateOpenAPITypes(
         continue;
       }
 
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'PathItems', pathId, method],
-        statement: ts.factory.createImportEqualsDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          false,
-          context.buildIdentifier(method),
-          buildTypeReference(context, [
-            'Components',
-            'Operations',
-            splitRef(
-              (maybeOperationObject as OpenAPIV3_1.ReferenceObject).$ref,
-            ).pop() as string,
-          ]) as unknown as ts.ModuleReference,
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: [
+              'Components',
+              'PathItems',
+              pathId,
+              buildIdentifier(method),
+            ],
+            type: 'imported',
+          },
+          (maybeOperationObject as OpenAPIV3_1.ReferenceObject).$ref,
         ),
-      });
+      );
     }
   }
 
   for (const path of Object.keys(root.paths)) {
     const pathItemRef = root.paths[path] as OpenAPIV3_1.ReferenceObject;
-    const pathItem = await ensureResolved<OpenAPIV3_1.RequestBodyObject>(
-      root,
-      pathItemRef,
-    );
+    const pathItem = await ensureResolved<
+      IngestedDocument,
+      OpenAPIV3_1.RequestBodyObject
+    >(root, pathItemRef);
 
     for (const method of Object.keys(pathItem)) {
       const maybeOperationObject = pickOperationObject(
@@ -727,24 +750,20 @@ export async function generateOpenAPITypes(
       const operationObjectRef =
         maybeOperationObject as OpenAPIV3_1.ReferenceObject;
 
-      context.sideTypeDeclarations.push({
-        namespaceParts: [
-          context.oasOptions.baseName,
-          splitRef(operationObjectRef.$ref).pop() as string,
-        ],
-        statement: ts.factory.createImportEqualsDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          false,
-          splitRef(operationObjectRef.$ref).pop() as string,
-          buildTypeReference(context, [
-            'Components',
-            'Operations',
-            context.buildIdentifier(
-              splitRef(operationObjectRef.$ref).pop() as string,
-            ),
-          ]) as unknown as ts.ModuleReference,
+      const identifier = buildIdentifier(
+        splitRef(operationObjectRef.$ref).pop() as string,
+      );
+
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: [context.oasOptions.baseName, identifier],
+            type: 'imported',
+          },
+          operationObjectRef.$ref,
         ),
-      });
+      );
     }
   }
 
@@ -752,52 +771,45 @@ export async function generateOpenAPITypes(
     const callback = root.components.callbacks[callbackId];
 
     if ('$ref' in callback) {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Callbacks', callbackId],
-        statement: ts.factory.createImportEqualsDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          false,
-          callbackId,
-          buildTypeReference(context, [
-            'Components',
-            'Callbacks',
-            splitRef(
-              (callback as OpenAPIV3_1.ReferenceObject).$ref,
-            ).pop() as string,
-          ]) as unknown as ts.ModuleReference,
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'Callbacks', callbackId],
+          },
+          (callback as OpenAPIV3_1.ReferenceObject).$ref,
         ),
-      });
+      );
     } else {
+      context.typeDefinitionBuilder.register(
+        buildAliasFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'Callbacks', callbackId],
+          },
+          `#/components/callbacks/${callbackId}`,
+        ),
+      );
+
       for (const expression of Object.keys(
         callback as OpenAPIV3_1.CallbackObject,
       )) {
         const pathItem = callback[expression] as OpenAPIV3_1.ReferenceObject;
 
-        context.sideTypeDeclarations.push({
-          namespaceParts: [
-            'Components',
-            'Callbacks',
-            callbackId,
-            context.buildIdentifier(camelCase(expression)),
-          ],
-          statement: ts.factory.createImportEqualsDeclaration(
-            [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-            false,
-            context.buildIdentifier(camelCase(expression)),
-            ts.factory.createTypeReferenceNode(
-              ts.factory.createQualifiedName(
-                ts.factory.createQualifiedName(
-                  ts.factory.createIdentifier('Components'),
-                  'PathItems',
-                ),
-                splitRef(
-                  (pathItem as OpenAPIV3_1.ReferenceObject).$ref,
-                ).pop() as string,
-              ),
-              [],
-            ) as unknown as ts.ModuleReference,
+        context.typeDefinitionBuilder.register(
+          buildLinkFragment(
+            {
+              ...context.baseLocation,
+              namespace: [
+                'Components',
+                'Callbacks',
+                callbackId,
+                buildIdentifier(camelCase(expression)),
+              ],
+            },
+            (pathItem as OpenAPIV3_1.ReferenceObject).$ref,
           ),
-        });
+        );
       }
     }
   }
@@ -806,38 +818,34 @@ export async function generateOpenAPITypes(
     const webhook = root.webhooks[webhookName];
 
     if ('$ref' in webhook) {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['WebHooks', webhookName],
-        statement: ts.factory.createImportEqualsDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          false,
-          webhookName,
-          buildTypeReference(context, [
-            'Components',
-            'PathItems',
-            splitRef(
-              (webhook as OpenAPIV3_1.ReferenceObject).$ref,
-            ).pop() as string,
-          ]) as unknown as ts.ModuleReference,
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['WebHooks', buildIdentifier(webhookName)],
+          },
+          (webhook as OpenAPIV3_1.ReferenceObject).$ref,
         ),
-      });
+      );
     }
   }
 
   for (const requestBodyId of Object.keys(root.components.requestBodies)) {
     const requestBody = root.components.requestBodies[requestBodyId];
-    let statement: Statement;
 
     if ('$ref' in requestBody) {
-      statement = ts.factory.createTypeAliasDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        requestBodyId,
-        [],
-        buildTypeReference(context, [
-          'Components',
-          'RequestBodies',
-          splitRef(requestBody.$ref).pop() as string,
-        ]),
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: [
+              'Components',
+              'RequestBodies',
+              buildIdentifier(requestBodyId),
+            ],
+          },
+          requestBody.$ref,
+        ),
       );
     } else {
       const requestBodySchemas = requestBody
@@ -851,12 +859,18 @@ export async function generateOpenAPITypes(
         : [];
 
       if (!requestBodySchemas.length) {
-        statement = await generateTypeDeclaration(
-          {
-            ...context,
-            candidateName: requestBodyId,
-          },
-          { type: 'any' },
+        context.typeDefinitionBuilder.register(
+          buildTypeFragment(
+            {
+              ...context.baseLocation,
+              namespace: [
+                'Components',
+                'RequestBodies',
+                buildIdentifier(requestBodyId),
+              ],
+            },
+            await schemaToTypeNode(context, { type: 'any' }),
+          ),
         );
       } else {
         const requestBodySchemasReferences: OpenAPIV3_1.ReferenceObject[] = (
@@ -866,96 +880,105 @@ export async function generateOpenAPITypes(
             | OpenAPIV3_1.NonArraySchemaObject
           )[]
         ).map((schema, index) => {
-          let ref;
+          let ref: string;
 
           if ('$ref' in schema) {
             ref = schema.$ref;
           } else {
-            ref = `#/components/schemas/RequestBodies${requestBodyId}Body${index}`;
-            root.components.schemas[
-              `RequestBodies${requestBodyId}Body${index}`
-            ] = schema;
+            const uniqueKey = `RequestBodies${buildIdentifier(requestBodyId)}Body${index}`;
+
+            ref = `#/components/schemas/${uniqueKey}`;
+            root.components.schemas[uniqueKey] = schema;
           }
-          context.seenSchemas[ref] = true;
+
+          context.typeDefinitionBuilder.assume(ref);
+
           return { $ref: ref };
         });
 
-        statement = await generateTypeDeclaration(
-          {
-            ...context,
-            candidateName: requestBodyId,
-          },
-          {
-            oneOf: requestBodySchemasReferences,
-          },
+        context.typeDefinitionBuilder.register(
+          buildTypeFragment(
+            {
+              ...context.baseLocation,
+              namespace: [
+                'Components',
+                'RequestBodies',
+                buildIdentifier(requestBodyId),
+              ],
+            },
+            await schemaToTypeNode(context, {
+              oneOf: requestBodySchemasReferences,
+            }),
+            [],
+            `#/components/requestBodies/${requestBodyId}`,
+          ),
         );
       }
     }
-    context.sideTypeDeclarations.push({
-      namespaceParts: ['Components', 'RequestBodies', requestBodyId],
-      statement,
-    });
   }
 
   for (const parameterId of Object.keys(root.components.parameters)) {
     const parameter = root.components.parameters[parameterId];
 
     if ('$ref' in parameter) {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Parameters', parameterId],
-        statement: ts.factory.createTypeAliasDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          context.buildIdentifier(parameterId),
-          [],
-          buildTypeReference(context, [
-            'Components',
-            'Parameters',
-            splitRef(parameter.$ref).pop() as string,
-          ]),
-        ),
-      });
-    } else {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Parameters', parameterId],
-        statement: await generateTypeDeclaration(
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
           {
-            ...context,
-            candidateName: parameterId,
+            ...context.baseLocation,
+            namespace: [
+              'Components',
+              'Parameters',
+              buildIdentifier(parameterId),
+            ],
           },
-          parameter.schema || { type: 'any' },
+          parameter.$ref,
         ),
-      });
+      );
+    } else {
+      const identifier = buildIdentifier(parameterId);
+
+      context.typeDefinitionBuilder.register(
+        buildTypeFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'Parameters', identifier],
+          },
+          await schemaToTypeNode(
+            context,
+            eventuallyIdentifySchema(
+              parameter.schema || { type: 'any' },
+              identifier,
+            ),
+          ),
+          [],
+          `#/components/parameters/${parameterId}`,
+        ),
+      );
     }
   }
 
   for (const responseId of Object.keys(root.components.responses)) {
     const response = root.components.responses[responseId];
-    let schemasType: ts.TypeNode;
+    let schemasType: TypeNode;
 
     if ('$ref' in response) {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Responses', responseId],
-        statement: ts.factory.createTypeAliasDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          responseId,
-          [
-            ts.factory.createTypeParameterDeclaration(
-              [],
-              'S',
-              ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-            ),
-          ],
-          buildTypeReference(
-            context,
-            [
-              'Components',
-              'Responses',
-              splitRef(response.$ref).pop() as string,
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'Responses', buildIdentifier(responseId)],
+            parameters: [
+              factory.createTypeParameterDeclaration(
+                [],
+                'S',
+                factory.createKeywordTypeNode(SyntaxKind.NumberKeyword),
+              ),
             ],
-            ['S'],
-          ),
+          },
+          response.$ref,
+          ['S'],
         ),
-      });
+      );
     } else {
       const responseSchemas =
         response && response.content
@@ -988,7 +1011,9 @@ export async function generateOpenAPITypes(
             root.components.schemas[`Responses${responseId}Body${index}`] =
               schema;
           }
-          context.seenSchemas[ref] = true;
+
+          context.typeDefinitionBuilder.assume(ref);
+
           return { $ref: ref };
         });
 
@@ -1002,10 +1027,13 @@ export async function generateOpenAPITypes(
           const header = response.headers?.[headerName] as
             | OpenAPIV3_1.ReferenceObject
             | OpenAPIV3_1.HeaderObject;
-          const uniqueKey = `${responseId}Headers${context.buildIdentifier(
+          const uniqueKey = `${responseId}Headers${buildIdentifier(
             headerName,
           )}`;
-          const resolvedHeader = await ensureResolved(root, header);
+          const resolvedHeader = await ensureResolved<
+            IngestedDocument,
+            OpenAPIV3_1.HeaderObject
+          >(root, header);
 
           hasRequiredHeaders = hasRequiredHeaders || !!resolvedHeader.required;
 
@@ -1016,16 +1044,16 @@ export async function generateOpenAPITypes(
             };
           }
 
-          return ts.factory.createPropertySignature(
-            [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
-            ts.factory.createStringLiteral(headerName.toLowerCase()),
+          return factory.createPropertySignature(
+            [factory.createModifier(SyntaxKind.ReadonlyKeyword)],
+            factory.createStringLiteral(headerName.toLowerCase()),
             resolvedHeader.required
               ? undefined
-              : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-            buildTypeReference(context, [
+              : factory.createToken(SyntaxKind.QuestionToken),
+            buildTypeReference([
               'Components',
               'Headers',
-              context.buildIdentifier(
+              buildIdentifier(
                 splitRef(
                   (
                     (response.headers || {})[
@@ -1039,64 +1067,63 @@ export async function generateOpenAPITypes(
         }),
       );
 
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Responses', responseId],
-        statement: ts.factory.createTypeAliasDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          responseId,
-          [
-            ts.factory.createTypeParameterDeclaration(
-              [],
-              'S',
-              ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-            ),
-          ],
-          ts.factory.createTypeLiteralNode([
-            ts.factory.createPropertySignature(
-              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+      context.typeDefinitionBuilder.register(
+        buildTypeFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'Responses', buildIdentifier(responseId)],
+            kind: 'type',
+            type: 'exported',
+            parameters: [
+              factory.createTypeParameterDeclaration(
+                [],
+                'S',
+                factory.createKeywordTypeNode(SyntaxKind.NumberKeyword),
+              ),
+            ],
+          },
+          factory.createTypeLiteralNode([
+            factory.createPropertySignature(
+              [factory.createModifier(SyntaxKind.ReadonlyKeyword)],
               'status',
               undefined,
-              ts.factory.createTypeReferenceNode('S'),
+              factory.createTypeReferenceNode('S'),
             ),
-            ts.factory.createPropertySignature(
-              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+            factory.createPropertySignature(
+              [factory.createModifier(SyntaxKind.ReadonlyKeyword)],
               'headers',
               hasRequiredHeaders
                 ? undefined
-                : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-              ts.factory.createTypeLiteralNode([
+                : factory.createToken(SyntaxKind.QuestionToken),
+              factory.createTypeLiteralNode([
                 ...headersTypes,
-                ts.factory.createIndexSignature(
-                  [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+                factory.createIndexSignature(
+                  [factory.createModifier(SyntaxKind.ReadonlyKeyword)],
                   [
-                    ts.factory.createParameterDeclaration(
+                    factory.createParameterDeclaration(
                       [],
                       undefined,
-                      ts.factory.createIdentifier('name'),
+                      factory.createIdentifier('name'),
                       undefined,
-                      ts.factory.createKeywordTypeNode(
-                        ts.SyntaxKind.StringKeyword,
-                      ),
+                      factory.createKeywordTypeNode(SyntaxKind.StringKeyword),
                       undefined,
                     ),
                   ],
-                  ts.factory.createKeywordTypeNode(
-                    ts.SyntaxKind.UnknownKeyword,
-                  ),
+                  factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
                 ),
               ]),
             ),
-            ts.factory.createPropertySignature(
-              [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)],
+            factory.createPropertySignature(
+              [factory.createModifier(SyntaxKind.ReadonlyKeyword)],
               'body',
               !responseSchemas.length
-                ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
+                ? factory.createToken(SyntaxKind.QuestionToken)
                 : undefined,
               schemasType,
             ),
           ]),
         ),
-      });
+      );
     }
   }
 
@@ -1104,38 +1131,46 @@ export async function generateOpenAPITypes(
     const header = root.components.headers[headerId];
 
     if ('$ref' in header) {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Headers', headerId],
-        statement: ts.factory.createTypeAliasDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          headerId,
-          undefined,
-          buildTypeReference(context, [
-            'Components',
-            'Headers',
-            splitRef(header.$ref).pop() as string,
-          ]),
-        ),
-      });
-    } else {
-      context.sideTypeDeclarations.push({
-        namespaceParts: ['Components', 'Headers', headerId],
-        statement: await generateTypeDeclaration(
+      context.typeDefinitionBuilder.register(
+        buildLinkFragment(
           {
-            ...context,
-            candidateName: headerId,
+            ...context.baseLocation,
+            namespace: ['Components', 'Headers', buildIdentifier(headerId)],
           },
-          header.schema || { type: 'any' },
+          header.$ref,
+          [],
+          `#/components/headers/${headerId}`,
         ),
-      });
+      );
+    } else {
+      const identifier = buildIdentifier(headerId);
+
+      context.typeDefinitionBuilder.register(
+        buildTypeFragment(
+          {
+            ...context.baseLocation,
+            namespace: ['Components', 'Headers', identifier],
+          },
+          await schemaToTypeNode(
+            context,
+            eventuallyIdentifySchema(
+              header.schema || { type: 'any' },
+              buildIdentifier(headerId),
+            ),
+          ),
+          [],
+          `#/components/headers/${headerId}`,
+        ),
+      );
     }
   }
 
-  return gatherStatements(context, root, []);
+  return gatherStatements(context);
 }
 
 type JSONSchemaOptions = {
   baseName?: string;
+  basePath?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
   generateRealEnums: boolean;
   tuplesFromFixedArraysLengthLimit: number;
@@ -1152,23 +1187,28 @@ type JSONSchemaOptions = {
  * @returns {TypeScript.NodeArray}
  */
 export async function generateJSONSchemaTypes(
-  schema: Schema,
+  rootSchema: JSONSchema,
   {
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
+    basePath = DEFAULT_JSON_SCHEMA_OPTIONS.basePath,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
     tuplesFromFixedArraysLengthLimit = DEFAULT_JSON_SCHEMA_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_JSON_SCHEMA_OPTIONS.exportNamespaces,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
 ): Promise<NodeArray<Statement>> {
-  const context: Context = {
-    nameResolver: async (ref) => {
-      context.seenSchemas[ref] = true;
-
-      return splitRef(ref);
+  debug('generateJSONSchemaTypes: start');
+  const typeDefinitionBuilder = await initTypeDefinitionBuilder({
+    log: debug,
+  });
+  const context: JSONSchemaContext = {
+    baseLocation: {
+      path: basePath,
+      type: exportNamespaces ? 'exported' : 'declared',
+      kind: 'type',
     },
-    buildIdentifier,
-    sideTypeDeclarations: [],
+    typeDefinitionBuilder,
+    rootSchema,
     jsonSchemaOptions: {
       baseName,
       brandedTypes,
@@ -1176,147 +1216,417 @@ export async function generateJSONSchemaTypes(
       tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
     },
-    seenSchemas: {},
   };
 
-  const mainStatement = await generateTypeDeclaration(
-    { ...context, candidateName: baseName, root: true },
-    schema,
+  const typeNode = await schemaToTypeNode(context, rootSchema);
+  const identifier = buildIdentifier(
+    baseName || rootSchema?.title || 'Unknown',
   );
+  const finalSchema = eventuallyIdentifySchema(rootSchema, identifier);
+  const finalType = await eventuallyBrandType(context, finalSchema, typeNode);
 
-  return gatherStatements(context, schema, [mainStatement]);
+  context.typeDefinitionBuilder.register({
+    ref: 'virtual://main',
+    location: {
+      ...context.baseLocation,
+      kind: 'statement',
+      namespace: [identifier],
+    },
+    type: 'statement',
+    statement: factory.createTypeAliasDeclaration(
+      [
+        context.jsonSchemaOptions.exportNamespaces
+          ? factory.createModifier(SyntaxKind.ExportKeyword)
+          : factory.createModifier(SyntaxKind.DeclareKeyword),
+      ],
+      identifier,
+      undefined,
+      finalType,
+    ),
+  });
+
+  return gatherStatements(context);
 }
 
 export async function gatherStatements(
-  context: Context,
-  schema: Schema,
-  statements: Statement[],
+  context: JSONSchemaContext,
 ): Promise<NodeArray<Statement>> {
-  const builtRefs: { [refName: string]: boolean } = {};
-  let refsToBuild = Object.keys(context.seenSchemas);
+  const statements: Statement[] = [];
+  let assumedFragmentsToBuild = context.typeDefinitionBuilder.list('assumed');
 
-  do {
-    context.sideTypeDeclarations = context.sideTypeDeclarations.concat(
-      await Promise.all(
-        refsToBuild.map(async (ref) => {
-          builtRefs[ref] = true;
+  debug('gatherStatements: start');
 
-          const namespaceParts = splitRef(ref);
-          const subSchema = await resolve<Schema, Schema>(
-            schema,
-            namespaceParts,
-          );
+  while (assumedFragmentsToBuild.length) {
+    for (const assumedFragmentToBuild of assumedFragmentsToBuild) {
+      const namespaceParts = splitRef(assumedFragmentToBuild.ref);
+      const subSchema = await resolve<JSONSchema, JSONSchema>(
+        context.rootSchema as JSONSchema,
+        namespaceParts,
+      );
 
-          return {
-            statement: await generateTypeDeclaration(
-              {
-                ...context,
-                root: namespaceParts.length === 1,
-                candidateName: buildIdentifier(
-                  namespaceParts[namespaceParts.length - 1],
-                ),
-                jsonSchemaOptions: {
-                  ...context.jsonSchemaOptions,
-                },
-              },
-              subSchema,
+      debug(
+        'assumed: ' + assumedFragmentToBuild.ref,
+        subSchema,
+        assumedFragmentToBuild,
+      );
+
+      if (subSchema.$ref) {
+        context.typeDefinitionBuilder.register(
+          buildLinkFragment(
+            {
+              ...context.baseLocation,
+              namespace: namespaceParts.map((part) => buildIdentifier(part)),
+            },
+            subSchema.$ref,
+            [],
+            assumedFragmentToBuild.ref,
+          ),
+        );
+        continue;
+      }
+
+      const identifier = buildIdentifier(
+        namespaceParts[namespaceParts.length - 1],
+      );
+      const finalSchema = eventuallyIdentifySchema(
+        namespaceParts[0] === 'components' && namespaceParts[1] !== 'schemas'
+          ? (subSchema as { schema: JSONSchema }).schema
+          : subSchema,
+        identifier,
+      );
+
+      context.typeDefinitionBuilder.register({
+        ref: assumedFragmentToBuild.ref,
+        location: {
+          ...context.baseLocation,
+          namespace: namespaceParts.map((part) => buildIdentifier(part)),
+        },
+        type:
+          namespaceParts[0] === 'components' && namespaceParts[1] !== 'schemas'
+            ? 'component'
+            : 'schema',
+        componentType: namespaceParts[1] as ComponentFragment['componentType'],
+        typeNode: await eventuallyBrandType(
+          context,
+          finalSchema,
+          await schemaToTypeNode(context, finalSchema),
+        ),
+      });
+    }
+
+    assumedFragmentsToBuild = context.typeDefinitionBuilder.list('assumed');
+  }
+
+  const fragments = context.typeDefinitionBuilder.list();
+
+  const interfaceStatements = fragments.reduce((statements, fragment) => {
+    if (!('location' in fragment) || fragment.location.kind !== 'interface') {
+      return statements;
+    }
+    const namespace = fragment.location.namespace;
+
+    let interfaceDeclaration = statements.find(
+      (d) => d.name.text === namespace[0],
+    );
+    let curTypeElements: TypeElement[] =
+      (interfaceDeclaration?.members as unknown as TypeElement[]) ||
+      ([] as TypeElement[]);
+
+    if (!interfaceDeclaration) {
+      interfaceDeclaration = factory.createInterfaceDeclaration(
+        [
+          context.jsonSchemaOptions.exportNamespaces
+            ? factory.createModifier(SyntaxKind.ExportKeyword)
+            : factory.createModifier(SyntaxKind.DeclareKeyword),
+        ],
+        factory.createIdentifier(namespace[0]),
+        undefined,
+        undefined,
+        curTypeElements,
+      );
+
+      statements.push(interfaceDeclaration);
+    }
+
+    for (let i = 1; i < namespace.length - 1; i++) {
+      let propertySignature: PropertySignature | undefined =
+        curTypeElements.find(
+          (e) =>
+            e &&
+            isPropertySignature(e) &&
+            (e.name as Identifier).text === namespace[i],
+        ) as PropertySignature;
+      const typeNode = propertySignature?.type;
+      const typeElements =
+        (typeNode && isTypeLiteralNode(typeNode) && typeNode.members) ||
+        ([] as TypeElement[]);
+
+      if (!propertySignature) {
+        propertySignature = factory.createPropertySignature(
+          undefined,
+          factory.createIdentifier(namespace[i]),
+          undefined,
+          factory.createTypeLiteralNode(typeElements),
+        );
+        curTypeElements.push(propertySignature);
+      }
+      curTypeElements = typeElements as TypeElement[];
+    }
+
+    if (fragment.type === 'link') {
+      const linkedFragment = context.typeDefinitionBuilder.find(
+        fragment.destination,
+      );
+
+      if (!linkedFragment) {
+        debug(`could not find ${fragment.destination}`);
+        return statements;
+      }
+      if (!('location' in linkedFragment)) {
+        debug(`could not locate ${fragment.destination}`);
+        return statements;
+      }
+
+      curTypeElements.push(
+        factory.createPropertySignature(
+          undefined,
+          factory.createIdentifier(namespace[namespace.length - 1]),
+          undefined,
+          linkedFragment.location.kind === 'interface'
+            ? buildInterfaceReference(linkedFragment.location.namespace)
+            : buildTypeReference(
+                linkedFragment.location.namespace,
+                fragment.parameters,
+              ),
+        ),
+      );
+    } else if ('typeNode' in fragment && fragment.type !== 'typeDeclaration') {
+      curTypeElements.push(
+        factory.createPropertySignature(
+          undefined,
+          factory.createIdentifier(namespace[namespace.length - 1]),
+          undefined,
+          fragment.typeNode,
+        ),
+      );
+    } else {
+      debug('bad fragment', fragment);
+    }
+
+    return statements;
+  }, [] as InterfaceDeclaration[]);
+
+  const typeStatements = fragments.reduce((statements, fragment) => {
+    if (!('location' in fragment) || fragment.location.kind !== 'type') {
+      return statements;
+    }
+
+    const namespace = fragment.location.namespace;
+    // TEMPFIX: Add a const to manage the esbuild-jest problems
+    // https://github.com/aelbore/esbuild-jest/issues/54
+    const createModuleBlck = factory.createModuleBlock;
+    let moduleDeclaration = statements.find(
+      (d) => d.name.text === namespace[0],
+    );
+    let curTypeModuleDeclarations =
+      ((moduleDeclaration?.body as ModuleBlock)?.statements as unknown as (
+        | ModuleDeclaration
+        | Statement
+      )[]) || ([] as (ModuleDeclaration | Statement)[]);
+
+    if (!moduleDeclaration) {
+      moduleDeclaration = factory.createModuleDeclaration(
+        [
+          context.jsonSchemaOptions.exportNamespaces
+            ? factory.createModifier(SyntaxKind.ExportKeyword)
+            : factory.createModifier(SyntaxKind.DeclareKeyword),
+        ],
+        factory.createIdentifier(buildIdentifier(namespace[0])),
+        createModuleBlck(curTypeModuleDeclarations),
+        NodeFlags.Namespace | NodeFlags.ExportContext | NodeFlags.ContextFlags,
+      );
+
+      statements.push(moduleDeclaration);
+    }
+
+    for (let i = 1; i < namespace.length - 1; i++) {
+      let moduleDeclaration: ModuleDeclaration | undefined =
+        curTypeModuleDeclarations.find(
+          (e) =>
+            e &&
+            isModuleDeclaration(e) &&
+            (e.name as Identifier).text === namespace[i],
+        ) as ModuleDeclaration;
+      const typeElements =
+        ((moduleDeclaration?.body as ModuleBlock)?.statements as unknown as (
+          | ModuleDeclaration
+          | Statement
+        )[]) || ([] as (ModuleDeclaration | Statement)[]);
+
+      if (!moduleDeclaration) {
+        moduleDeclaration = factory.createModuleDeclaration(
+          [factory.createModifier(SyntaxKind.ExportKeyword)],
+          factory.createIdentifier(namespace[i]),
+          createModuleBlck(typeElements),
+          NodeFlags.Namespace |
+            NodeFlags.ExportContext |
+            NodeFlags.ContextFlags,
+        );
+        curTypeModuleDeclarations.push(moduleDeclaration);
+      }
+      curTypeModuleDeclarations = typeElements;
+    }
+
+    if (fragment.type === 'link') {
+      const linkedFragment = context.typeDefinitionBuilder.find(
+        fragment.destination,
+      );
+
+      if (!linkedFragment) {
+        debug(`could not find ${fragment.destination}`);
+        return statements;
+      }
+      if (!('location' in linkedFragment)) {
+        debug(`could not locate ${fragment.destination}`);
+        return statements;
+      }
+
+      if (
+        fragment.parameters?.length &&
+        fragment.parameters?.length !==
+          linkedFragment.location?.parameters?.length
+      ) {
+        debug('bad parameters:', fragment, linkedFragment);
+      }
+
+      curTypeModuleDeclarations.push(
+        linkedFragment.type === 'alias' &&
+          !linkedFragment.parameters?.length &&
+          fragment.location.type === 'imported'
+          ? factory.createImportEqualsDeclaration(
+              [factory.createModifier(SyntaxKind.ExportKeyword)],
+              false,
+              factory.createIdentifier(namespace[namespace.length - 1]),
+              (linkedFragment.location.kind === 'interface'
+                ? buildInterfaceReference(linkedFragment.location.namespace)
+                : buildTypeReference(
+                    linkedFragment.location.namespace,
+                    fragment.parameters,
+                  )) as unknown as ModuleReference,
+            )
+          : factory.createTypeAliasDeclaration(
+              [factory.createModifier(SyntaxKind.ExportKeyword)],
+              factory.createIdentifier(namespace[namespace.length - 1]),
+              fragment.location.parameters || undefined,
+              linkedFragment.location.kind === 'interface'
+                ? buildInterfaceReference(linkedFragment.location.namespace)
+                : buildTypeReference(
+                    linkedFragment.location.namespace,
+                    fragment.parameters,
+                  ),
             ),
-            namespaceParts: namespaceParts.map((part) => buildIdentifier(part)),
-          };
-        }),
-      ),
-    );
-    refsToBuild = Object.keys(context.seenSchemas).filter(
-      (ref) => !builtRefs[ref],
-    );
-  } while (refsToBuild.length);
+      );
+    } else if (fragment.type === 'typeDeclaration') {
+      curTypeModuleDeclarations.push(fragment.typeNode);
+    } else if (fragment.type !== 'alias' && 'typeNode' in fragment) {
+      curTypeModuleDeclarations.push(
+        factory.createTypeAliasDeclaration(
+          [factory.createModifier(SyntaxKind.ExportKeyword)],
+          factory.createIdentifier(namespace[namespace.length - 1]),
+          fragment.location.parameters || undefined,
+          fragment.typeNode,
+        ),
+      );
+    } else {
+      debug('bad fragment', fragment);
+    }
 
-  const packageTree: PackageTreeNode[] = [];
+    return statements;
+  }, [] as ModuleDeclaration[]);
 
-  context.sideTypeDeclarations.forEach(({ statement, namespaceParts }) => {
-    buildTree(packageTree, namespaceParts, statement);
-  }, []);
+  const statementsFragments = fragments.filter(
+    (fragment): fragment is StatementFragment =>
+      fragment.type === 'statement' && 'statement' in fragment,
+  ) as StatementFragment[];
 
-  return ts.factory.createNodeArray([
+  return factory.createNodeArray([
     ...statements,
-    ...buildModuleDeclarations(context, packageTree),
+    ...statementsFragments.map((fragment) => fragment.statement),
+    ...interfaceStatements,
+    ...typeStatements,
   ]);
 }
 
-export async function generateTypeDeclaration(
-  context: Context,
+export async function eventuallyBrandType(
+  context: JSONSchemaContext,
   schema: SchemaDefinition,
-): Promise<Statement> {
-  const types = await schemaToTypes(context, schema);
+  typeNode: TypeNode,
+): Promise<TypeNode> {
+  if (
+    typeof schema === 'boolean' ||
+    typeof schema === 'undefined' ||
+    !(typeof schema === 'object') ||
+    !schema ||
+    !['string', 'number', 'integer', 'boolean'].includes(schema?.type as string)
+  ) {
+    return typeNode;
+  }
 
-  const name = context.buildIdentifier(
-    context.candidateName || (schema && (schema as Schema).title) || 'Unknown',
-  );
+  const name =
+    typeof schema === 'object' &&
+    schema &&
+    'title' in schema &&
+    schema.title !== 'Unknown' &&
+    schema.title;
+
+  if (!name) {
+    return typeNode;
+  }
+
   const isBrandedType =
-    name &&
-    name !== 'Unknown' &&
-    typeof schema !== 'boolean' &&
-    (schema.type === 'string' ||
-      schema.type === 'number' ||
-      schema.type === 'integer' ||
-      schema.type === 'boolean') &&
-    (context.jsonSchemaOptions.brandedTypes === ALL_TYPES ||
-      context.jsonSchemaOptions.brandedTypes.includes(name));
-  let finalType =
-    types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
+    context.jsonSchemaOptions.brandedTypes === ALL_TYPES ||
+    context.jsonSchemaOptions.brandedTypes.includes(name);
 
   if (isBrandedType) {
-    finalType = ts.factory.createIntersectionTypeNode([
-      finalType,
-      ...(await schemaToTypes(
-        { ...context, candidateName: undefined },
-        {
-          type: 'object',
-          properties: {
-            _type: { enum: [name as string] },
-          },
+    return factory.createIntersectionTypeNode([
+      typeNode,
+      ...(await schemaToTypes(context, {
+        type: 'object',
+        properties: {
+          _type: { enum: [name as string] },
         },
-      )),
+      })),
     ]);
   }
 
-  return ts.factory.createTypeAliasDeclaration(
-    [
-      context.root && !context.jsonSchemaOptions.exportNamespaces
-        ? ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)
-        : ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
-    ],
-    name,
-    undefined,
-    finalType,
-  );
+  return typeNode;
 }
 
 async function schemaToTypeNode(
-  context: Context,
+  context: JSONSchemaContext,
   schema: SchemaDefinition,
-): Promise<ts.TypeNode> {
+): Promise<TypeNode> {
   const types = await schemaToTypes(context, schema);
 
-  return types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0];
+  return types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
 }
 
 async function schemaToTypes(
-  context: Context,
+  context: JSONSchemaContext,
   schema: SchemaDefinition,
   parentType?: JSONSchema6TypeName | JSONSchema6TypeName[],
-): Promise<ts.TypeNode[]> {
+): Promise<TypeNode[]> {
   if (typeof schema === 'boolean') {
     if (schema) {
-      return [ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)];
+      return [factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword)];
     } else {
-      return [ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword)];
+      return [factory.createKeywordTypeNode(SyntaxKind.NeverKeyword)];
     }
   }
   if (schema.type === 'null') {
     return [
-      ts.factory.createLiteralTypeNode(
-        ts.factory.createToken(ts.SyntaxKind.NullKeyword),
+      factory.createLiteralTypeNode(
+        factory.createToken(SyntaxKind.NullKeyword),
       ),
     ];
   }
@@ -1327,9 +1637,11 @@ async function schemaToTypes(
   }
 
   if (schema.$ref) {
-    const referenceParts = await context.nameResolver(schema.$ref);
+    context.typeDefinitionBuilder?.assume(schema.$ref);
 
-    return [buildTypeReference(context, referenceParts)];
+    const referenceParts = splitRef(schema.$ref);
+
+    return [buildTypeReference(referenceParts.map(buildIdentifier))];
   } else if ('const' in schema) {
     return [buildLiteralType(schema.const)];
   } else if (schema.enum) {
@@ -1346,27 +1658,35 @@ async function schemaToTypes(
       schema.enum.length > 1 &&
       allEnumValuesAreLiteral &&
       enumTypes[0] === 'string';
-    const name = schema.title || context.candidateName;
+    const name = schema.title;
 
     if (
       enumValuesCanBeEnumType &&
       name &&
       context.jsonSchemaOptions.generateRealEnums
     ) {
-      context.sideTypeDeclarations.push({
-        statement: ts.factory.createEnumDeclaration(
-          [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          buildIdentifier(name),
+      const identifier = buildIdentifier(name);
+
+      context.typeDefinitionBuilder.register({
+        location: {
+          ...context.baseLocation,
+          namespace: ['Enums', identifier],
+          kind: 'type',
+        },
+        type: 'typeDeclaration',
+        typeNode: factory.createEnumDeclaration(
+          [factory.createModifier(SyntaxKind.ExportKeyword)],
+          identifier,
           schema.enum.map((value) =>
-            ts.factory.createEnumMember(
+            factory.createEnumMember(
               buildIdentifier(value as string),
-              ts.factory.createStringLiteral(value as string),
+              factory.createStringLiteral(value as string),
             ),
           ),
         ),
-        namespaceParts: ['Enums', buildIdentifier(name)],
+        ref: `virtual://enums/${name}`,
       });
-      return [buildTypeReference(context, ['Enums', buildIdentifier(name)])];
+      return [buildTypeReference(['Enums', identifier])];
     }
 
     if (allEnumValuesAreLiteral) {
@@ -1377,22 +1697,13 @@ async function schemaToTypes(
 
     throw new YError('E_UNSUPPORTED_ENUM', schema.enum);
   } else if (schema.type) {
-    return await handleTypedSchema(
-      { ...context, candidateName: undefined },
-      schema,
-    );
+    return await handleTypedSchema(context, schema);
   } else if (schema.anyOf || schema.allOf || schema.oneOf) {
-    return handleComposedSchemas(
-      { ...context, candidateName: undefined },
-      schema,
-    );
+    return handleComposedSchemas(context, schema);
   } else if (parentType) {
     // Inject type from parent
     schema.type = parentType;
-    return await handleTypedSchema(
-      { ...context, candidateName: undefined },
-      schema,
-    );
+    return await handleTypedSchema(context, schema);
   }
 
   throw new YError('E_UNSUPPORTED_SCHEMA', schema);
@@ -1400,35 +1711,29 @@ async function schemaToTypes(
 
 // Handle schema where type is defined
 async function handleTypedSchema(
-  context: Context,
-  schema: Schema,
-): Promise<ts.TypeNode[]> {
+  context: JSONSchemaContext,
+  schema: JSONSchema,
+): Promise<TypeNode[]> {
   const types = schema.type instanceof Array ? schema.type : [schema.type];
-  const baseTypes: ts.TypeNode[] = await Promise.all(
+  const baseTypes: TypeNode[] = await Promise.all(
     types.map(async (type) => {
       switch (type) {
         case 'null':
-          return ts.factory.createLiteralTypeNode(ts.factory.createNull());
+          return factory.createLiteralTypeNode(factory.createNull());
         case 'any':
-          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+          return factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
         case 'boolean':
-          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+          return factory.createKeywordTypeNode(SyntaxKind.BooleanKeyword);
         case 'integer':
-          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+          return factory.createKeywordTypeNode(SyntaxKind.NumberKeyword);
         case 'number':
-          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+          return factory.createKeywordTypeNode(SyntaxKind.NumberKeyword);
         case 'string':
-          return ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+          return factory.createKeywordTypeNode(SyntaxKind.StringKeyword);
         case 'object':
-          return await buildObjectTypeNode(
-            { ...context, candidateName: undefined },
-            schema,
-          );
+          return await buildObjectTypeNode(context, schema);
         case 'array':
-          return await buildArrayTypeNode(
-            { ...context, candidateName: undefined },
-            schema,
-          );
+          return await buildArrayTypeNode(context, schema);
         default:
           throw new YError('E_BAD_TYPE', type);
       }
@@ -1439,9 +1744,7 @@ async function handleTypedSchema(
   if (schema.anyOf || schema.allOf || schema.oneOf) {
     const innerTypes = await handleComposedSchemas(context, schema);
 
-    return [
-      ts.factory.createIntersectionTypeNode([...baseTypes, ...innerTypes]),
-    ];
+    return [factory.createIntersectionTypeNode([...baseTypes, ...innerTypes])];
   } else {
     return baseTypes;
   }
@@ -1449,44 +1752,44 @@ async function handleTypedSchema(
 
 // Handle oneOf / anyOf / allOf
 async function handleComposedSchemas(
-  context: Context,
-  schema: Schema,
-): Promise<ts.TypeNode[]> {
+  context: JSONSchemaContext,
+  schema: JSONSchema,
+): Promise<TypeNode[]> {
   const types = (
     await Promise.all(
-      ((schema.anyOf || schema.allOf || schema.oneOf) as Schema[]).map(
+      ((schema.anyOf || schema.allOf || schema.oneOf) as JSONSchema[]).map(
         async (innerSchema) =>
           await schemaToTypes(context, innerSchema, schema.type),
       ),
     )
   ).map((innerTypes) =>
     innerTypes.length > 1
-      ? ts.factory.createUnionTypeNode(innerTypes)
+      ? factory.createUnionTypeNode(innerTypes)
       : innerTypes[0],
   );
 
   if (schema.oneOf) {
-    return [ts.factory.createUnionTypeNode(types)];
+    return [factory.createUnionTypeNode(types)];
   } else if (schema.anyOf) {
     // Not really a union types but no way to express
     // this in TypeScript atm 🤷
-    return [ts.factory.createUnionTypeNode(types)];
+    return [factory.createUnionTypeNode(types)];
   } else if (schema.allOf) {
     // Fallback to intersection type which will only work
     // in some situations (see the README)
-    return [ts.factory.createIntersectionTypeNode(types)];
+    return [factory.createIntersectionTypeNode(types)];
   } else {
     throw new YError('E_COMPOSED_SCHEMA_UNSUPPORTED', schema);
   }
 }
 
 async function buildObjectTypeNode(
-  context: Context,
-  schema: Schema,
-): Promise<ts.TypeNode> {
+  context: JSONSchemaContext,
+  schema: JSONSchema,
+): Promise<TypeNode> {
   const requiredProperties =
     schema.required && schema.required instanceof Array ? schema.required : [];
-  let elements: ts.TypeElement[] = [];
+  let elements: TypeElement[] = [];
 
   if (schema.properties) {
     elements = elements.concat(
@@ -1498,24 +1801,24 @@ async function buildObjectTypeNode(
           const required = requiredProperties.includes(propertyName);
           const readOnly = (property as JSONSchema7).readOnly;
           const types = await schemaToTypes(
-            { ...context, candidateName: propertyName },
-            property as Schema,
+            context,
+            eventuallyIdentifySchema(property as JSONSchema, propertyName),
           );
           const isSuitableAsIdentifierName = /^[a-z_$][a-z0-9_$]*$/i.test(
             propertyName,
           );
 
-          return ts.factory.createPropertySignature(
+          return factory.createPropertySignature(
             readOnly
-              ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
+              ? [factory.createModifier(SyntaxKind.ReadonlyKeyword)]
               : [],
             isSuitableAsIdentifierName
               ? propertyName
-              : ts.factory.createStringLiteral(propertyName),
+              : factory.createStringLiteral(propertyName),
             required
               ? undefined
-              : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-            types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+              : factory.createToken(SyntaxKind.QuestionToken),
+            types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
           );
         }),
       ),
@@ -1533,11 +1836,11 @@ async function buildObjectTypeNode(
               'undefined' === typeof schema.properties?.[propertyName],
           )
           .map(async (propertyName) => {
-            return ts.factory.createPropertySignature(
+            return factory.createPropertySignature(
               [],
               propertyName,
               undefined,
-              ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+              factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
             );
           }),
       ),
@@ -1556,14 +1859,14 @@ async function buildObjectTypeNode(
             ] as JSONSchema7Definition;
             const required = requiredProperties.includes(propertyPattern);
             const readOnly = !!(property as JSONSchema7).readOnly;
-            const types = await schemaToTypes(context, property as Schema);
+            const types = await schemaToTypes(context, property as JSONSchema);
 
             return {
               readOnly,
               required,
               type:
                 types.length > 1
-                  ? ts.factory.createUnionTypeNode(types)
+                  ? factory.createUnionTypeNode(types)
                   : types[0],
             };
           },
@@ -1574,16 +1877,14 @@ async function buildObjectTypeNode(
         schema.additionalProperties
           ? [
               {
-                type: ts.factory.createKeywordTypeNode(
-                  ts.SyntaxKind.UnknownKeyword,
-                ),
+                type: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
                 required: false,
                 readOnly: false,
               },
             ]
           : [],
       )
-      .reduce<{ readOnly: boolean; required: boolean; types: ts.TypeNode[] }>(
+      .reduce<{ readOnly: boolean; required: boolean; types: TypeNode[] }>(
         (
           { required: allRequired, readOnly: allReadOnly, types: allTypes },
           { required, readOnly, type },
@@ -1596,37 +1897,35 @@ async function buildObjectTypeNode(
       );
 
     elements = elements.concat(
-      ts.factory.createIndexSignature(
-        readOnly
-          ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
-          : [],
+      factory.createIndexSignature(
+        readOnly ? [factory.createModifier(SyntaxKind.ReadonlyKeyword)] : [],
         [
-          ts.factory.createParameterDeclaration(
+          factory.createParameterDeclaration(
             [],
             undefined,
-            ts.factory.createIdentifier('pattern'),
+            factory.createIdentifier('pattern'),
             required
-              ? ts.factory.createToken(ts.SyntaxKind.QuestionToken)
+              ? factory.createToken(SyntaxKind.QuestionToken)
               : undefined,
-            ts.factory.createTypeReferenceNode('string', []),
+            factory.createTypeReferenceNode('string', []),
             undefined,
           ),
         ],
-        ts.factory.createUnionTypeNode(types),
+        factory.createUnionTypeNode(types),
       ),
     );
   }
 
-  return ts.factory.createTypeLiteralNode(elements);
+  return factory.createTypeLiteralNode(elements);
 }
 
 async function buildArrayTypeNode(
-  context: Context,
-  schema: Schema,
-): Promise<ts.TypeNode> {
+  context: JSONSchemaContext,
+  schema: JSONSchema,
+): Promise<TypeNode> {
   if (typeof schema.maxItems === 'number' && schema.maxItems <= 0) {
-    return ts.factory.createArrayTypeNode(
-      ts.factory.createKeywordTypeNode(ts.SyntaxKind.NeverKeyword),
+    return factory.createArrayTypeNode(
+      factory.createKeywordTypeNode(SyntaxKind.NeverKeyword),
     );
   }
 
@@ -1636,13 +1935,13 @@ async function buildArrayTypeNode(
     (typeof schema.items !== 'boolean' && !(schema.items instanceof Array)
       ? schema.items
       : undefined);
-  const prefixItems: Schema[] =
+  const prefixItems: JSONSchema[] =
     // Here, we are supporting the new way to declare tuples
     // in the last JSONSchema Draft
     // (see https://json-schema.org/understanding-json-schema/reference/array#tupleValidation )
-    (schema as unknown as { prefixItems: Schema[] }).prefixItems ||
+    (schema as unknown as { prefixItems: JSONSchema[] }).prefixItems ||
     (typeof schema.items === 'object' && schema.items instanceof Array)
-      ? (schema.items as unknown as Schema[])
+      ? (schema.items as unknown as JSONSchema[])
       : [];
 
   if (prefixItems.length) {
@@ -1651,28 +1950,28 @@ async function buildArrayTypeNode(
         prefixItems.map((schema) => schemaToTypes(context, schema)),
       )
     ).map((types) =>
-      types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+      types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
     );
 
     if (additionalItems) {
       const additionalTypes = await schemaToTypes(context, additionalItems);
 
       types.push(
-        ts.factory.createRestTypeNode(
-          ts.factory.createArrayTypeNode(
+        factory.createRestTypeNode(
+          factory.createArrayTypeNode(
             additionalTypes.length > 1
-              ? ts.factory.createUnionTypeNode(additionalTypes)
+              ? factory.createUnionTypeNode(additionalTypes)
               : additionalTypes[0],
           ),
         ),
       );
     }
 
-    return ts.factory.createTupleTypeNode(types);
+    return factory.createTupleTypeNode(types);
   } else {
     const types = additionalItems
       ? await schemaToTypes(context, additionalItems)
-      : [ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)];
+      : [factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword)];
 
     // Switch from arrays to tuples for small fixed length arrays
     if (
@@ -1684,9 +1983,9 @@ async function buildArrayTypeNode(
       schema.maxItems <
         context.jsonSchemaOptions.tuplesFromFixedArraysLengthLimit
     ) {
-      return ts.factory.createTupleTypeNode(
+      return factory.createTupleTypeNode(
         new Array(schema.minItems).fill(
-          types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+          types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
         ),
       );
     }
@@ -1699,16 +1998,16 @@ async function buildArrayTypeNode(
       schema.minItems <
         context.jsonSchemaOptions.tuplesFromFixedArraysLengthLimit
     ) {
-      return ts.factory.createTupleTypeNode(
+      return factory.createTupleTypeNode(
         new Array(schema.minItems)
           .fill(
-            types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+            types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
           )
           .concat(
-            ts.factory.createRestTypeNode(
-              ts.factory.createArrayTypeNode(
+            factory.createRestTypeNode(
+              factory.createArrayTypeNode(
                 types.length > 1
-                  ? ts.factory.createUnionTypeNode(types)
+                  ? factory.createUnionTypeNode(types)
                   : types[0],
               ),
             ),
@@ -1716,28 +2015,9 @@ async function buildArrayTypeNode(
       );
     }
 
-    return ts.factory.createArrayTypeNode(
-      types.length > 1 ? ts.factory.createUnionTypeNode(types) : types[0],
+    return factory.createArrayTypeNode(
+      types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
     );
-  }
-}
-
-function buildLiteralType(value: number | string | boolean): ts.TypeNode {
-  switch (typeof value) {
-    case 'number':
-      return ts.factory.createLiteralTypeNode(
-        ts.factory.createNumericLiteral(value),
-      );
-    case 'string':
-      return ts.factory.createLiteralTypeNode(
-        ts.factory.createStringLiteral(value),
-      );
-    case 'boolean':
-      return ts.factory.createLiteralTypeNode(
-        value ? ts.factory.createTrue() : ts.factory.createFalse(),
-      );
-    case 'object':
-      return ts.factory.createLiteralTypeNode(ts.factory.createNull());
   }
 }
 
@@ -1746,98 +2026,21 @@ function buildLiteralType(value: number | string | boolean): ts.TypeNode {
  * @param {TypedPropertyDescriptor.NodeArray} nodes
  * @returns string
  */
-export function toSource(nodes: ts.Node | NodeArray<ts.Node>): string {
-  const resultFile = ts.createSourceFile(
+export function toSource(nodes: Node | NodeArray<Node>): string {
+  const resultFile = createSourceFile(
     'someFileName.ts',
     '',
-    ts.ScriptTarget.Latest,
+    ScriptTarget.Latest,
     /*setParentNodes*/ false,
-    ts.ScriptKind.TS,
+    ScriptKind.TS,
   );
-  const printer = ts.createPrinter({
-    newLine: ts.NewLineKind.LineFeed,
+  const printer = createPrinter({
+    newLine: NewLineKind.LineFeed,
   });
   return printer.printList(
-    ts.ListFormat.SourceFileStatements,
-    nodes instanceof Array
-      ? nodes
-      : ts.factory.createNodeArray([nodes as ts.Node]),
+    ListFormat.SourceFileStatements,
+    nodes instanceof Array ? nodes : factory.createNodeArray([nodes]),
     resultFile,
-  );
-}
-
-function buildModuleDeclarations(
-  context: Context,
-  currentTree: PackageTreeNode[],
-  level = 0,
-): Statement[] {
-  return currentTree.map((treeNode) => {
-    // TEMPFIX: Add a const to manage the esbuild-jest problems
-    // https://github.com/aelbore/esbuild-jest/issues/54
-    const createModuleBlck = ts.factory.createModuleBlock;
-    return ts.factory.createModuleDeclaration(
-      [
-        level === 0 && !context.jsonSchemaOptions.exportNamespaces
-          ? ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)
-          : ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
-      ],
-      ts.factory.createIdentifier(context.buildIdentifier(treeNode.name)),
-      createModuleBlck([
-        ...treeNode.types,
-        ...(treeNode.childs
-          ? buildModuleDeclarations(context, treeNode.childs, level + 1)
-          : []),
-      ]),
-      ts.NodeFlags.Namespace |
-        ts.NodeFlags.ExportContext |
-        ts.NodeFlags.ContextFlags,
-    );
-  });
-}
-
-function buildTree(
-  currentTree: PackageTreeNode[],
-  baseParts: string[],
-  type: ts.Statement,
-) {
-  const [part, ...leftParts] = baseParts;
-  let child = currentTree.find(({ name }) => name === part);
-
-  if (!child) {
-    child = {
-      name: part,
-      childs: [],
-      types: [],
-    };
-    currentTree.push(child);
-  }
-
-  if (leftParts.length > 1) {
-    buildTree(child.childs, leftParts, type);
-    return;
-  }
-  child.types.push(type);
-}
-
-function buildTypeReference(
-  context: Context,
-  namespaceParts: string[],
-  withTypeRefs: string[] = [],
-) {
-  return ts.factory.createTypeReferenceNode(
-    namespaceParts.reduce<ts.EntityName>(
-      (curNode: ts.EntityName | null, referencePart: string) => {
-        const identifier = ts.factory.createIdentifier(
-          context.buildIdentifier(referencePart),
-        );
-
-        return curNode
-          ? ts.factory.createQualifiedName(curNode, identifier)
-          : identifier;
-      },
-      null as unknown as ts.EntityName,
-    ),
-    withTypeRefs.map((typeRef) => ts.factory.createTypeReferenceNode(typeRef)),
   );
 }
 

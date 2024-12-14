@@ -1,13 +1,13 @@
 {
-  "openapi": "3.0.2",
+  "openapi": "3.1.0",
   "info": {
-    "version": "4.1.1",
+    "version": "18.1.0",
     "title": "@whook/example",
     "description": "A basic Whook server"
   },
   "servers": [
     {
-      "url": "http://localhost:8000/v4"
+      "url": "http://localhost:8001/v18"
     }
   ],
   "paths": {
@@ -24,11 +24,14 @@
         "responses": {
           "204": {
             "description": "Delay expired"
+          },
+          "200": {
+            "description": "Delay expired"
           }
         }
       }
     },
-    "/diag": {
+    "/diagnostic": {
       "get": {
         "operationId": "getDiagnostic",
         "summary": "Returns current API's transactions.",
@@ -41,21 +44,10 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Diagnostic",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["transactions"],
-                  "properties": {
-                    "transactions": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/Diagnostic"
+          },
+          "204": {
+            "$ref": "#/components/responses/Diagnostic"
           }
         }
       }
@@ -102,24 +94,29 @@
             "$ref": "#/components/parameters/pathParam2"
           },
           {
+            "$ref": "#/components/parameters/queryParam"
+          },
+          {
             "in": "header",
             "name": "aHeader",
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "in": "header",
+            "name": "aMultiHeader",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
           }
         ],
         "responses": {
-          "204": {
+          "200": {
             "description": "Delay expired",
-            "headers": {
-              "x-delay-precision": {
-                "schema": {
-                  "type": "string",
-                  "enum": ["ns", "ms", "s"]
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -128,10 +125,19 @@
                     "aHeader": {
                       "type": "boolean"
                     },
+                    "aMultiHeader": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    },
                     "pathParam1": {
                       "type": "number"
                     },
                     "pathParam2": {
+                      "type": "string"
+                    },
+                    "queryParam": {
                       "type": "array",
                       "items": {
                         "type": "string"
@@ -170,29 +176,11 @@
         "summary": "Echoes what it takes.",
         "tags": ["example"],
         "requestBody": {
-          "description": "The input sentence",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Echo"
-              },
-              "example": {
-                "echo": "Repeat this!"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/Echo"
         },
         "responses": {
           "200": {
-            "description": "The actual echo",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Echo"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Echo"
           }
         }
       }
@@ -202,6 +190,16 @@
         "operationId": "getPing",
         "summary": "Checks API's availability.",
         "tags": ["system"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Echo"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Pong",
@@ -245,12 +243,6 @@
             "type": "string"
           }
         }
-      },
-      "strings": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
       }
     },
     "parameters": {
@@ -267,7 +259,7 @@
         "in": "path",
         "name": "pathParam1",
         "required": true,
-        "description": "Duration in milliseconds",
+        "description": "A number param",
         "schema": {
           "type": "number"
         }
@@ -276,8 +268,64 @@
         "in": "path",
         "name": "pathParam2",
         "required": true,
-        "description": "Duration in milliseconds",
-        "schema": { "$ref": "#/components/schemas/strings" }
+        "description": "A string item",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "queryParam": {
+        "in": "query",
+        "name": "queryParam",
+        "required": true,
+        "description": "A list of items",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "headers": {},
+    "requestBodies": {
+      "Echo": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Echo"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Diagnostic": {
+        "description": "Diagnostic",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["transactions"],
+              "properties": {
+                "transactions": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "Echo": {
+        "description": "Echo response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Echo"
+            }
+          }
+        }
       }
     },
     "securitySchemes": {

@@ -23,7 +23,7 @@ It is also meant to be a building block for higher level generators.
 ## Usage
 
 ```ts
-import { readFileSync, writeFileSync } from 'fs';
+import { readFile, writeFile } from 'node:fs/promises';
 import {
   generateJSONSchemaTypes,
   generateOpenAPITypes,
@@ -33,15 +33,21 @@ import {
 // Open API
 const openAPISchema = JSON.parse(readFileSync('openapi.json').toString());
 
-writeFileSync('API.d.ts', toSource(await generateOpenAPITypes(openAPISchema)));
+await writeFile(
+  'API.d.ts',
+  toSource(await generateOpenAPITypes(openAPISchema)),
+);
 
 // JSON Schema
 const jsonSchema = JSON.parse(readFileSync('schema.json').toString());
 
-writeFileSync('API.d.ts', toSource(await generateJSONSchemaTypes(jsonSchema)));
+await writeFile(
+  'API.d.ts',
+  toSource(await generateJSONSchemaTypes(jsonSchema)),
+);
 ```
 
-If you find some case with unexpected results, please add the fixtures to this
+If you find some cases with unexpected results, please add the fixtures to this
 repository in a pull request and describe the problem you encounter.
 
 ## Options
