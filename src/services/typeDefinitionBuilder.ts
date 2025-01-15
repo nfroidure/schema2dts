@@ -22,6 +22,13 @@ async function initTypeDefinitionBuilder({
 
   const typeDefinition = {
     register: (fragment: Fragment) => {
+      if (
+        fragment.type === 'assumed' &&
+        store.find((aFragment) => fragment.ref === aFragment.ref)
+      ) {
+        return;
+      }
+
       store = store
         .filter((aFragment) => aFragment.ref !== fragment.ref)
         .concat(fragment);

@@ -40,6 +40,7 @@ import {
   eventuallyIdentifySchema,
   JSONSchemaContext,
   JSONSchemaOptions,
+  jsonSchemaToFragments,
   resolve,
   schemaToTypeNode,
   splitRef,
@@ -874,13 +875,9 @@ export async function generateOpenAPITypes(
 
           return { $ref: ref };
         });
-        const { type, assumedReferences, fragments } = await schemaToTypeNode(
-          context,
-          {
-            oneOf: requestBodySchemasReferences,
-          },
-        );
-        (assumedReferences || []).map(typeDefinitionBuilder.assume);
+        const { type, fragments } = await schemaToTypeNode(context, {
+          oneOf: requestBodySchemasReferences,
+        });
         (fragments || []).map(typeDefinitionBuilder.register);
 
         context.typeDefinitionBuilder.register(
@@ -926,13 +923,12 @@ export async function generateOpenAPITypes(
       if (!('schema' in parameter) || typeof parameter.schema === 'undefined') {
         finalType = factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
       } else {
-        const { type, assumedReferences, fragments } = await schemaToTypeNode(
+        const { type, fragments } = await schemaToTypeNode(
           context,
           eventuallyIdentifySchema(parameter.schema as JSONSchema, identifier),
         );
 
         finalType = type;
-        (assumedReferences || []).map(typeDefinitionBuilder.assume);
         (fragments || []).map(typeDefinitionBuilder.register);
       }
 
@@ -1009,15 +1005,11 @@ export async function generateOpenAPITypes(
 
           return { $ref: ref };
         });
-        const { type, assumedReferences, fragments } = await schemaToTypeNode(
-          context,
-          {
-            oneOf: responseSchemasReferences,
-          },
-        );
+        const { type, fragments } = await schemaToTypeNode(context, {
+          oneOf: responseSchemasReferences,
+        });
 
         schemasType = type;
-        (assumedReferences || []).map(typeDefinitionBuilder.assume);
         (fragments || []).map(typeDefinitionBuilder.register);
       }
       let hasRequiredHeaders = false;
@@ -1148,7 +1140,7 @@ export async function generateOpenAPITypes(
       if (!('schema' in header) || typeof header.schema === 'undefined') {
         finalType = factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
       } else {
-        const { type, assumedReferences, fragments } = await schemaToTypeNode(
+        const { type, fragments } = await schemaToTypeNode(
           context,
           eventuallyIdentifySchema(
             header.schema as JSONSchema,
@@ -1157,7 +1149,6 @@ export async function generateOpenAPITypes(
         );
 
         finalType = type;
-        (assumedReferences || []).map(typeDefinitionBuilder.assume);
         (fragments || []).map(typeDefinitionBuilder.register);
       }
 
@@ -1219,40 +1210,9 @@ export async function generateJSONSchemaTypes(
     },
   };
 
-  const {
-    type: typeNode,
-    assumedReferences,
-    fragments,
-  } = await schemaToTypeNode(context, rootSchema);
-  const identifier = buildIdentifier(
-    baseName || rootSchema?.title || 'Unknown',
-  );
-  const finalSchema = eventuallyIdentifySchema(rootSchema, identifier);
-  const finalType = await eventuallyBrandType(context, finalSchema, typeNode);
+  const fragments = await jsonSchemaToFragments(context, rootSchema);
 
-  console.log(finalType, assumedReferences, fragments);
-
-  (assumedReferences || []).map(typeDefinitionBuilder.assume);
   (fragments || []).map(typeDefinitionBuilder.register);
-  typeDefinitionBuilder.register({
-    ref: 'virtual://main',
-    location: {
-      ...context.baseLocation,
-      kind: 'statement',
-      namespace: [identifier],
-    },
-    type: 'statement',
-    statement: factory.createTypeAliasDeclaration(
-      [
-        context.jsonSchemaOptions.exportNamespaces
-          ? factory.createModifier(SyntaxKind.ExportKeyword)
-          : factory.createModifier(SyntaxKind.DeclareKeyword),
-      ],
-      identifier,
-      undefined,
-      finalType,
-    ),
-  });
 
   return gatherFragments({ typeDefinitionBuilder, ...context });
 }
@@ -1305,12 +1265,8 @@ export async function gatherFragments(
           : subSchema,
         identifier,
       );
-      const { type, assumedReferences, fragments } = await schemaToTypeNode(
-        context,
-        finalSchema,
-      );
+      const { type, fragments } = await schemaToTypeNode(context, finalSchema);
 
-      (assumedReferences || []).map(context.typeDefinitionBuilder.assume);
       (fragments || []).map(context.typeDefinitionBuilder.register);
 
       context.typeDefinitionBuilder.register({

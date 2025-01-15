@@ -42,19 +42,53 @@ export type JSONSchemaContext = {
   rootSchema?: IngestedDocument | JSONSchema;
   jsonSchemaOptions: JSONSchemaOptions;
 };
-export type SchemaDefinition = JSONSchema7Definition;
 export type JSONSchema = JSONSchema7;
+export type JSONSchemaDefinition = JSONSchema7Definition;
 export type Reference = { $ref: string };
 export type BaseResult = {
-  assumedReferences?: string[];
   fragments?: Fragment[];
 };
 export type TypeNodeResult = { type: TypeNode } & BaseResult;
 export type TypeNodesResult = { types: TypeNode[] } & BaseResult;
 
+export async function jsonSchemaToFragments(
+  context: JSONSchemaContext,
+  schema: JSONSchema,
+): Promise<Fragment[]> {
+  const { type: typeNode, fragments } = await schemaToTypeNode(context, schema);
+  const identifier = buildIdentifier(
+    context.jsonSchemaOptions.baseName || schema?.title || 'Unknown',
+  );
+  const finalSchema = eventuallyIdentifySchema(schema, identifier);
+  const finalType = await eventuallyBrandType(context, finalSchema, typeNode);
+
+  return [
+    ...(fragments || []),
+    {
+      ref: 'virtual://main',
+      location: {
+        ...context.baseLocation,
+        kind: 'statement',
+        namespace: [identifier],
+      },
+      type: 'statement',
+      statement: factory.createTypeAliasDeclaration(
+        [
+          context.jsonSchemaOptions.exportNamespaces
+            ? factory.createModifier(SyntaxKind.ExportKeyword)
+            : factory.createModifier(SyntaxKind.DeclareKeyword),
+        ],
+        identifier,
+        undefined,
+        finalType,
+      ),
+    },
+  ];
+}
+
 export async function schemaToTypeNode(
   context: JSONSchemaContext,
-  schema: SchemaDefinition,
+  schema: JSONSchemaDefinition,
 ): Promise<TypeNodeResult> {
   const { types, ...resultRest } = await schemaToTypes(context, schema);
 
@@ -66,7 +100,7 @@ export async function schemaToTypeNode(
 
 export async function schemaToTypes(
   context: JSONSchemaContext,
-  schema: SchemaDefinition,
+  schema: JSONSchemaDefinition,
   parentType?: JSONSchema7TypeName | JSONSchema7TypeName[],
 ): Promise<TypeNodesResult> {
   if (typeof schema === 'boolean') {
@@ -100,7 +134,7 @@ export async function schemaToTypes(
 
     return {
       types: [buildTypeReference(referenceParts.map(buildIdentifier))],
-      assumedReferences: [schema.$ref],
+      fragments: [{ type: 'assumed', ref: schema.$ref }],
     };
   } else if ('const' in schema && 'undefined' !== typeof schema.const) {
     return {
@@ -587,7 +621,7 @@ export function eventuallyIdentifySchema(schema: JSONSchema, title: string) {
 
 export async function eventuallyBrandType(
   context: JSONSchemaContext,
-  schema: SchemaDefinition,
+  schema: JSONSchemaDefinition,
   typeNode: TypeNode,
 ): Promise<TypeNode> {
   if (
@@ -634,12 +668,9 @@ export async function eventuallyBrandType(
 
 function combineResultRest(results: BaseResult[]): BaseResult {
   return results.reduce(
-    (rest, { assumedReferences, fragments }) => ({
-      assumedReferences: (rest.assumedReferences || []).concat(
-        assumedReferences || [],
-      ),
+    (rest, { fragments }) => ({
       fragments: (rest.fragments || []).concat(fragments || []),
     }),
-    { assumedReferences: [], fragments: [] },
+    { fragments: [] },
   );
 }
