@@ -2,7 +2,7 @@ import {
   type TypeParameterDeclaration,
   type Statement,
   type TypeNode,
-  EnumDeclaration,
+  type EnumDeclaration,
 } from 'typescript';
 
 export type FragmentPath = string & {
@@ -24,28 +24,10 @@ export type FragmentLocation = {
 export type BaseFragment = {
   ref: FragmentRef;
 };
-export type ComponentFragment = BaseFragment & {
+export type StatementFragment = BaseFragment & {
   location: FragmentLocation;
-  type: 'component';
-  componentType:
-    | 'responses'
-    | 'parameter'
-    | 'requestBody'
-    | 'header'
-    | 'callbacks'
-    | 'pathItem';
-  typeNode: TypeNode;
-};
-export type SchemaFragment = BaseFragment & {
-  location: FragmentLocation;
-  type: 'schema';
-  typeNode: TypeNode;
-};
-export type TypeFragment = BaseFragment & {
-  location: FragmentLocation;
-  type: 'type';
-  typeNode: TypeNode;
-  parameters?: TypeNode[];
+  type: 'statement';
+  statement: Statement;
 };
 export type TypeDeclarationFragment = BaseFragment & {
   location: FragmentLocation;
@@ -53,10 +35,11 @@ export type TypeDeclarationFragment = BaseFragment & {
   typeNode: EnumDeclaration;
   parameters?: TypeNode[];
 };
-export type StatementFragment = BaseFragment & {
+export type TypeFragment = BaseFragment & {
   location: FragmentLocation;
-  type: 'statement';
-  statement: Statement;
+  type: 'type';
+  typeNode: TypeNode;
+  parameters?: TypeNode[];
 };
 export type LinkFragment = BaseFragment & {
   location: FragmentLocation;
@@ -74,12 +57,10 @@ export type AssumedFragment = BaseFragment & {
 };
 
 export type Fragment =
-  | ComponentFragment
-  | SchemaFragment
   | StatementFragment
-  | LinkFragment
   | TypeFragment
   | TypeDeclarationFragment
+  | LinkFragment
   | AliasFragment
   | AssumedFragment;
 

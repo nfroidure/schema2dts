@@ -1,12 +1,5 @@
 import camelCase from 'camelcase';
 import initDebug from 'debug';
-import {
-  type JSONSchema4,
-  type JSONSchema6Definition,
-  type JSONSchema6TypeName,
-  type JSONSchema7,
-  type JSONSchema7Definition,
-} from 'json-schema';
 import { type OpenAPIV3_1 } from 'openapi-types';
 import {
   SyntaxKind,
@@ -35,18 +28,23 @@ import {
 } from 'typescript';
 import { YError } from 'yerror';
 import {
-  buildLiteralType,
   buildTypeReference,
   buildIdentifier,
   buildInterfaceReference,
 } from './utils/typeDefinitions.js';
 import {
+  ALL_TYPES,
+  DEFAULT_JSON_SCHEMA_OPTIONS,
   ensureResolved,
+  eventuallyBrandType,
   eventuallyIdentifySchema,
+  JSONSchemaContext,
+  JSONSchemaOptions,
   resolve,
+  schemaToTypeNode,
   splitRef,
   type JSONSchema,
-} from './utils/schema.js';
+} from './utils/jsonSchema.js';
 import initTypeDefinitionBuilder, {
   type TypeDefinitionBuilderService,
 } from './services/typeDefinitionBuilder.js';
@@ -54,36 +52,17 @@ import {
   buildAliasFragment,
   buildLinkFragment,
   buildTypeFragment,
-  type ComponentFragment,
-  type FragmentLocation,
   type StatementFragment,
 } from './utils/fragments.js';
+import { pickOperationObject } from './utils/openAPI.js';
 
-export type JSONSchemaContext = {
-  baseLocation: Pick<FragmentLocation, 'path' | 'kind' | 'type'>;
-  rootSchema?: IngestedDocument | JSONSchema;
-  jsonSchemaOptions: JSONSchemaOptions;
-  typeDefinitionBuilder: TypeDefinitionBuilderService;
-};
 export type OASContext = JSONSchemaContext & {
+  typeDefinitionBuilder: TypeDefinitionBuilderService;
   oasOptions: OpenAPITypesGenerationOptions;
 };
-type SchemaDefinition =
-  | JSONSchema4
-  | JSONSchema6Definition
-  | JSONSchema7Definition;
 
 const debug = initDebug('schema2dts');
 
-export const ALL_TYPES = 'all' as const;
-export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
-  baseName: 'Main',
-  basePath: 'schema.d.ts',
-  brandedTypes: [],
-  generateRealEnums: false,
-  tuplesFromFixedArraysLengthLimit: 5,
-  exportNamespaces: false,
-};
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   baseName: 'API',
   basePath: 'openapi.d.ts',
@@ -110,7 +89,7 @@ export type OpenAPITypesGenerationOptions = {
   requireCleanAPI?: boolean;
 };
 
-type IngestedDocument = {
+export type IngestedDocument = {
   components: {
     schemas: NonNullable<
       NonNullable<OpenAPIV3_1.Document['components']>['schemas']
@@ -869,7 +848,7 @@ export async function generateOpenAPITypes(
                 buildIdentifier(requestBodyId),
               ],
             },
-            await schemaToTypeNode(context, { type: 'any' }),
+            factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
           ),
         );
       } else {
@@ -895,6 +874,14 @@ export async function generateOpenAPITypes(
 
           return { $ref: ref };
         });
+        const { type, assumedReferences, fragments } = await schemaToTypeNode(
+          context,
+          {
+            oneOf: requestBodySchemasReferences,
+          },
+        );
+        (assumedReferences || []).map(typeDefinitionBuilder.assume);
+        (fragments || []).map(typeDefinitionBuilder.register);
 
         context.typeDefinitionBuilder.register(
           buildTypeFragment(
@@ -906,9 +893,7 @@ export async function generateOpenAPITypes(
                 buildIdentifier(requestBodyId),
               ],
             },
-            await schemaToTypeNode(context, {
-              oneOf: requestBodySchemasReferences,
-            }),
+            type,
             [],
             `#/components/requestBodies/${requestBodyId}`,
           ),
@@ -936,6 +921,20 @@ export async function generateOpenAPITypes(
       );
     } else {
       const identifier = buildIdentifier(parameterId);
+      let finalType;
+
+      if (!('schema' in parameter) || typeof parameter.schema === 'undefined') {
+        finalType = factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
+      } else {
+        const { type, assumedReferences, fragments } = await schemaToTypeNode(
+          context,
+          eventuallyIdentifySchema(parameter.schema as JSONSchema, identifier),
+        );
+
+        finalType = type;
+        (assumedReferences || []).map(typeDefinitionBuilder.assume);
+        (fragments || []).map(typeDefinitionBuilder.register);
+      }
 
       context.typeDefinitionBuilder.register(
         buildTypeFragment(
@@ -943,13 +942,7 @@ export async function generateOpenAPITypes(
             ...context.baseLocation,
             namespace: ['Components', 'Parameters', identifier],
           },
-          await schemaToTypeNode(
-            context,
-            eventuallyIdentifySchema(
-              parameter.schema || { type: 'any' },
-              identifier,
-            ),
-          ),
+          finalType,
           [],
           `#/components/parameters/${parameterId}`,
         ),
@@ -993,7 +986,7 @@ export async function generateOpenAPITypes(
           : [];
 
       if (!responseSchemas.length) {
-        schemasType = await schemaToTypeNode(context, { type: 'any' });
+        schemasType = factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
       } else {
         const responseSchemasReferences: OpenAPIV3_1.ReferenceObject[] = (
           responseSchemas as (
@@ -1016,10 +1009,16 @@ export async function generateOpenAPITypes(
 
           return { $ref: ref };
         });
+        const { type, assumedReferences, fragments } = await schemaToTypeNode(
+          context,
+          {
+            oneOf: responseSchemasReferences,
+          },
+        );
 
-        schemasType = await schemaToTypeNode(context, {
-          oneOf: responseSchemasReferences,
-        });
+        schemasType = type;
+        (assumedReferences || []).map(typeDefinitionBuilder.assume);
+        (fragments || []).map(typeDefinitionBuilder.register);
       }
       let hasRequiredHeaders = false;
       const headersTypes = await Promise.all(
@@ -1144,6 +1143,23 @@ export async function generateOpenAPITypes(
       );
     } else {
       const identifier = buildIdentifier(headerId);
+      let finalType;
+
+      if (!('schema' in header) || typeof header.schema === 'undefined') {
+        finalType = factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
+      } else {
+        const { type, assumedReferences, fragments } = await schemaToTypeNode(
+          context,
+          eventuallyIdentifySchema(
+            header.schema as JSONSchema,
+            buildIdentifier(headerId),
+          ),
+        );
+
+        finalType = type;
+        (assumedReferences || []).map(typeDefinitionBuilder.assume);
+        (fragments || []).map(typeDefinitionBuilder.register);
+      }
 
       context.typeDefinitionBuilder.register(
         buildTypeFragment(
@@ -1151,13 +1167,7 @@ export async function generateOpenAPITypes(
             ...context.baseLocation,
             namespace: ['Components', 'Headers', identifier],
           },
-          await schemaToTypeNode(
-            context,
-            eventuallyIdentifySchema(
-              header.schema || { type: 'any' },
-              buildIdentifier(headerId),
-            ),
-          ),
+          finalType,
           [],
           `#/components/headers/${headerId}`,
         ),
@@ -1165,17 +1175,8 @@ export async function generateOpenAPITypes(
     }
   }
 
-  return gatherStatements(context);
+  return gatherFragments(context);
 }
-
-type JSONSchemaOptions = {
-  baseName?: string;
-  basePath?: string;
-  brandedTypes: string[] | typeof ALL_TYPES;
-  generateRealEnums: boolean;
-  tuplesFromFixedArraysLengthLimit: number;
-  exportNamespaces: boolean;
-};
 
 // Could use https://apitools.dev/json-schema-ref-parser/
 /**
@@ -1207,7 +1208,7 @@ export async function generateJSONSchemaTypes(
       type: exportNamespaces ? 'exported' : 'declared',
       kind: 'type',
     },
-    typeDefinitionBuilder,
+    // typeDefinitionBuilder,
     rootSchema,
     jsonSchemaOptions: {
       baseName,
@@ -1218,14 +1219,22 @@ export async function generateJSONSchemaTypes(
     },
   };
 
-  const typeNode = await schemaToTypeNode(context, rootSchema);
+  const {
+    type: typeNode,
+    assumedReferences,
+    fragments,
+  } = await schemaToTypeNode(context, rootSchema);
   const identifier = buildIdentifier(
     baseName || rootSchema?.title || 'Unknown',
   );
   const finalSchema = eventuallyIdentifySchema(rootSchema, identifier);
   const finalType = await eventuallyBrandType(context, finalSchema, typeNode);
 
-  context.typeDefinitionBuilder.register({
+  console.log(finalType, assumedReferences, fragments);
+
+  (assumedReferences || []).map(typeDefinitionBuilder.assume);
+  (fragments || []).map(typeDefinitionBuilder.register);
+  typeDefinitionBuilder.register({
     ref: 'virtual://main',
     location: {
       ...context.baseLocation,
@@ -1245,16 +1254,18 @@ export async function generateJSONSchemaTypes(
     ),
   });
 
-  return gatherStatements(context);
+  return gatherFragments({ typeDefinitionBuilder, ...context });
 }
 
-export async function gatherStatements(
-  context: JSONSchemaContext,
+export async function gatherFragments(
+  context: JSONSchemaContext & {
+    typeDefinitionBuilder: TypeDefinitionBuilderService;
+  },
 ): Promise<NodeArray<Statement>> {
   const statements: Statement[] = [];
   let assumedFragmentsToBuild = context.typeDefinitionBuilder.list('assumed');
 
-  debug('gatherStatements: start');
+  debug('gatherFragments: start');
 
   while (assumedFragmentsToBuild.length) {
     for (const assumedFragmentToBuild of assumedFragmentsToBuild) {
@@ -1294,6 +1305,13 @@ export async function gatherStatements(
           : subSchema,
         identifier,
       );
+      const { type, assumedReferences, fragments } = await schemaToTypeNode(
+        context,
+        finalSchema,
+      );
+
+      (assumedReferences || []).map(context.typeDefinitionBuilder.assume);
+      (fragments || []).map(context.typeDefinitionBuilder.register);
 
       context.typeDefinitionBuilder.register({
         ref: assumedFragmentToBuild.ref,
@@ -1301,16 +1319,8 @@ export async function gatherStatements(
           ...context.baseLocation,
           namespace: namespaceParts.map((part) => buildIdentifier(part)),
         },
-        type:
-          namespaceParts[0] === 'components' && namespaceParts[1] !== 'schemas'
-            ? 'component'
-            : 'schema',
-        componentType: namespaceParts[1] as ComponentFragment['componentType'],
-        typeNode: await eventuallyBrandType(
-          context,
-          finalSchema,
-          await schemaToTypeNode(context, finalSchema),
-        ),
+        type: 'type',
+        typeNode: await eventuallyBrandType(context, finalSchema, type),
       });
     }
 
@@ -1557,470 +1567,6 @@ export async function gatherStatements(
   ]);
 }
 
-export async function eventuallyBrandType(
-  context: JSONSchemaContext,
-  schema: SchemaDefinition,
-  typeNode: TypeNode,
-): Promise<TypeNode> {
-  if (
-    typeof schema === 'boolean' ||
-    typeof schema === 'undefined' ||
-    !(typeof schema === 'object') ||
-    !schema ||
-    !['string', 'number', 'integer', 'boolean'].includes(schema?.type as string)
-  ) {
-    return typeNode;
-  }
-
-  const name =
-    typeof schema === 'object' &&
-    schema &&
-    'title' in schema &&
-    schema.title !== 'Unknown' &&
-    schema.title;
-
-  if (!name) {
-    return typeNode;
-  }
-
-  const isBrandedType =
-    context.jsonSchemaOptions.brandedTypes === ALL_TYPES ||
-    context.jsonSchemaOptions.brandedTypes.includes(name);
-
-  if (isBrandedType) {
-    return factory.createIntersectionTypeNode([
-      typeNode,
-      ...(await schemaToTypes(context, {
-        type: 'object',
-        properties: {
-          _type: { enum: [name as string] },
-        },
-      })),
-    ]);
-  }
-
-  return typeNode;
-}
-
-async function schemaToTypeNode(
-  context: JSONSchemaContext,
-  schema: SchemaDefinition,
-): Promise<TypeNode> {
-  const types = await schemaToTypes(context, schema);
-
-  return types.length > 1 ? factory.createUnionTypeNode(types) : types[0];
-}
-
-async function schemaToTypes(
-  context: JSONSchemaContext,
-  schema: SchemaDefinition,
-  parentType?: JSONSchema6TypeName | JSONSchema6TypeName[],
-): Promise<TypeNode[]> {
-  if (typeof schema === 'boolean') {
-    if (schema) {
-      return [factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword)];
-    } else {
-      return [factory.createKeywordTypeNode(SyntaxKind.NeverKeyword)];
-    }
-  }
-  if (schema.type === 'null') {
-    return [
-      factory.createLiteralTypeNode(
-        factory.createToken(SyntaxKind.NullKeyword),
-      ),
-    ];
-  }
-  if (typeof schema.type === 'undefined') {
-    if ('properties' in schema) {
-      schema.type = 'object';
-    }
-  }
-
-  if (schema.$ref) {
-    context.typeDefinitionBuilder?.assume(schema.$ref);
-
-    const referenceParts = splitRef(schema.$ref);
-
-    return [buildTypeReference(referenceParts.map(buildIdentifier))];
-  } else if ('const' in schema) {
-    return [buildLiteralType(schema.const)];
-  } else if (schema.enum) {
-    const enumTypes = schema.enum.reduce<string[]>(
-      (acc, value) =>
-        acc.includes(typeof value) ? acc : [...acc, typeof value],
-      [],
-    );
-    const allEnumValuesAreLiteral = schema.enum
-      .filter((value) => value !== null)
-      .every((value) => ['number', 'string', 'boolean'].includes(typeof value));
-    const enumValuesCanBeEnumType =
-      enumTypes.length === 1 &&
-      schema.enum.length > 1 &&
-      allEnumValuesAreLiteral &&
-      enumTypes[0] === 'string';
-    const name = schema.title;
-
-    if (
-      enumValuesCanBeEnumType &&
-      name &&
-      context.jsonSchemaOptions.generateRealEnums
-    ) {
-      const identifier = buildIdentifier(name);
-
-      context.typeDefinitionBuilder.register({
-        location: {
-          ...context.baseLocation,
-          namespace: ['Enums', identifier],
-          kind: 'type',
-        },
-        type: 'typeDeclaration',
-        typeNode: factory.createEnumDeclaration(
-          [factory.createModifier(SyntaxKind.ExportKeyword)],
-          identifier,
-          schema.enum.map((value) =>
-            factory.createEnumMember(
-              buildIdentifier(value as string),
-              factory.createStringLiteral(value as string),
-            ),
-          ),
-        ),
-        ref: `virtual://enums/${name}`,
-      });
-      return [buildTypeReference(['Enums', identifier])];
-    }
-
-    if (allEnumValuesAreLiteral) {
-      return (schema.enum as Parameters<typeof buildLiteralType>[0][]).map(
-        buildLiteralType,
-      );
-    }
-
-    throw new YError('E_UNSUPPORTED_ENUM', schema.enum);
-  } else if (schema.type) {
-    return await handleTypedSchema(context, schema);
-  } else if (schema.anyOf || schema.allOf || schema.oneOf) {
-    return handleComposedSchemas(context, schema);
-  } else if (parentType) {
-    // Inject type from parent
-    schema.type = parentType;
-    return await handleTypedSchema(context, schema);
-  }
-
-  throw new YError('E_UNSUPPORTED_SCHEMA', schema);
-}
-
-// Handle schema where type is defined
-async function handleTypedSchema(
-  context: JSONSchemaContext,
-  schema: JSONSchema,
-): Promise<TypeNode[]> {
-  const types = schema.type instanceof Array ? schema.type : [schema.type];
-  const baseTypes: TypeNode[] = await Promise.all(
-    types.map(async (type) => {
-      switch (type) {
-        case 'null':
-          return factory.createLiteralTypeNode(factory.createNull());
-        case 'any':
-          return factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword);
-        case 'boolean':
-          return factory.createKeywordTypeNode(SyntaxKind.BooleanKeyword);
-        case 'integer':
-          return factory.createKeywordTypeNode(SyntaxKind.NumberKeyword);
-        case 'number':
-          return factory.createKeywordTypeNode(SyntaxKind.NumberKeyword);
-        case 'string':
-          return factory.createKeywordTypeNode(SyntaxKind.StringKeyword);
-        case 'object':
-          return await buildObjectTypeNode(context, schema);
-        case 'array':
-          return await buildArrayTypeNode(context, schema);
-        default:
-          throw new YError('E_BAD_TYPE', type);
-      }
-    }),
-  );
-
-  // Schema also contains a composed schema, handle it as well and do a intersection with base schema
-  if (schema.anyOf || schema.allOf || schema.oneOf) {
-    const innerTypes = await handleComposedSchemas(context, schema);
-
-    return [factory.createIntersectionTypeNode([...baseTypes, ...innerTypes])];
-  } else {
-    return baseTypes;
-  }
-}
-
-// Handle oneOf / anyOf / allOf
-async function handleComposedSchemas(
-  context: JSONSchemaContext,
-  schema: JSONSchema,
-): Promise<TypeNode[]> {
-  const types = (
-    await Promise.all(
-      ((schema.anyOf || schema.allOf || schema.oneOf) as JSONSchema[]).map(
-        async (innerSchema) =>
-          await schemaToTypes(context, innerSchema, schema.type),
-      ),
-    )
-  ).map((innerTypes) =>
-    innerTypes.length > 1
-      ? factory.createUnionTypeNode(innerTypes)
-      : innerTypes[0],
-  );
-
-  if (schema.oneOf) {
-    return [factory.createUnionTypeNode(types)];
-  } else if (schema.anyOf) {
-    // Not really a union types but no way to express
-    // this in TypeScript atm 🤷
-    return [factory.createUnionTypeNode(types)];
-  } else if (schema.allOf) {
-    // Fallback to intersection type which will only work
-    // in some situations (see the README)
-    return [factory.createIntersectionTypeNode(types)];
-  } else {
-    throw new YError('E_COMPOSED_SCHEMA_UNSUPPORTED', schema);
-  }
-}
-
-async function buildObjectTypeNode(
-  context: JSONSchemaContext,
-  schema: JSONSchema,
-): Promise<TypeNode> {
-  const requiredProperties =
-    schema.required && schema.required instanceof Array ? schema.required : [];
-  let elements: TypeElement[] = [];
-
-  if (schema.properties) {
-    elements = elements.concat(
-      await Promise.all(
-        Object.keys(schema.properties).map(async (propertyName) => {
-          const property = schema.properties?.[
-            propertyName
-          ] as JSONSchema7Definition;
-          const required = requiredProperties.includes(propertyName);
-          const readOnly = (property as JSONSchema7).readOnly;
-          const types = await schemaToTypes(
-            context,
-            eventuallyIdentifySchema(property as JSONSchema, propertyName),
-          );
-          const isSuitableAsIdentifierName = /^[a-z_$][a-z0-9_$]*$/i.test(
-            propertyName,
-          );
-
-          return factory.createPropertySignature(
-            readOnly
-              ? [factory.createModifier(SyntaxKind.ReadonlyKeyword)]
-              : [],
-            isSuitableAsIdentifierName
-              ? propertyName
-              : factory.createStringLiteral(propertyName),
-            required
-              ? undefined
-              : factory.createToken(SyntaxKind.QuestionToken),
-            types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
-          );
-        }),
-      ),
-    );
-  }
-
-  // We need to handle empty required properties in order to be able
-  // to generate objects with only required properties
-  if (requiredProperties.length) {
-    elements = elements.concat(
-      await Promise.all(
-        requiredProperties
-          .filter(
-            (propertyName) =>
-              'undefined' === typeof schema.properties?.[propertyName],
-          )
-          .map(async (propertyName) => {
-            return factory.createPropertySignature(
-              [],
-              propertyName,
-              undefined,
-              factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-            );
-          }),
-      ),
-    );
-  }
-
-  // We have to manage pattern and additional properties together
-  // since TypeScript disallow several string index signatures
-  if (schema.patternProperties || schema.additionalProperties) {
-    const { readOnly, required, types } = (
-      await Promise.all(
-        Object.keys(schema.patternProperties || {}).map(
-          async (propertyPattern) => {
-            const property = schema.patternProperties?.[
-              propertyPattern
-            ] as JSONSchema7Definition;
-            const required = requiredProperties.includes(propertyPattern);
-            const readOnly = !!(property as JSONSchema7).readOnly;
-            const types = await schemaToTypes(context, property as JSONSchema);
-
-            return {
-              readOnly,
-              required,
-              type:
-                types.length > 1
-                  ? factory.createUnionTypeNode(types)
-                  : types[0],
-            };
-          },
-        ),
-      )
-    )
-      .concat(
-        schema.additionalProperties
-          ? [
-              {
-                type: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-                required: false,
-                readOnly: false,
-              },
-            ]
-          : [],
-      )
-      .reduce<{ readOnly: boolean; required: boolean; types: TypeNode[] }>(
-        (
-          { required: allRequired, readOnly: allReadOnly, types: allTypes },
-          { required, readOnly, type },
-        ) => ({
-          types: allTypes.concat([type]),
-          required: allRequired && required,
-          readOnly: allReadOnly && readOnly,
-        }),
-        { required: false, readOnly: false, types: [] },
-      );
-
-    elements = elements.concat(
-      factory.createIndexSignature(
-        readOnly ? [factory.createModifier(SyntaxKind.ReadonlyKeyword)] : [],
-        [
-          factory.createParameterDeclaration(
-            [],
-            undefined,
-            factory.createIdentifier('pattern'),
-            required
-              ? factory.createToken(SyntaxKind.QuestionToken)
-              : undefined,
-            factory.createTypeReferenceNode('string', []),
-            undefined,
-          ),
-        ],
-        factory.createUnionTypeNode(types),
-      ),
-    );
-  }
-
-  return factory.createTypeLiteralNode(elements);
-}
-
-async function buildArrayTypeNode(
-  context: JSONSchemaContext,
-  schema: JSONSchema,
-): Promise<TypeNode> {
-  if (typeof schema.maxItems === 'number' && schema.maxItems <= 0) {
-    return factory.createArrayTypeNode(
-      factory.createKeywordTypeNode(SyntaxKind.NeverKeyword),
-    );
-  }
-
-  const additionalItems =
-    schema.additionalItems ||
-    // Backward compatibility with old JSONSchema behavior
-    (typeof schema.items !== 'boolean' && !(schema.items instanceof Array)
-      ? schema.items
-      : undefined);
-  const prefixItems: JSONSchema[] =
-    // Here, we are supporting the new way to declare tuples
-    // in the last JSONSchema Draft
-    // (see https://json-schema.org/understanding-json-schema/reference/array#tupleValidation )
-    (schema as unknown as { prefixItems: JSONSchema[] }).prefixItems ||
-    (typeof schema.items === 'object' && schema.items instanceof Array)
-      ? (schema.items as unknown as JSONSchema[])
-      : [];
-
-  if (prefixItems.length) {
-    const types = (
-      await Promise.all(
-        prefixItems.map((schema) => schemaToTypes(context, schema)),
-      )
-    ).map((types) =>
-      types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
-    );
-
-    if (additionalItems) {
-      const additionalTypes = await schemaToTypes(context, additionalItems);
-
-      types.push(
-        factory.createRestTypeNode(
-          factory.createArrayTypeNode(
-            additionalTypes.length > 1
-              ? factory.createUnionTypeNode(additionalTypes)
-              : additionalTypes[0],
-          ),
-        ),
-      );
-    }
-
-    return factory.createTupleTypeNode(types);
-  } else {
-    const types = additionalItems
-      ? await schemaToTypes(context, additionalItems)
-      : [factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword)];
-
-    // Switch from arrays to tuples for small fixed length arrays
-    if (
-      'minItems' in schema &&
-      'maxItems' in schema &&
-      typeof schema.minItems === 'number' &&
-      typeof schema.maxItems === 'number' &&
-      schema.maxItems === schema.minItems &&
-      schema.maxItems <
-        context.jsonSchemaOptions.tuplesFromFixedArraysLengthLimit
-    ) {
-      return factory.createTupleTypeNode(
-        new Array(schema.minItems).fill(
-          types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
-        ),
-      );
-    }
-
-    // Switch from arrays to tuples and spread for small min length arrays
-    if (
-      'minItems' in schema &&
-      typeof schema.minItems === 'number' &&
-      schema.minItems > 0 &&
-      schema.minItems <
-        context.jsonSchemaOptions.tuplesFromFixedArraysLengthLimit
-    ) {
-      return factory.createTupleTypeNode(
-        new Array(schema.minItems)
-          .fill(
-            types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
-          )
-          .concat(
-            factory.createRestTypeNode(
-              factory.createArrayTypeNode(
-                types.length > 1
-                  ? factory.createUnionTypeNode(types)
-                  : types[0],
-              ),
-            ),
-          ),
-      );
-    }
-
-    return factory.createArrayTypeNode(
-      types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
-    );
-  }
-}
-
 /**
  * Returns source from a list of TypeScript statements
  * @param {TypedPropertyDescriptor.NodeArray} nodes
@@ -2042,27 +1588,4 @@ export function toSource(nodes: Node | NodeArray<Node>): string {
     nodes instanceof Array ? nodes : factory.createNodeArray([nodes]),
     resultFile,
   );
-}
-
-function pickOperationObject(
-  maybeMethod: string,
-  maybeOperationObject: OpenAPIV3_1.PathItemObject[keyof OpenAPIV3_1.PathItemObject],
-): OpenAPIV3_1.OperationObject | OpenAPIV3_1.ReferenceObject | undefined {
-  if (
-    [
-      'head',
-      'options',
-      'get',
-      'put',
-      'post',
-      'delete',
-      'patch',
-      'trace',
-    ].includes(maybeMethod)
-  ) {
-    return maybeOperationObject as
-      | OpenAPIV3_1.OperationObject
-      | OpenAPIV3_1.ReferenceObject;
-  }
-  return undefined;
 }

@@ -5,8 +5,9 @@ import {
   type EntityName,
   type TypeNode,
 } from 'typescript';
+import { type JSONSchema7Type } from 'json-schema';
 
-export function buildLiteralType(value: number | string | boolean): TypeNode {
+export function buildLiteralType(value: JSONSchema7Type): TypeNode {
   switch (typeof value) {
     case 'number':
       return factory.createLiteralTypeNode(factory.createNumericLiteral(value));
@@ -17,7 +18,22 @@ export function buildLiteralType(value: number | string | boolean): TypeNode {
         value ? factory.createTrue() : factory.createFalse(),
       );
     case 'object':
-      return factory.createLiteralTypeNode(factory.createNull());
+      if (value instanceof Array) {
+        return factory.createTupleTypeNode(value.map(buildLiteralType));
+      } else if (value == null) {
+        return factory.createLiteralTypeNode(factory.createNull());
+      } else {
+        return factory.createTypeLiteralNode(
+          Object.keys(value).map((key) =>
+            factory.createPropertySignature(
+              undefined,
+              factory.createIdentifier(key),
+              undefined,
+              buildLiteralType(value[key]),
+            ),
+          ),
+        );
+      }
   }
 }
 
