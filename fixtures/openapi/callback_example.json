@@ -43,7 +43,7 @@
         },
         "callbacks": {
           "StreamValidated": {
-            "$ref": "#/components/callbacks/OnValidated"
+            "$ref": "#/components/callbacks/OnValidatedClone"
           },
           "onData": {
             "{$request.query.callbackUrl}/data": {

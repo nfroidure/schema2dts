@@ -31,6 +31,7 @@ describe('generateOpenAPITypes()', () => {
               {
                 name: 'X-A-Header',
                 in: 'header',
+                required: true,
                 schema: {
                   type: 'number',
                 },
@@ -44,6 +45,7 @@ describe('generateOpenAPITypes()', () => {
               },
             ],
             requestBody: {
+              required: true,
               content: {
                 'application/json': {
                   schema: { type: 'string' },
@@ -79,67 +81,38 @@ describe('generateOpenAPITypes()', () => {
     } as OpenAPIV3_1.Document;
 
     expect(
-  toSource(
-    await generateOpenAPITypes(schema, {
-      generateRealEnums: true,
-      exportNamespaces: true,
-      tuplesFromFixedArraysLengthLimit: 5
-    })
-  )
-).toMatchInlineSnapshot(`
-"export namespace Components {
-    export namespace Operations {
-        export namespace GetPing {
-            export type Body = Components.RequestBodies.GetPing;
-            export namespace Responses {
-                export type $200 = Components.Responses.GetPing200<200>;
-            }
-            export type Output = Responses.$200;
-            export namespace Parameters {
-                export type XAHeader = Components.Parameters.GetPing0;
-                export type XAPIVersion = Components.Parameters.GetPing1;
-            }
-            export type Input = {
-                readonly body?: Body;
-                readonly xAHeader?: Parameters.XAHeader;
-                readonly xApiVersion?: Parameters.XAPIVersion;
-            };
-        }
-    }
-    export namespace Responses {
-        export type GetPing200<S extends number> = {
-            readonly status: S;
-            readonly headers: {
-                readonly "x-a-header": Components.Headers.GetPing200HeadersXAHeader;
-                readonly "x-sdk-version"?: Components.Headers.GetPing200HeadersXSDKVersion;
-                readonly [name: string]: unknown;
-            };
-            readonly body: Components.Schemas.ResponsesGetPing200Body0;
-        };
-    }
-    export namespace PathItems {
-        export namespace Test {
-            export import Get = Components.Operations.GetPing;
-        }
-    }
-    export namespace RequestBodies {
-        export type GetPing = Components.Schemas.RequestBodiesGetPingBody0;
-    }
-    export namespace Parameters {
-        export type GetPing0 = number;
-        export type GetPing1 = string;
-    }
-    export namespace Headers {
-        export type GetPing200HeadersXAHeader = number;
-        export type GetPing200HeadersXSDKVersion = string;
-    }
-    export namespace Schemas {
-        export type RequestBodiesGetPingBody0 = string;
-        export type ResponsesGetPing200Body0 = string;
-    }
+      toSource(
+        await generateOpenAPITypes(schema, {
+          generateRealEnums: true,
+          exportNamespaces: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"export interface paths {
+    "/test": {
+        get: operations["GetPing"];
+    };
 }
-export namespace API {
-    export import GetPing = Components.Operations.GetPing;
+export interface operations {
+    GetPing: {
+        requestBody: string;
+        responses: {
+            200: {
+                body: string;
+                headers: {
+                    "X-A-Header": number;
+                    "X-SDK-Version"?: string;
+                };
+            };
+        };
+        parameters: {
+            header: {
+                "X-A-Header": number;
+                "X-API-Version"?: string;
+            };
+        };
+    };
 }"
 `);
   });
@@ -242,69 +215,58 @@ export namespace API {
     } as OpenAPIV3_1.Document;
 
     expect(
-  toSource(
-    await generateOpenAPITypes(schema, {
-      brandedTypes: ['TheSchema', 'TheSchemaClone'],
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: false
-    })
-  )
-).toMatchInlineSnapshot(`
-"declare namespace Components {
-    export namespace Operations {
-        export namespace GetTest {
-            export type Body = Components.RequestBodies.TheBody;
-            export namespace Responses {
-                export type $200 = Components.Responses.TheResponse<200>;
-            }
-            export type Output = Responses.$200;
-            export namespace Parameters {
-                export type TestParam = Components.Parameters.TheTestParam;
-            }
-            export type Input = {
-                readonly body?: Body;
-                readonly testParam?: Parameters.TestParam;
-            };
-        }
-    }
-    export namespace Responses {
-        export type TheResponseClone<S extends number> = Components.Responses.TheResponse<S>;
-        export type TheResponse<S extends number> = {
-            readonly status: S;
-            readonly headers?: {
-                readonly "x-a-header"?: Components.Headers.TheXAHeaderClone;
-                readonly [name: string]: unknown;
-            };
-            readonly body: Components.Schemas.TheSchema;
+      toSource(
+        await generateOpenAPITypes(schema, {
+          brandedTypes: ['TheSchema', 'TheSchemaClone'],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: false,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare interface paths {
+    "/test": {
+        get: operations["GetTest"];
+    };
+}
+declare interface operations {
+    GetTest: {
+        requestBody?: components["requestBodies"]["TheBody"];
+        responses: {
+            200: components["responses"]["TheResponse"];
         };
-    }
-    export namespace Parameters {
-        export type TheTestParamClone = Components.Parameters.TheTestParam;
-        export type TheTestParam = Components.Schemas.TheSchema;
-    }
-    export namespace PathItems {
-        export namespace Test {
-            export import Get = Components.Operations.GetTest;
-        }
-    }
-    export namespace RequestBodies {
-        export type TheBodyClone = Components.RequestBodies.TheBody;
-        export type TheBody = Components.Schemas.TheSchemaClone;
-    }
-    export namespace Headers {
-        export type TheXAHeaderClone = Components.Headers.TheXAHeader;
-        export type TheXAHeader = number;
-    }
-    export namespace Schemas {
-        export type TheSchemaClone = Components.Schemas.TheSchema;
-        export type TheSchema = string & {
+        parameters: {
+            query: {
+                TestParam?: components["parameters"]["TheTestParam"];
+            };
+        };
+    };
+}
+declare interface components {
+    requestBodies: {
+        TheBody: components["schemas"]["TheSchemaClone"];
+    };
+    responses: {
+        TheResponse: {
+            body: components["schemas"]["TheSchema"];
+            headers: {
+                "X-A-Header"?: components["headers"]["TheXAHeaderClone"];
+            };
+        };
+    };
+    headers: {
+        TheXAHeader: number;
+        TheXAHeaderClone: components["headers"]["TheXAHeader"];
+    };
+    parameters: {
+        TheTestParam: components["schemas"]["TheSchema"];
+    };
+    schemas: {
+        TheSchemaClone: components["schemas"]["TheSchema"];
+        TheSchema: string & {
             _type?: "TheSchema";
         };
-    }
-}
-declare namespace API {
-    export import GetTest = Components.Operations.GetTest;
+    };
 }"
 `);
   });
@@ -399,38 +361,28 @@ declare namespace API {
     } as OpenAPIV3_1.Document;
 
     expect(
-  toSource(
-    await generateOpenAPITypes(schema, {
-      camelizeInputs: false,
-      generateRealEnums: false,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: false
-    })
-  )
-).toMatchInlineSnapshot(`
-"declare namespace Components {
-    export namespace Operations {
-        export namespace GetTest {
-            export type Output = unknown;
-            export namespace Parameters {
-                export type FooBar = Components.Parameters.GetTest0;
-            }
-            export type Input = {
-                readonly foo_bar?: Parameters.FooBar;
-            };
-        }
-    }
-    export namespace PathItems {
-        export namespace Test {
-            export import Get = Components.Operations.GetTest;
-        }
-    }
-    export namespace Parameters {
-        export type GetTest0 = string;
-    }
+      toSource(
+        await generateOpenAPITypes(schema, {
+          camelizeInputs: false,
+          generateRealEnums: false,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: false,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare interface paths {
+    "/test": {
+        get: operations["PathsTest"];
+    };
 }
-declare namespace API {
-    export import GetTest = Components.Operations.GetTest;
+declare interface operations {
+    PathsTest: {
+        parameters: {
+            query: {
+                foo_bar?: string;
+            };
+        };
+    };
 }"
 `);
   });
@@ -477,29 +429,19 @@ declare namespace API {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"declare namespace Components {
-    export namespace Operations {
-        export namespace Test {
-            export type Output = unknown;
-            export namespace Parameters {
-                export type FooBar = Components.Parameters.Test0;
-            }
-            export type Input = {
-                readonly foo_bar?: Parameters.FooBar;
-            };
-        }
-    }
-    export namespace PathItems {
-        export namespace Test {
-            export import Get = Components.Operations.Test;
-        }
-    }
-    export namespace Parameters {
-        export type Test0 = string;
-    }
+"declare interface paths {
+    "/test": {
+        get: operations["Test"];
+    };
 }
-declare namespace API {
-    export import Test = Components.Operations.Test;
+declare interface operations {
+    Test: {
+        parameters: {
+            query: {
+                foo_bar?: string;
+            };
+        };
+    };
 }"
 `);
   });
@@ -530,15 +472,15 @@ describe('generateJSONSchemaTypes()', () => {
     };
 
     expect(
-  toSource(
-    await generateJSONSchemaTypes(schema, {
-      brandedTypes: [],
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: true
-    })
-  )
-).toMatchInlineSnapshot(`
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Main = Enums.Limit;
 export namespace Enums {
     export enum Limit {
@@ -558,15 +500,15 @@ export namespace Enums {
     };
 
     expect(
-  toSource(
-    await generateJSONSchemaTypes(schema, {
-      brandedTypes: [],
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: true
-    })
-  )
-).toMatchInlineSnapshot(`
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Main = Enums.Limit;
 export namespace Enums {
     export enum Limit {
@@ -586,15 +528,15 @@ export namespace Enums {
     };
 
     expect(
-  toSource(
-    await generateJSONSchemaTypes(schema, {
-      brandedTypes: [],
-      exportNamespaces: false,
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5
-    })
-  )
-).toMatchInlineSnapshot(`
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          exportNamespaces: false,
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "declare type Main = Enums.Limit;
 declare namespace Enums {
     export enum Limit {
@@ -1122,6 +1064,30 @@ declare namespace Enums {
       };
 
       expect(
+        toSource(
+          await generateJSONSchemaTypes(schema, {
+            brandedTypes: [],
+            generateRealEnums: true,
+            tuplesFromFixedArraysLengthLimit: 5,
+            exportNamespaces: true,
+            baseName: 'Limit',
+          }),
+        ),
+      ).toMatchInlineSnapshot(`
+"export type Limit = definitions["User"];
+export interface definitions {
+    User: string;
+}"
+`);
+    });
+
+    test('should work with empty objects schemas', async () => {
+      const schema: JSONSchema7 = {
+        title: 'Limit',
+        type: 'object',
+      };
+
+      expect(
   toSource(
     await generateJSONSchemaTypes(schema, {
       brandedTypes: [],
@@ -1131,12 +1097,7 @@ declare namespace Enums {
       baseName: 'Limit'
     })
   )
-).toMatchInlineSnapshot(`
-"export type Limit = Definitions.User;
-export namespace Definitions {
-    export type User = string;
-}"
-`);
+).toMatchInlineSnapshot(`"export type Limit = object;"`);
     });
 
     test('should work with a nested oneOf in allOf schemas', async () => {
@@ -1298,29 +1259,29 @@ export namespace Definitions {
       };
 
       expect(
-  toSource(
-    await generateJSONSchemaTypes(schema, {
-      brandedTypes: [],
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: true
-    })
-  )
-).toMatchInlineSnapshot(`
+        toSource(
+          await generateJSONSchemaTypes(schema, {
+            brandedTypes: [],
+            generateRealEnums: true,
+            tuplesFromFixedArraysLengthLimit: 5,
+            exportNamespaces: true,
+          }),
+        ),
+      ).toMatchInlineSnapshot(`
 "export type Main = {
     name: string;
     duration: number;
-    start: Definitions.Date;
-    end: Definitions.Date;
+    start: definitions["Date"];
+    end: definitions["Date"];
     labels: ("value" | "peaks" | "startTime" | "endTime" | "peakTime")[];
     timestamp: ("startTime" | "endTime" | "peakTime")[];
-    data: (Definitions.Date | number | ("first" | "bosse" | "last") | string)[][];
-    context: Definitions.Data;
+    data: (definitions["Date"] | number | ("first" | "bosse" | "last") | string)[][];
+    context: definitions["Data"];
     [pattern: string]: unknown;
 };
-export namespace Definitions {
-    export type Date = string;
-    export type Data = string;
+export interface definitions {
+    Date: string;
+    Data: string;
 }"
 `);
     });

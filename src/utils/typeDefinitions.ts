@@ -7,6 +7,16 @@ import {
 } from 'typescript';
 import { type JSONSchema7Type } from 'json-schema';
 
+// TODO: check real rules
+export function canBeIdentifier(str: string) {
+  return !(
+    str.includes('/') ||
+    str.includes('-') ||
+    str.includes('{') ||
+    str.includes('}')
+  );
+}
+
 export function buildLiteralType(value: JSONSchema7Type): TypeNode {
   switch (typeof value) {
     case 'number':

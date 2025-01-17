@@ -8,6 +8,7 @@ import {
   buildLiteralType,
   buildTypeReference,
   buildIdentifier,
+  buildInterfaceReference,
 } from './typeDefinitions.js';
 import {
   factory,
@@ -15,8 +16,7 @@ import {
   type TypeElement,
   type TypeNode,
 } from 'typescript';
-import { type IngestedDocument } from '../index.js';
-import { type Fragment, type FragmentLocation } from './fragments.js';
+import { type Fragment } from './fragments.js';
 
 export const ALL_TYPES = 'all' as const;
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
@@ -38,8 +38,6 @@ export type JSONSchemaOptions = {
   strictMode?: boolean;
 };
 export type JSONSchemaContext = {
-  baseLocation: Pick<FragmentLocation, 'path' | 'kind' | 'type'>;
-  rootSchema?: IngestedDocument | JSONSchema;
   jsonSchemaOptions: JSONSchemaOptions;
 };
 export type JSONSchema = JSONSchema7;
@@ -66,11 +64,6 @@ export async function jsonSchemaToFragments(
     ...(fragments || []),
     {
       ref: 'virtual://main',
-      location: {
-        ...context.baseLocation,
-        kind: 'statement',
-        namespace: [identifier],
-      },
       type: 'statement',
       statement: factory.createTypeAliasDeclaration(
         [
@@ -133,7 +126,7 @@ export async function schemaToTypes(
     const referenceParts = splitRef(schema.$ref);
 
     return {
-      types: [buildTypeReference(referenceParts.map(buildIdentifier))],
+      types: [buildInterfaceReference(referenceParts)],
       fragments: [{ type: 'assumed', ref: schema.$ref }],
     };
   } else if ('const' in schema && 'undefined' !== typeof schema.const) {
@@ -162,12 +155,9 @@ export async function schemaToTypes(
       return {
         fragments: [
           {
-            location: {
-              ...context.baseLocation,
-              namespace: ['Enums', identifier],
-              kind: 'type',
-            },
-            type: 'typeDeclaration',
+            ref: `virtual://enums/${name}`,
+            type: 'declarationMember',
+            namespace: ['Enums', identifier],
             typeNode: factory.createEnumDeclaration(
               [factory.createModifier(SyntaxKind.ExportKeyword)],
               identifier,
@@ -178,7 +168,6 @@ export async function schemaToTypes(
                 ),
               ),
             ),
-            ref: `virtual://enums/${name}`,
           },
         ],
         types: [buildTypeReference(['Enums', identifier])],
@@ -439,6 +428,12 @@ export async function buildObjectTypeNode(
         factory.createUnionTypeNode(types),
       ),
     );
+  }
+
+  if (!elements.length) {
+    return {
+      type: factory.createKeywordTypeNode(SyntaxKind.ObjectKeyword),
+    };
   }
 
   return {
