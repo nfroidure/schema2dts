@@ -1,17 +1,29 @@
-import { type OpenAPIV3_1 } from 'openapi-types';
 import {
   ALL_TYPES,
   ensureResolved,
   resolve,
   schemaToTypeNode,
   splitRef,
-  type JSONSchema,
   type JSONSchemaContext,
 } from './jsonSchema.js';
 import { type Fragment } from './fragments.js';
 import { buildIdentifier } from './typeDefinitions.js';
 import { YError } from 'yerror';
 import { factory, SyntaxKind, type TypeNode } from 'typescript';
+import {
+  type OpenAPI,
+  type OpenAPICallback,
+  type OpenAPIOperation,
+  type OpenAPIPathItem,
+  type OpenAPIReference,
+  type OpenAPIExtension,
+  type OpenAPIReferenceable,
+  type OpenAPIHeader,
+  type OpenAPIRequestBody,
+  type OpenAPIResponse,
+  type OpenAPIParameter,
+} from '../types/openAPI.js';
+import { JSONSchema } from '../types/jsonSchema.js';
 
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   baseName: 'API',
@@ -47,12 +59,15 @@ export type OpenAPIContext = JSONSchemaContext & {
 
 export async function openAPIToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
+  document: OpenAPI,
 ): Promise<Fragment[]> {
   let fragments: Fragment[] = [];
 
   if ('paths' in document && document.paths) {
     for (const [path, pathItem] of Object.entries(document.paths)) {
+      if (path.startsWith('x-')) {
+        continue;
+      }
       if (pathItem) {
         fragments.push(
           ...(await pathItemToFragments(context, document, pathItem, [
@@ -96,6 +111,7 @@ export async function openAPIToFragments(
         if (fragment.type === 'assumed') {
           if (fragment.ref.startsWith('#/components/pathItems/')) {
             const namespace = splitRef(fragment.ref);
+            const pathItem = await resolve(document, namespace);
 
             hasFragmentsToBuild = true;
 
@@ -104,16 +120,14 @@ export async function openAPIToFragments(
               ...(await pathItemToFragments(
                 context,
                 document,
-                await resolve<OpenAPIV3_1.Document, OpenAPIV3_1.PathItemObject>(
-                  document,
-                  namespace,
-                ),
+                pathItem as OpenAPIPathItem<JSONSchema, OpenAPIExtension>,
                 namespace,
               )),
             ];
           }
           if (fragment.ref.startsWith('#/components/requestBodies/')) {
             const namespace = splitRef(fragment.ref);
+            const requestBody = await resolve(document, namespace);
 
             hasFragmentsToBuild = true;
 
@@ -122,10 +136,7 @@ export async function openAPIToFragments(
               ...(await requestBodyToFragments(
                 context,
                 document,
-                await resolve<
-                  OpenAPIV3_1.Document,
-                  OpenAPIV3_1.RequestBodyObject
-                >(document, namespace),
+                requestBody as OpenAPIRequestBody<JSONSchema, OpenAPIExtension>,
                 namespace,
                 false,
               )),
@@ -133,6 +144,10 @@ export async function openAPIToFragments(
           }
           if (fragment.ref.startsWith('#/components/responses/')) {
             const namespace = splitRef(fragment.ref);
+            const response = (await resolve(
+              document,
+              namespace,
+            )) as OpenAPIResponse<JSONSchema, OpenAPIExtension>;
 
             hasFragmentsToBuild = true;
 
@@ -141,16 +156,14 @@ export async function openAPIToFragments(
               ...(await responseToFragments(
                 context,
                 document,
-                await resolve<OpenAPIV3_1.Document, OpenAPIV3_1.ResponseObject>(
-                  document,
-                  namespace,
-                ),
+                response,
                 namespace,
               )),
             ];
           }
           if (fragment.ref.startsWith('#/components/parameters/')) {
             const namespace = splitRef(fragment.ref);
+            const parameter = await resolve(document, namespace);
 
             hasFragmentsToBuild = true;
 
@@ -159,10 +172,7 @@ export async function openAPIToFragments(
               ...(await parameterToFragments(
                 context,
                 document,
-                await resolve<
-                  OpenAPIV3_1.Document,
-                  OpenAPIV3_1.ParameterObject
-                >(document, namespace),
+                parameter as OpenAPIParameter<JSONSchema, OpenAPIExtension>,
                 namespace,
                 false,
               )),
@@ -170,6 +180,10 @@ export async function openAPIToFragments(
           }
           if (fragment.ref.startsWith('#/components/headers/')) {
             const namespace = splitRef(fragment.ref);
+            const header = (await resolve(
+              document,
+              namespace,
+            )) as OpenAPIHeader<JSONSchema, OpenAPIExtension>;
 
             hasFragmentsToBuild = true;
 
@@ -178,10 +192,7 @@ export async function openAPIToFragments(
               ...(await headerToFragments(
                 context,
                 document,
-                await resolve<OpenAPIV3_1.Document, OpenAPIV3_1.HeaderObject>(
-                  document,
-                  namespace,
-                ),
+                header,
                 namespace,
                 false,
               )),
@@ -189,6 +200,7 @@ export async function openAPIToFragments(
           }
           if (fragment.ref.startsWith('#/components/callbacks/')) {
             const namespace = splitRef(fragment.ref);
+            const callback = await resolve(document, namespace);
 
             hasFragmentsToBuild = true;
 
@@ -197,10 +209,7 @@ export async function openAPIToFragments(
               ...(await callbackToFragments(
                 context,
                 document,
-                await resolve<OpenAPIV3_1.Document, OpenAPIV3_1.CallbackObject>(
-                  document,
-                  namespace,
-                ),
+                callback as OpenAPICallback<JSONSchema, OpenAPIExtension>,
                 namespace,
               )),
             ];
@@ -217,11 +226,11 @@ export async function openAPIToFragments(
 
 export async function pathItemToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  pathItem: OpenAPIV3_1.PathItemObject,
+  document: OpenAPI,
+  pathItem: OpenAPIPathItem<JSONSchema, OpenAPIExtension>,
   namespace: string[],
 ): Promise<Fragment[]> {
-  if ('$ref' in pathItem && pathItem.$ref) {
+  if (isAReference(pathItem)) {
     // Path items should be merged but we won't atm
     // since it may not be like this in the future
     // and embrace the ReferenceObject classic behavior.
@@ -242,6 +251,31 @@ export async function pathItemToFragments(
   }
 
   const fragments: Fragment[] = [];
+
+  if (pathItem.parameters && pathItem.parameters.length) {
+    for (const parameter of pathItem.parameters) {
+      const resolvedParameter = (await ensureResolved(
+        document,
+        parameter,
+      )) as OpenAPIParameter<JSONSchema, OpenAPIExtension>;
+      const subNamespace = [
+        ...namespace,
+        'parameters',
+        resolvedParameter.in,
+        resolvedParameter.name,
+      ];
+
+      fragments.push(
+        ...(await parameterToFragments(
+          context,
+          document,
+          parameter,
+          subNamespace,
+          !resolvedParameter.required,
+        )),
+      );
+    }
+  }
 
   for (const method of Object.keys(pathItem)) {
     const maybeOperationObject = pickOperationObject(method, pathItem[method]);
@@ -264,8 +298,6 @@ export async function pathItemToFragments(
       throw new YError('E_OPERATION_ID_REQUIRED', ...namespace);
     }
 
-    // TODO: parameters
-
     fragments.push({
       type: 'interfaceMember',
       ref: '#/' + subNamespace.join('/'),
@@ -285,8 +317,8 @@ export async function pathItemToFragments(
 
 export async function operationToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  operation: OpenAPIV3_1.OperationObject,
+  document: OpenAPI,
+  operation: OpenAPIOperation<JSONSchema, OpenAPIExtension>,
   namespace: string[],
 ): Promise<Fragment[]> {
   const fragments: Fragment[] = [
@@ -313,10 +345,11 @@ export async function operationToFragments(
 
   if ('requestBody' in operation && operation.requestBody) {
     const subNamespace = [...namespace, 'requestBody'];
-    const requestBody = await ensureResolved<
-      OpenAPIV3_1.Document,
-      OpenAPIV3_1.RequestBodyObject
-    >(document, operation.requestBody);
+    const requestBody = (await ensureResolved(
+      document,
+      operation.requestBody,
+    )) as OpenAPIRequestBody<JSONSchema, OpenAPIExtension>;
+    const hasNoSchemas = pickRequestBodySchemas(requestBody).length === 0;
 
     fragments.push(
       ...(await requestBodyToFragments(
@@ -324,7 +357,7 @@ export async function operationToFragments(
         document,
         operation.requestBody,
         subNamespace,
-        !requestBody.required,
+        hasNoSchemas || !requestBody.required,
       )),
     );
   }
@@ -359,10 +392,10 @@ export async function operationToFragments(
 
   if (operation.parameters && operation.parameters.length) {
     for (const parameter of operation.parameters) {
-      const resolvedParameter = await ensureResolved<
-        OpenAPIV3_1.Document,
-        OpenAPIV3_1.ParameterObject
-      >(document, parameter);
+      const resolvedParameter = (await ensureResolved(
+        document,
+        parameter,
+      )) as OpenAPIParameter<JSONSchema, OpenAPIExtension>;
       const subNamespace = [
         ...namespace,
         'parameters',
@@ -385,23 +418,36 @@ export async function operationToFragments(
   return fragments;
 }
 
+export function isAReference<D, X extends OpenAPIExtension>(
+  maybeReference:
+    | OpenAPIReference<OpenAPIReferenceable<D, X>>
+    | OpenAPIReferenceable<D, X>,
+): maybeReference is OpenAPIReference<OpenAPIReferenceable<D, X>> {
+  if (typeof maybeReference !== 'object' || maybeReference == null) {
+    return false;
+  }
+  return !!('$ref' in maybeReference && maybeReference.$ref);
+}
+
 export async function callbackToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  callback: OpenAPIV3_1.CallbackObject | OpenAPIV3_1.ReferenceObject,
+  document: OpenAPI,
+  callback:
+    | OpenAPIReference<OpenAPICallback<JSONSchema, OpenAPIExtension>>
+    | OpenAPICallback<JSONSchema, OpenAPIExtension>,
   namespace: string[],
 ): Promise<Fragment[]> {
-  if ('$ref' in callback && callback.$ref) {
+  if (isAReference(callback)) {
     return [
       {
         type: 'assumed',
-        ref: (callback as OpenAPIV3_1.ReferenceObject).$ref,
+        ref: callback.$ref,
       },
       {
         type: 'interfaceMember',
         ref: '#/' + namespace.join('/'),
         namespace: [...namespace],
-        destination: (callback as OpenAPIV3_1.ReferenceObject).$ref,
+        destination: callback.$ref,
       },
     ];
   }
@@ -416,11 +462,14 @@ export async function callbackToFragments(
   ];
 
   for (const [callbackName, pathItem] of Object.entries(callback)) {
+    if (callbackName.startsWith('x-')) {
+      continue;
+    }
     fragments.push(
       ...(await pathItemToFragments(
         context,
         document,
-        pathItem as OpenAPIV3_1.PathItemObject,
+        pathItem as OpenAPIPathItem<JSONSchema, OpenAPIExtension>,
         [...namespace, callbackName],
       )),
     );
@@ -431,29 +480,33 @@ export async function callbackToFragments(
 
 export async function headerToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  header: OpenAPIV3_1.HeaderObject,
+  document: OpenAPI,
+  header:
+    | OpenAPIReference<OpenAPIHeader<JSONSchema, OpenAPIExtension>>
+    | OpenAPIHeader<JSONSchema, OpenAPIExtension>,
   namespace: string[],
   optional = true,
 ): Promise<Fragment[]> {
-  if ('$ref' in header) {
+  if (isAReference(header)) {
     return [
       {
         type: 'assumed',
-        ref: (header as OpenAPIV3_1.ReferenceObject).$ref,
+        ref: header.$ref,
       },
       {
         type: 'interfaceMember',
         ref: '#/' + namespace.join('/'),
         namespace: [...namespace],
-        destination: (header as OpenAPIV3_1.ReferenceObject).$ref,
+        destination: header.$ref,
         optional,
       },
     ];
+  } else if ('content' in header) {
+    throw new YError('E_UNSUPPORTED_HEADER', header);
   } else {
     const { type, fragments: schemaFragments } = await schemaToTypeNode(
       context,
-      header.schema as JSONSchema,
+      header.schema,
     );
 
     return [
@@ -471,36 +524,32 @@ export async function headerToFragments(
 
 export async function requestBodyToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  requestBody: OpenAPIV3_1.RequestBodyObject | OpenAPIV3_1.ReferenceObject,
+  document: OpenAPI,
+  requestBody:
+    | OpenAPIRequestBody<JSONSchema, OpenAPIExtension>
+    | OpenAPIReference<OpenAPIRequestBody<JSONSchema, OpenAPIExtension>>,
   namespace: string[],
   optional = true,
 ): Promise<Fragment[]> {
-  if ('$ref' in requestBody) {
+  if (isAReference(requestBody)) {
     return [
       {
         type: 'assumed',
-        ref: (requestBody as OpenAPIV3_1.ReferenceObject).$ref,
+        ref: requestBody.$ref,
       },
       {
         type: 'interfaceMember',
         ref: '#/' + namespace.join('/'),
         namespace: [...namespace],
-        destination: (requestBody as OpenAPIV3_1.ReferenceObject).$ref,
+        destination: requestBody.$ref,
         optional,
       },
     ];
   }
 
-  const requestBodySchemas = (
-    requestBody
-      ? Object.keys(requestBody.content)
-          .filter((contentType) => 'schema' in requestBody.content[contentType])
-          .map((contentType) => {
-            return requestBody.content[contentType].schema;
-          })
-      : []
-  ) as (OpenAPIV3_1.ReferenceObject | OpenAPIV3_1.SchemaObject)[];
+  const requestBodySchemas = pickRequestBodySchemas(
+    requestBody as OpenAPIRequestBody<JSONSchema, OpenAPIExtension>,
+  );
 
   if (!requestBodySchemas.length) {
     return [
@@ -509,7 +558,7 @@ export async function requestBodyToFragments(
         ref: '#/' + namespace.join('/'),
         namespace: [...namespace],
         typeNode: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-        optional,
+        optional: true,
       },
     ];
   }
@@ -540,21 +589,23 @@ export async function requestBodyToFragments(
 
 export async function responseToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  response: OpenAPIV3_1.ResponseObject | OpenAPIV3_1.ReferenceObject,
+  document: OpenAPI,
+  response:
+    | OpenAPIResponse<JSONSchema, OpenAPIExtension>
+    | OpenAPIReference<OpenAPIResponse<JSONSchema, OpenAPIExtension>>,
   namespace: string[],
 ): Promise<Fragment[]> {
-  if ('$ref' in response) {
+  if (isAReference(response)) {
     return [
       {
         type: 'assumed',
-        ref: (response as OpenAPIV3_1.ReferenceObject).$ref,
+        ref: response.$ref,
       },
       {
         type: 'interfaceMember',
         ref: '#/' + namespace.join('/'),
         namespace: [...namespace],
-        destination: (response as OpenAPIV3_1.ReferenceObject).$ref,
+        destination: response.$ref,
       },
     ];
   }
@@ -578,14 +629,18 @@ export async function responseToFragments(
           })
       : [];
   const responseBodyNamespace = [...namespace, 'body'];
+  const hasContent = 'content' in response;
 
   if (!responseSchemas.length) {
-    fragments.push({
-      type: 'interfaceMember',
-      ref: '#/' + responseBodyNamespace.join('/'),
-      namespace: responseBodyNamespace,
-      typeNode: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-    });
+    if (hasContent) {
+      fragments.push({
+        type: 'interfaceMember',
+        ref: '#/' + responseBodyNamespace.join('/'),
+        namespace: responseBodyNamespace,
+        typeNode: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
+        optional: true,
+      });
+    }
   } else {
     const types: TypeNode[] = [];
 
@@ -608,12 +663,16 @@ export async function responseToFragments(
     });
   }
 
+  let hasHeaders = false;
+
   if (response.headers) {
     for (const [headerName, header] of Object.entries(response.headers)) {
-      const resolvedHeader = await ensureResolved<
-        OpenAPIV3_1.Document,
-        OpenAPIV3_1.HeaderObject
-      >(document, header);
+      const resolvedHeader = (await ensureResolved(
+        document,
+        header,
+      )) as OpenAPIHeader<JSONSchema, OpenAPIExtension>;
+
+      hasHeaders = true;
 
       fragments.push(
         ...(await headerToFragments(
@@ -627,44 +686,55 @@ export async function responseToFragments(
     }
   }
 
+  if (!(hasContent || hasHeaders)) {
+    fragments.push({
+      ref: '#/' + namespace.join('/') + '/empty',
+      type: 'interfaceMember',
+      namespace: [...namespace],
+      typeNode: factory.createKeywordTypeNode(SyntaxKind.ObjectKeyword),
+    });
+  }
+
   return fragments;
 }
 
 export async function parameterToFragments(
   context: OpenAPIContext,
-  document: OpenAPIV3_1.Document,
-  parameter: OpenAPIV3_1.ParameterObject | OpenAPIV3_1.ReferenceObject,
+  document: OpenAPI,
+  parameter:
+    | OpenAPIParameter<JSONSchema, OpenAPIExtension>
+    | OpenAPIReference<OpenAPIParameter<JSONSchema, OpenAPIExtension>>,
   namespace: string[],
   optional = true,
 ): Promise<Fragment[]> {
-  if ('$ref' in parameter) {
+  if (isAReference(parameter)) {
     return [
       {
         type: 'assumed',
-        ref: (parameter as OpenAPIV3_1.ReferenceObject).$ref,
+        ref: parameter.$ref,
       },
       {
         type: 'interfaceMember',
         ref: '#/' + namespace.join('/'),
         namespace: [...namespace],
-        destination: (parameter as OpenAPIV3_1.ReferenceObject).$ref,
+        destination: parameter.$ref,
         optional,
       },
     ];
   }
 
   if ('schema' in parameter && parameter.schema) {
-    if ('$ref' in parameter.schema) {
+    if (isAReference(parameter.schema)) {
       return [
         {
           type: 'assumed',
-          ref: (parameter.schema as OpenAPIV3_1.ReferenceObject).$ref,
+          ref: parameter.schema.$ref,
         },
         {
           type: 'interfaceMember',
           ref: '#/' + namespace.join('/'),
           namespace: [...namespace],
-          destination: (parameter.schema as OpenAPIV3_1.ReferenceObject).$ref,
+          destination: parameter.schema.$ref,
           optional,
         },
       ];
@@ -697,56 +767,10 @@ export async function parameterToFragments(
   ];
 }
 
-export type CleanedOpenAPIDocument = Omit<
-  OpenAPIV3_1.Document,
-  'components'
-> & {
-  components: {
-    schemas: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['schemas']
-    >;
-    requestBodies: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['requestBodies']
-    >;
-    parameters: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['parameters']
-    >;
-    responses: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['responses']
-    >;
-    headers: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['headers']
-    >;
-    pathItems: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['pathItems']
-    >;
-    callbacks: NonNullable<
-      NonNullable<OpenAPIV3_1.Document['components']>['callbacks']
-    >;
-  };
-};
-
-export function cleanOpenAPIDocument(
-  document: OpenAPIV3_1.Document,
-): CleanedOpenAPIDocument {
-  return {
-    ...document,
-    components: {
-      schemas: document.components?.schemas || {},
-      requestBodies: document.components?.requestBodies || {},
-      parameters: document.components?.parameters || {},
-      responses: document.components?.responses || {},
-      headers: document.components?.headers || {},
-      callbacks: document.components?.callbacks || {},
-      pathItems: document.components?.pathItems || {},
-    },
-  };
-}
-
-export function pickOperationObject(
+export function pickOperationObject<D, X extends OpenAPIExtension>(
   maybeMethod: string,
-  maybeOperationObject: OpenAPIV3_1.PathItemObject[keyof OpenAPIV3_1.PathItemObject],
-): OpenAPIV3_1.OperationObject | undefined {
+  maybeOperationObject: OpenAPIOperation<D, X>,
+): OpenAPIOperation<D, X> | undefined {
   if (
     [
       'head',
@@ -759,7 +783,22 @@ export function pickOperationObject(
       'trace',
     ].includes(maybeMethod)
   ) {
-    return maybeOperationObject as OpenAPIV3_1.OperationObject;
+    return maybeOperationObject;
   }
   return undefined;
+}
+
+function pickRequestBodySchemas<
+  D,
+  T extends OpenAPIRequestBody<D, OpenAPIExtension>,
+>(requestBody: T) {
+  return (
+    requestBody
+      ? Object.keys(requestBody.content)
+          .filter((contentType) => 'schema' in requestBody.content[contentType])
+          .map((contentType) => {
+            return requestBody.content[contentType].schema;
+          })
+      : []
+  ) as D[];
 }

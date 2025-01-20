@@ -6,13 +6,19 @@ import {
 } from './index.js';
 import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
-import { OpenAPIV3_1 } from 'openapi-types';
-import type { JSONSchema7 } from 'json-schema';
+
+import {
+  JSONSchema,
+  JSONSchemaFormat,
+  JSONSchemaPrimitive,
+} from './types/jsonSchema.js';
+import { DEFAULT_JSON_SCHEMA_OPTIONS } from './utils/jsonSchema.js';
+import { OpenAPI } from './types/openAPI.js';
 
 describe('generateOpenAPITypes()', () => {
   test('with a denormalized simple sample', async () => {
-    const schema = {
-      openapi: '3.0.2',
+    const schema: OpenAPI = {
+      openapi: '3.1',
       info: {
         version: '0.0.0',
         title: 'diagrams-api',
@@ -78,7 +84,7 @@ describe('generateOpenAPITypes()', () => {
           },
         },
       },
-    } as OpenAPIV3_1.Document;
+    };
 
     expect(
       toSource(
@@ -91,7 +97,7 @@ describe('generateOpenAPITypes()', () => {
     ).toMatchInlineSnapshot(`
 "export interface paths {
     "/test": {
-        get: operations["GetPing"];
+        "get": operations["GetPing"];
     };
 }
 export interface operations {
@@ -118,8 +124,8 @@ export interface operations {
   });
 
   test('with a normalized simple sample', async () => {
-    const schema = {
-      openapi: '3.0.2',
+    const schema: OpenAPI = {
+      openapi: '3.1.0',
       info: {
         version: '0.0.0',
         title: 'diagrams-api',
@@ -212,7 +218,7 @@ export interface operations {
           },
         },
       },
-    } as OpenAPIV3_1.Document;
+    };
 
     expect(
       toSource(
@@ -226,7 +232,7 @@ export interface operations {
     ).toMatchInlineSnapshot(`
 "declare interface paths {
     "/test": {
-        get: operations["GetTest"];
+        "get": operations["GetTest"];
     };
 }
 declare interface operations {
@@ -278,7 +284,7 @@ declare interface components {
       test(`should work with ${file}`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPIV3_1.Document;
+        ) as OpenAPI;
 
         expect(
           toSource(
@@ -294,7 +300,7 @@ declare interface components {
       test(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPIV3_1.Document;
+        ) as OpenAPI;
 
         expect(
           toSource(
@@ -312,7 +318,7 @@ declare interface components {
       test(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPIV3_1.Document;
+        ) as OpenAPI;
 
         expect(
           toSource(
@@ -330,8 +336,8 @@ declare interface components {
   });
 
   test('should work without operation id per default', async () => {
-    const schema = {
-      openapi: '3.0.2',
+    const schema: OpenAPI = {
+      openapi: '3.1.0',
       info: {
         version: '0.0.0',
         title: 'foobar-api',
@@ -358,7 +364,7 @@ declare interface components {
           },
         },
       },
-    } as OpenAPIV3_1.Document;
+    };
 
     expect(
       toSource(
@@ -372,7 +378,7 @@ declare interface components {
     ).toMatchInlineSnapshot(`
 "declare interface paths {
     "/test": {
-        get: operations["PathsTest"];
+        "get": operations["PathsTest"];
     };
 }
 declare interface operations {
@@ -388,8 +394,8 @@ declare interface operations {
   });
 
   test('should work with snake case parameter in query', async () => {
-    const schema = {
-      openapi: '3.0.2',
+    const schema: OpenAPI = {
+      openapi: '3.1.1',
       info: {
         version: '0.0.0',
         title: 'foobar-api',
@@ -417,7 +423,7 @@ declare interface operations {
           },
         },
       },
-    } as OpenAPIV3_1.Document;
+    };
 
     expect(
       toSource(
@@ -431,7 +437,7 @@ declare interface operations {
     ).toMatchInlineSnapshot(`
 "declare interface paths {
     "/test": {
-        get: operations["Test"];
+        "get": operations["Test"];
     };
 }
 declare interface operations {
@@ -455,7 +461,7 @@ describe('generateJSONSchemaTypes()', () => {
       test(`should work with ${file}`, async () => {
         const schema = JSON.parse(
           readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as JSONSchema7;
+        ) as JSONSchema;
 
         expect(
           toSource(await generateJSONSchemaTypes(schema)),
@@ -464,8 +470,169 @@ describe('generateJSONSchemaTypes()', () => {
     });
   });
 
+  test('should camelize number separated identifiers', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: 'string',
+      enum: ['user1name', 'user_2_name', 'user3_name'],
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          generateRealEnums: true,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"export type Main = Enums.Limit;
+export namespace Enums {
+    export enum Limit {
+        User1Name = "user1name",
+        User2Name = "user_2_name",
+        User3Name = "user3_name"
+    }
+}"
+`);
+  });
+
+  test('should work with empty schema', async () => {
+    const schema: JSONSchema = {};
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = any;"`);
+  });
+
+  test('should work with true schema', async () => {
+    const schema: JSONSchema = true;
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = unknown;"`);
+  });
+
+  test('should work with false schema', async () => {
+    const schema: JSONSchema = false;
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = never;"`);
+  });
+
+  test('should work with null schema', async () => {
+    const schema: JSONSchema = {
+      type: 'null',
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = null;"`);
+  });
+
+  test('should work with sample schema 1', async () => {
+    const schema: JSONSchema = {
+      $id: 'https://example.com/polygon',
+      $schema: 'https://json-schema.org/draft/2020-12/schema',
+      $defs: {
+        point: {
+          type: 'object',
+          properties: {
+            x: { type: 'number' },
+            y: { type: 'number' },
+          },
+          additionalProperties: false,
+          required: ['x', 'y'],
+        },
+      },
+      type: 'array',
+      items: { $ref: '#/$defs/point' },
+      minItems: 3,
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type Main = [
+    $defs["point"],
+    $defs["point"],
+    $defs["point"],
+    ...$defs["point"][]
+];
+declare interface $defs {
+    point: {
+        x: number;
+        y: number;
+    };
+}"
+`);
+  });
+
+  test('should work with sample schema 2', async () => {
+    const schema: JSONSchema<
+      JSONSchemaPrimitive,
+      JSONSchemaFormat,
+      {
+        classRelation?: string;
+      }
+    > = {
+      allOf: [
+        {
+          classRelation: 'is-a',
+          $ref: '#/$defs/base',
+        },
+        {
+          $ref: '#/$defs/common',
+        },
+      ],
+      properties: {
+        foo: {
+          classRelation: 'has-a',
+          $ref: '#/$defs/foo',
+        },
+        date: {
+          $ref: '#/$defs/date',
+        },
+      },
+      $defs: {
+        base: { const: 'base' },
+        common: { const: 'common' },
+        foo: { const: 'foo' },
+        date: { const: 'date' },
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type Main = {
+    foo?: $defs["foo"];
+    date?: $defs["date"];
+} & ($defs["base"] & $defs["common"]);
+declare interface $defs {
+    foo: "foo";
+    date: "date";
+    base: "base";
+    common: "common";
+}"
+`);
+  });
+
   test('should work with enums having values starting with a number', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'Limit',
       type: 'string',
       enum: ['1m', '1d', '1w'],
@@ -474,9 +641,8 @@ describe('generateJSONSchemaTypes()', () => {
     expect(
       toSource(
         await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
           generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
         }),
       ),
@@ -493,7 +659,7 @@ export namespace Enums {
   });
 
   test('should camelize number separated identifiers', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'Limit',
       type: 'string',
       enum: ['user1name', 'user_2_name', 'user3_name'],
@@ -502,9 +668,8 @@ export namespace Enums {
     expect(
       toSource(
         await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
           generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
         }),
       ),
@@ -521,7 +686,7 @@ export namespace Enums {
   });
 
   test('should work with string literal enums', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'Limit',
       type: ['string'],
       enum: ['str1', 'str2'],
@@ -547,130 +712,122 @@ declare namespace Enums {
 `);
   });
 
-  describe('for JSONSchema v7', () => {
-    test('should work with simple literal type schema', async () => {
-      const schema: JSONSchema7 = {
-        type: 'number',
-      };
+  test('should work with simple literal type schema', async () => {
+    const schema: JSONSchema = {
+      type: 'number',
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`"export type Limit = number;"`);
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`"export type Limit = number;"`);
+  });
 
-    test('should work with several literal type schema', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: ['number', 'string', 'boolean'],
-      };
+  test('should work with several literal type schema', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: ['number', 'string', 'boolean'],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(
-        `"export type Main = number | string | boolean;"`,
-      );
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = number | string | boolean;"`);
+  });
 
-    test('should work with a literal nullable type schema', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: ['number', 'null'],
-      };
+  test('should work with a literal nullable type schema', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: ['number', 'null'],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`"export type Limit = number | null;"`);
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`"export type Limit = number | null;"`);
+  });
 
-    test('should work with several literal nullable type schema', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: ['number', 'string', 'null'],
-      };
+  test('should work with several literal nullable type schema', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: ['number', 'string', 'null'],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`"export type Limit = number | string | null;"`);
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`"export type Limit = number | string | null;"`);
+  });
 
-    test('should work with literal enums', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: ['number', 'string', 'null'],
-        enum: [1, 2, 'hop', 'lol', null],
-      };
+  test('should work with literal enums', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: ['number', 'string', 'null'],
+      enum: [1, 2, 'hop', 'lol', null],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(
-        `"export type Limit = 1 | 2 | "hop" | "lol" | null;"`,
-      );
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(
+      `"export type Limit = 1 | 2 | "hop" | "lol" | null;"`,
+    );
+  });
 
-    test('should work with object schema', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: 'object',
-        required: ['min', 'max'],
-        properties: {
-          min: { type: 'integer' },
-          max: { type: 'integer' },
-          minIncluded: { type: 'boolean' },
-          maxIncluded: { type: 'boolean' },
-          pace: { type: 'number' },
-        },
-      };
+  test('should work with object schema', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: 'object',
+      required: ['min', 'max'],
+      properties: {
+        min: { type: 'integer' },
+        max: { type: 'integer' },
+        minIncluded: { type: 'boolean' },
+        maxIncluded: { type: 'boolean' },
+        pace: { type: 'number' },
+      },
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = {
     min: number;
     max: number;
@@ -679,40 +836,40 @@ declare namespace Enums {
     pace?: number;
 };"
 `);
-    });
+  });
 
-    test('should work with nullable object schema', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: ['object', 'null'],
-        required: [],
-        properties: {
-          min: { type: 'integer' },
-          max: { type: 'integer' },
-          minIncluded: { type: 'boolean' },
-          maxIncluded: { type: 'boolean' },
-          pace: { type: 'number' },
-          nothing: false,
-          anything: true,
-          aConst: { const: 'test' },
-        },
-        patternProperties: {
-          '[a-z]{2}\\-[A-Z]{2,3}': { type: 'string' },
-        },
-        additionalProperties: true,
-      };
+  test('should work with nullable object schema', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: ['object', 'null'],
+      required: [],
+      properties: {
+        min: { type: 'integer' },
+        max: { type: 'integer' },
+        minIncluded: { type: 'boolean' },
+        maxIncluded: { type: 'boolean' },
+        pace: { type: 'number' },
+        nothing: false,
+        anything: true,
+        aConst: { const: 'test' },
+      },
+      patternProperties: {
+        '[a-z]{2}\\-[A-Z]{2,3}': { type: 'string' },
+      },
+      additionalProperties: true,
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = {
     min?: number;
     max?: number;
@@ -725,33 +882,33 @@ declare namespace Enums {
     [pattern: string]: string | unknown;
 } | null;"
 `);
-    });
+  });
 
-    test('should work with nested schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: ['object', 'null', 'number', 'array'],
-        properties: {
-          min: { type: 'integer' },
-          max: { type: 'integer' },
-          minIncluded: { type: 'boolean' },
-          maxIncluded: { type: 'boolean' },
-          pace: { type: 'number', readOnly: true },
-        },
-        items: [{ type: 'number' }, { type: 'string' }],
-      };
+  test('should work with nested schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: ['object', 'null', 'number', 'array'],
+      properties: {
+        min: { type: 'integer' },
+        max: { type: 'integer' },
+        minIncluded: { type: 'boolean' },
+        maxIncluded: { type: 'boolean' },
+        pace: { type: 'number', readOnly: true },
+      },
+      prefixItems: [{ type: 'number' }, { type: 'string' }],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = {
     min?: number;
     max?: number;
@@ -763,43 +920,43 @@ declare namespace Enums {
     string
 ];"
 `);
-    });
+  });
 
-    test('should work with anyOf schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        anyOf: [
-          {
-            type: ['null', 'number'],
+  test('should work with anyOf schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      anyOf: [
+        {
+          type: ['null', 'number'],
+        },
+        {
+          type: 'object',
+          properties: {
+            min: { type: 'integer' },
+            max: { type: 'integer' },
+            minIncluded: { type: 'boolean' },
+            maxIncluded: { type: 'boolean' },
+            pace: { type: 'number', readOnly: true },
           },
-          {
-            type: 'object',
-            properties: {
-              min: { type: 'integer' },
-              max: { type: 'integer' },
-              minIncluded: { type: 'boolean' },
-              maxIncluded: { type: 'boolean' },
-              pace: { type: 'number', readOnly: true },
-            },
-          },
-          {
-            type: 'array',
-            items: [{ type: 'number' }, { type: 'string' }],
-          },
-        ],
-      };
+        },
+        {
+          type: 'array',
+          prefixItems: [{ type: 'number' }, { type: 'string' }],
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = (null | number) | {
     min?: number;
     max?: number;
@@ -811,43 +968,43 @@ declare namespace Enums {
     string
 ];"
 `);
-    });
+  });
 
-    test('should work with oneOf schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        oneOf: [
-          {
-            type: ['null', 'number'],
+  test('should work with oneOf schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      oneOf: [
+        {
+          type: ['null', 'number'],
+        },
+        {
+          type: 'object',
+          properties: {
+            min: { type: 'integer' },
+            max: { type: 'integer' },
+            minIncluded: { type: 'boolean' },
+            maxIncluded: { type: 'boolean' },
+            pace: { type: 'number', readOnly: true },
           },
-          {
-            type: 'object',
-            properties: {
-              min: { type: 'integer' },
-              max: { type: 'integer' },
-              minIncluded: { type: 'boolean' },
-              maxIncluded: { type: 'boolean' },
-              pace: { type: 'number', readOnly: true },
-            },
-          },
-          {
-            type: 'array',
-            items: [{ type: 'number' }, { type: 'string' }],
-          },
-        ],
-      };
+        },
+        {
+          type: 'array',
+          prefixItems: [{ type: 'number' }, { type: 'string' }],
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = (null | number) | {
     min?: number;
     max?: number;
@@ -859,50 +1016,45 @@ declare namespace Enums {
     string
 ];"
 `);
-    });
+  });
 
-    test('should work with base schema and nested oneof schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'User',
-        type: 'object',
-        properties: {
-          name: {
-            type: 'string',
+  test('should work with base schema and nested oneof schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'User',
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+        },
+      },
+      oneOf: [
+        {
+          type: 'object',
+          required: ['email'],
+          properties: {
+            email: {
+              type: 'string',
+            },
           },
         },
-        oneOf: [
-          {
-            type: 'object',
-            required: ['email'],
-            properties: {
-              email: {
-                type: 'string',
-              },
+        {
+          type: 'object',
+          required: ['cellphone'],
+          properties: {
+            cellphone: {
+              type: 'string',
             },
           },
-          {
-            type: 'object',
-            required: ['cellphone'],
-            properties: {
-              cellphone: {
-                type: 'string',
-              },
-            },
-          },
-        ],
-      };
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
-"export type Main = {
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type Main = {
     name?: string;
 } & ({
     email: string;
@@ -910,48 +1062,43 @@ declare namespace Enums {
     cellphone: string;
 });"
 `);
-    });
+  });
 
-    test('should work with base schema and nested oneof schemas and inherited types', async () => {
-      const schema: JSONSchema7 = {
-        title: 'User',
-        type: 'object',
-        properties: {
-          name: {
-            type: 'string',
+  test('should work with base schema and nested oneof schemas and inherited types', async () => {
+    const schema: JSONSchema = {
+      title: 'User',
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+        },
+      },
+      oneOf: [
+        {
+          required: ['email'],
+          properties: {
+            email: {
+              type: 'string',
+            },
           },
         },
-        oneOf: [
-          {
-            required: ['email'],
-            properties: {
-              email: {
-                type: 'string',
-              },
+        {
+          required: ['cellphone'],
+          properties: {
+            cellphone: {
+              type: 'string',
             },
           },
-          {
-            required: ['cellphone'],
-            properties: {
-              cellphone: {
-                type: 'string',
-              },
-            },
-          },
-        ],
-      };
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
-"export type Main = {
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type Main = {
     name?: string;
 } & ({
     email: string;
@@ -959,43 +1106,43 @@ declare namespace Enums {
     cellphone: string;
 });"
 `);
-    });
+  });
 
-    test('should work with allOf schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        allOf: [
-          {
-            type: ['null', 'number'],
+  test('should work with allOf schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      allOf: [
+        {
+          type: ['null', 'number'],
+        },
+        {
+          type: 'object',
+          properties: {
+            min: { type: 'integer' },
+            max: { type: 'integer' },
+            minIncluded: { type: 'boolean' },
+            maxIncluded: { type: 'boolean' },
+            pace: { type: 'number', readOnly: true },
           },
-          {
-            type: 'object',
-            properties: {
-              min: { type: 'integer' },
-              max: { type: 'integer' },
-              minIncluded: { type: 'boolean' },
-              maxIncluded: { type: 'boolean' },
-              pace: { type: 'number', readOnly: true },
-            },
-          },
-          {
-            type: 'array',
-            items: [{ type: 'number' }, { type: 'string' }],
-          },
-        ],
-      };
+        },
+        {
+          type: 'array',
+          prefixItems: [{ type: 'number' }, { type: 'string' }],
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = (null | number) & {
     min?: number;
     max?: number;
@@ -1007,40 +1154,40 @@ declare namespace Enums {
     string
 ];"
 `);
-    });
+  });
 
-    test('should work with allOf schemas and required properties added', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        allOf: [
-          {
-            type: 'object',
-            properties: {
-              min: { type: 'integer' },
-              max: { type: 'integer' },
-              minIncluded: { type: 'boolean' },
-              maxIncluded: { type: 'boolean' },
-              pace: { type: 'number', readOnly: true },
-            },
+  test('should work with allOf schemas and required properties added', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      allOf: [
+        {
+          type: 'object',
+          properties: {
+            min: { type: 'integer' },
+            max: { type: 'integer' },
+            minIncluded: { type: 'boolean' },
+            maxIncluded: { type: 'boolean' },
+            pace: { type: 'number', readOnly: true },
           },
-          {
-            type: 'object',
-            required: ['min', 'max'],
-          },
-        ],
-      };
+        },
+        {
+          type: 'object',
+          required: ['min', 'max'],
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = {
     min?: number;
     max?: number;
@@ -1052,102 +1199,97 @@ declare namespace Enums {
     max: unknown;
 };"
 `);
-    });
+  });
 
-    test('should work with simple literal type schema', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        $ref: '#/definitions/User',
-        definitions: {
-          User: { type: 'string' },
-        },
-      };
+  test('should work with simple literal type schema', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      $ref: '#/definitions/User',
+      definitions: {
+        User: { type: 'string' },
+      },
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-            baseName: 'Limit',
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "export type Limit = definitions["User"];
 export interface definitions {
     User: string;
 }"
 `);
-    });
+  });
 
-    test('should work with empty objects schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'Limit',
-        type: 'object',
-      };
+  test('should work with empty objects schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Limit',
+      type: 'object',
+    };
 
-      expect(
-  toSource(
-    await generateJSONSchemaTypes(schema, {
-      brandedTypes: [],
-      generateRealEnums: true,
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: true,
-      baseName: 'Limit'
-    })
-  )
-).toMatchInlineSnapshot(`"export type Limit = object;"`);
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Limit',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`"export type Limit = object;"`);
+  });
 
-    test('should work with a nested oneOf in allOf schemas', async () => {
-      const schema: JSONSchema7 = {
-        allOf: [
-          {
-            type: 'object',
-            required: ['name'],
-            properties: {
-              name: {
-                type: 'string',
-              },
+  test('should work with a nested oneOf in allOf schemas', async () => {
+    const schema: JSONSchema = {
+      allOf: [
+        {
+          type: 'object',
+          required: ['name'],
+          properties: {
+            name: {
+              type: 'string',
             },
           },
-          {
-            oneOf: [
-              {
-                type: 'object',
-                required: ['email'],
-                properties: {
-                  email: {
-                    type: 'string',
-                  },
+        },
+        {
+          oneOf: [
+            {
+              type: 'object',
+              required: ['email'],
+              properties: {
+                email: {
+                  type: 'string',
                 },
               },
-              {
-                type: 'object',
-                required: ['phone'],
-                properties: {
-                  phone: {
-                    type: 'string',
-                  },
+            },
+            {
+              type: 'object',
+              required: ['phone'],
+              properties: {
+                phone: {
+                  type: 'string',
                 },
               },
-            ],
-          },
-        ],
-      };
+            },
+          ],
+        },
+      ],
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
-"export type Main = {
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type Main = {
     name: string;
 } & ({
     email: string;
@@ -1155,120 +1297,105 @@ export interface definitions {
     phone: string;
 });"
 `);
-    });
+  });
 
-    test('should work with not defined items array schemas', async () => {
-      const schema: JSONSchema7 = {
-        type: 'array',
-      };
+  test('should work with not defined items array schemas', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(`"export type Main = unknown[];"`);
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = unknown[];"`);
+  });
 
-    test('should work with no items array schemas', async () => {
-      const schema: JSONSchema7 = {
-        type: 'array',
-        maxItems: 0,
-      };
+  test('should work with no items array schemas', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+      maxItems: 0,
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(`"export type Main = never[];"`);
-    });
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`"declare type Main = never[];"`);
+  });
 
-    test('should work with anyOf/array special test case schemas', async () => {
-      const schema: JSONSchema7 = {
-        title: 'TrickyThing',
-        type: 'object',
-        additionalProperties: true,
-        required: [
-          'name',
-          'labels',
-          'timestamp',
-          'data',
-          'start',
-          'end',
-          'duration',
-          'context',
-        ],
-        properties: {
-          name: { type: 'string' },
-          duration: { type: 'number' },
-          start: {
-            $ref: '#/definitions/Date',
-          },
-          end: {
-            $ref: '#/definitions/Date',
-          },
-          labels: {
-            type: 'array',
-            items: {
-              type: 'string',
-              enum: ['value', 'peaks', 'startTime', 'endTime', 'peakTime'],
-            },
-          },
-          timestamp: {
-            type: 'array',
-            items: {
-              type: 'string',
-              enum: ['startTime', 'endTime', 'peakTime'],
-            },
-          },
-          data: {
-            type: 'array',
-            items: {
-              type: 'array',
-              maxItems: 5,
-              minItems: 5,
-              items: {
-                anyOf: [
-                  {
-                    $ref: '#/definitions/Date',
-                  },
-                  { type: 'number' },
-                  { type: 'string', enum: ['first', 'bosse', 'last'] },
-                  { type: 'string', pattern: '[0-9]+' },
-                ],
-              },
-            },
-          },
-          context: {
-            $ref: '#/definitions/Data',
+  test('should work with anyOf/array special test case schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'TrickyThing',
+      type: 'object',
+      additionalProperties: true,
+      required: [
+        'name',
+        'labels',
+        'timestamp',
+        'data',
+        'start',
+        'end',
+        'duration',
+        'context',
+      ],
+      properties: {
+        name: { type: 'string' },
+        duration: { type: 'number' },
+        start: {
+          $ref: '#/definitions/Date',
+        },
+        end: {
+          $ref: '#/definitions/Date',
+        },
+        labels: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['value', 'peaks', 'startTime', 'endTime', 'peakTime'],
           },
         },
-        definitions: {
-          Date: { type: 'string' },
-          Data: { type: 'string' },
+        timestamp: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['startTime', 'endTime', 'peakTime'],
+          },
         },
-      };
+        data: {
+          type: 'array',
+          items: {
+            type: 'array',
+            maxItems: 5,
+            minItems: 5,
+            items: {
+              anyOf: [
+                {
+                  $ref: '#/definitions/Date',
+                },
+                { type: 'number' },
+                { type: 'string', enum: ['first', 'bosse', 'last'] },
+                { type: 'string', pattern: '[0-9]+' },
+              ],
+            },
+          },
+        },
+        context: {
+          $ref: '#/definitions/Data',
+        },
+      },
+      definitions: {
+        Date: { type: 'string' },
+        Data: { type: 'string' },
+      },
+    };
 
-      expect(
-        toSource(
-          await generateJSONSchemaTypes(schema, {
-            brandedTypes: [],
-            generateRealEnums: true,
-            tuplesFromFixedArraysLengthLimit: 5,
-            exportNamespaces: true,
-          }),
-        ),
-      ).toMatchInlineSnapshot(`
-"export type Main = {
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type Main = {
     name: string;
     duration: number;
     start: definitions["Date"];
@@ -1279,16 +1406,15 @@ export interface definitions {
     context: definitions["Data"];
     [pattern: string]: unknown;
 };
-export interface definitions {
+declare interface definitions {
     Date: string;
     Data: string;
 }"
 `);
-    });
   });
 
   test('should work with tuple test case schemas', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'TupleTest',
       type: 'object',
       additionalProperties: false,
@@ -1298,7 +1424,7 @@ export interface definitions {
           type: 'array',
           items: {
             type: 'array',
-            items: [
+            prefixItems: [
               { type: 'string' },
               { type: 'number' },
               { type: 'number' },
@@ -1314,15 +1440,10 @@ export interface definitions {
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = {
+"declare type Main = {
     data: [
         string,
         number,
@@ -1334,7 +1455,7 @@ export interface definitions {
   });
 
   test('should create tuples from fixed length arrays', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'FixedArrayToTupleTest',
       type: 'object',
       additionalProperties: false,
@@ -1351,15 +1472,10 @@ export interface definitions {
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = {
+"declare type Main = {
     data: [
         string,
         string,
@@ -1371,7 +1487,7 @@ export interface definitions {
   });
 
   test('should create tuples from min length arrays', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'FixedArrayToTupleTest',
       type: 'object',
       additionalProperties: false,
@@ -1387,15 +1503,10 @@ export interface definitions {
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = {
+"declare type Main = {
     data: [
         string,
         string,
@@ -1406,7 +1517,7 @@ export interface definitions {
   });
 
   test('should work with tuples and rest test case schemas', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       title: 'TupleTest',
       type: 'object',
       additionalProperties: false,
@@ -1416,7 +1527,7 @@ export interface definitions {
           type: 'array',
           items: {
             type: 'array',
-            items: [
+            prefixItems: [
               { type: 'string' },
               { type: 'number' },
               { type: 'number' },
@@ -1425,7 +1536,7 @@ export interface definitions {
                 items: { type: 'string' },
               },
             ],
-            additionalItems: { type: 'boolean' },
+            items: { type: 'boolean' },
           },
         },
       },
@@ -1433,15 +1544,10 @@ export interface definitions {
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = {
+"declare type Main = {
     data: [
         string,
         number,
@@ -1453,29 +1559,29 @@ export interface definitions {
 `);
   });
 
-  test('should work with tuples and rest test case schemas', async () => {
-    const schema: JSONSchema7 = {
+  test('should work with tuple test case schemas', async () => {
+    const schema: JSONSchema = {
       type: 'array',
+      minItems: 1,
       items: {
-        minItems: 1,
         oneOf: [{ type: 'boolean' }, { type: 'string' }],
       },
     };
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
-    ).toMatchInlineSnapshot(`"export type Main = (boolean | string)[];"`);
+    ).toMatchInlineSnapshot(`
+"declare type Main = [
+    boolean | string,
+    ...(boolean | string)[]
+];"
+`);
   });
 
   test('should work with numbers as props schemas', async () => {
-    const schema: JSONSchema7 = {
+    const schema: JSONSchema = {
       type: 'object',
       properties: {
         '1.0': {
@@ -1511,15 +1617,10 @@ export interface definitions {
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, {
-          brandedTypes: [],
-          generateRealEnums: true,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: true,
-        }),
+        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = {
+"declare type Main = {
     "1.0"?: number;
     "5.0"?: number;
     "25.0"?: number;

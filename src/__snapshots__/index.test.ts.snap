@@ -25,7 +25,9 @@ declare interface operations {
     ComponentsCallbacksOnValidatedRequestqueryqueryUrl: {
         responses: {
             201: {
-                body: unknown;
+                headers: {
+                    "x-test"?: string;
+                };
             };
         };
     };
@@ -43,6 +45,9 @@ declare interface operations {
                 body: {
                     subscriptionId: string;
                 };
+                headers: {
+                    "x-test-3"?: components["headers"]["x-test-2"];
+                };
             };
         };
         parameters: {
@@ -57,12 +62,8 @@ declare interface operations {
             userData?: string;
         };
         responses: {
-            202: {
-                body: unknown;
-            };
-            204: {
-                body: unknown;
-            };
+            202: object;
+            204: object;
         };
     };
 }
@@ -74,6 +75,9 @@ declare interface components {
             };
         };
         OnValidatedClone: components["callbacks"]["OnValidated"];
+    };
+    headers: {
+        "x-test-2": string;
     };
 }"
 `;
@@ -88,7 +92,9 @@ declare interface operations {
     ComponentsCallbacksOnValidatedRequestqueryqueryUrl: {
         responses: {
             201: {
-                body: unknown;
+                headers: {
+                    "x-test"?: string;
+                };
             };
         };
     };
@@ -106,6 +112,9 @@ declare interface operations {
                 body: {
                     subscriptionId: string;
                 };
+                headers: {
+                    "x-test-3"?: components["headers"]["x-test-2"];
+                };
             };
         };
         parameters: {
@@ -120,9 +129,7 @@ declare interface operations {
             userData?: string;
         };
         responses: {
-            202: {
-                body: unknown;
-            };
+            202: object;
         };
     };
 }
@@ -134,6 +141,9 @@ declare interface components {
             };
         };
         OnValidatedClone: components["callbacks"]["OnValidated"];
+    };
+    headers: {
+        "x-test-2": string;
     };
 }"
 `;
@@ -148,7 +158,9 @@ export interface operations {
     ComponentsCallbacksOnValidatedRequestqueryqueryUrl: {
         responses: {
             201: {
-                body: unknown;
+                headers: {
+                    "x-test"?: string;
+                };
             };
         };
     };
@@ -166,6 +178,9 @@ export interface operations {
                 body: {
                     subscriptionId: string;
                 };
+                headers: {
+                    "x-test-3"?: components["headers"]["x-test-2"];
+                };
             };
         };
         parameters: {
@@ -180,12 +195,8 @@ export interface operations {
             userData?: string;
         };
         responses: {
-            202: {
-                body: unknown;
-            };
-            204: {
-                body: unknown;
-            };
+            202: object;
+            204: object;
         };
     };
 }
@@ -198,174 +209,177 @@ export interface components {
         };
         OnValidatedClone: components["callbacks"]["OnValidated"];
     };
+    headers: {
+        "x-test-2": string;
+    };
 }"
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json 1`] = `
 "declare interface paths {
     "/alerts/{alertId}": {
-        delete: operations["deleteAlert"];
+        "delete": operations["deleteAlert"];
     };
     "/applications/{applicationId}": {
-        delete: operations["deleteApplication"];
+        "delete": operations["deleteApplication"];
     };
     "/interventions/{interventionId}": {
-        delete: operations["deleteIntervention"];
+        "delete": operations["deleteIntervention"];
     };
     "/projects/{projectId}": {
-        delete: operations["deleteProject"];
+        "delete": operations["deleteProject"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}": {
-        delete: operations["deleteUserOrganisationAlert"];
-        get: operations["getUserOrganisationAlert"];
+        "delete": operations["deleteUserOrganisationAlert"];
+        "get": operations["getUserOrganisationAlert"];
         put: operations["putUserOrganisationAlert"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}/attachments/{attachmentId}": {
-        delete: operations["deleteUserOrganisationAlertAttachment"];
+        "delete": operations["deleteUserOrganisationAlertAttachment"];
         put: operations["putUserOrganisationAlertAttachment"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}/images/{imageId}": {
-        delete: operations["deleteUserOrganisationAlertImage"];
+        "delete": operations["deleteUserOrganisationAlertImage"];
         put: operations["putUserOrganisationAlertImage"];
     };
     "/users/{userId}/organisations/{organisationId}/applications/{applicationId}": {
-        delete: operations["deleteUserOrganisationApplication"];
+        "delete": operations["deleteUserOrganisationApplication"];
         put: operations["putUserOrganisationApplication"];
     };
     "/users/{userId}/organisations/{organisationId}/interventions/{interventionId}": {
-        delete: operations["deleteUserOrganisationIntervention"];
+        "delete": operations["deleteUserOrganisationIntervention"];
     };
     "/users/{userId}/organisations/{organisationId}/interventions/{interventionId}/images/{imageId}": {
-        delete: operations["deleteUserOrganisationInterventionImage"];
+        "delete": operations["deleteUserOrganisationInterventionImage"];
         put: operations["putUserOrganisationInterventionImage"];
     };
     "/users/{userId}/organisations/{organisationId}/memberships/{collaboratorId}": {
-        delete: operations["deleteUserOrganisationMembership"];
+        "delete": operations["deleteUserOrganisationMembership"];
     };
     "/users/{userId}/organisations/{organisationId}/projects/{projectId}": {
-        delete: operations["deleteUserOrganisationProject"];
+        "delete": operations["deleteUserOrganisationProject"];
         put: operations["putUserOrganisationProject"];
     };
     "/users/{userId}/organisations/{organisationId}/sensors/{sensorId}/series/{valueName}": {
-        delete: operations["deleteUserOrganisationSensorSeries"];
+        "delete": operations["deleteUserOrganisationSensorSeries"];
     };
     "/alerts/stats": {
-        get: operations["getAlertsStats"];
+        "get": operations["getAlertsStats"];
     };
     "/auth/profile": {
-        get: operations["getAuthProfile"];
+        "get": operations["getAuthProfile"];
     };
     "/me": {
-        get: operations["getMySelf"];
+        "get": operations["getMySelf"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/organisations/{organisationId}/factories/{factoryId}": {
-        get: operations["getOrganisationFactory"];
+        "get": operations["getOrganisationFactory"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/alerts/stats": {
-        get: operations["getOrganisationFactoryAlertsStats"];
+        "get": operations["getOrganisationFactoryAlertsStats"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/assets/{assetId}": {
-        get: operations["getOrganisationFactoryAsset"];
+        "get": operations["getOrganisationFactoryAsset"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/assets": {
-        get: operations["getOrganisationFactoryAssets"];
+        "get": operations["getOrganisationFactoryAssets"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/labels": {
-        get: operations["getOrganisationFactoryDataLabels"];
+        "get": operations["getOrganisationFactoryDataLabels"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/events": {
-        get: operations["getOrganisationFactoryEvents"];
+        "get": operations["getOrganisationFactoryEvents"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/interventions/{interventionId}": {
-        get: operations["getOrganisationFactoryIntervention"];
+        "get": operations["getOrganisationFactoryIntervention"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/interventions": {
-        get: operations["getOrganisationFactoryInterventions"];
+        "get": operations["getOrganisationFactoryInterventions"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/reports": {
-        get: operations["getOrganisationFactoryReports"];
+        "get": operations["getOrganisationFactoryReports"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/sensors/{sensorId}": {
-        get: operations["getOrganisationFactorySensor"];
+        "get": operations["getOrganisationFactorySensor"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/sensors": {
-        get: operations["getOrganisationFactorySensors"];
+        "get": operations["getOrganisationFactorySensors"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/trends": {
-        get: operations["getOrganisationFactoryTrends"];
+        "get": operations["getOrganisationFactoryTrends"];
     };
     "/organisations/{organisationId}/projects/{projectId}": {
-        get: operations["getOrganisationProject"];
+        "get": operations["getOrganisationProject"];
     };
     "/organisations/{organisationId}/projects": {
-        get: operations["getOrganisationProjects"];
+        "get": operations["getOrganisationProjects"];
     };
     "/organisations/{organisationId}/sensors/aggregateData": {
-        get: operations["getOrganisationSensorsAggregateData"];
+        "get": operations["getOrganisationSensorsAggregateData"];
     };
     "/organisations/{organisationId}/sensors/aggregateEventData": {
-        get: operations["getOrganisationSensorsAggregateEventData"];
+        "get": operations["getOrganisationSensorsAggregateEventData"];
     };
     "/organisations/{organisationId}/sensors/aggregateEventRangeData": {
-        get: operations["getOrganisationSensorsAggregateEventRangeData"];
+        "get": operations["getOrganisationSensorsAggregateEventRangeData"];
     };
     "/organisations/{organisationId}/sensors/data": {
-        get: operations["getOrganisationSensorsData"];
+        "get": operations["getOrganisationSensorsData"];
     };
     "/organisations/{organisationId}/sensors/eventData": {
-        get: operations["getOrganisationSensorsEventData"];
+        "get": operations["getOrganisationSensorsEventData"];
     };
     "/organisations/{organisationId}/sensors/eventRangeDataSchema": {
-        get: operations["getOrganisationSensorsEventRangeData"];
+        "get": operations["getOrganisationSensorsEventRangeData"];
     };
     "/organisations/{organisationId}/search": {
-        get: operations["getOrganisationUniversalSearch"];
+        "get": operations["getOrganisationUniversalSearch"];
     };
     "/reports/{reportId}": {
         put: operations["putReport"];
     };
     "/search": {
-        get: operations["getUniversalSearch"];
+        "get": operations["getUniversalSearch"];
     };
     "/users/{userId}": {
-        get: operations["getUser"];
+        "get": operations["getUser"];
         put: operations["putUser"];
     };
     "/users/{userId}/factories": {
-        get: operations["getUserFactories"];
+        "get": operations["getUserFactories"];
     };
     "/users/{userId}/notifications": {
-        get: operations["getUserNotifications"];
+        "get": operations["getUserNotifications"];
     };
     "/users/{userId}/organisations/{organisationId}": {
-        get: operations["getUserOrganisation"];
+        "get": operations["getUserOrganisation"];
         put: operations["putUserOrganisation"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts": {
-        get: operations["getUserOrganisationAlerts"];
+        "get": operations["getUserOrganisationAlerts"];
     };
     "/users/{userId}/organisations/{organisationId}/applications": {
-        get: operations["getUserOrganisationApplications"];
+        "get": operations["getUserOrganisationApplications"];
         post: operations["postUserOrganisationApplication"];
     };
     "/users/{userId}/organisations/{organisationId}/factories": {
-        get: operations["getUserOrganisationFactories"];
+        "get": operations["getUserOrganisationFactories"];
         post: operations["postUserOrganisationFactory"];
     };
     "/users/{userId}/organisations/{organisationId}/factories/{factoryId}/preferences": {
-        get: operations["getUserOrganisationFactoryPreferences"];
+        "get": operations["getUserOrganisationFactoryPreferences"];
     };
     "/users/{userId}/organisations/{organisationId}/tasks": {
-        get: operations["getUserOrganisationTasks"];
+        "get": operations["getUserOrganisationTasks"];
     };
     "/users/{userId}/organisations/{organisationId}/users": {
-        get: operations["getUserOrganisationUsers"];
+        "get": operations["getUserOrganisationUsers"];
     };
     "/users/{userId}/organisations": {
-        get: operations["getUserOrganisations"];
+        "get": operations["getUserOrganisations"];
         post: operations["postUserOrganisation"];
     };
     "/users": {
@@ -456,18 +470,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         put: operations["putUserOrganisationFactorySensor"];
     };
     "/oauth2/authorize": {
-        get: operations["getOAuth2Authorize"];
+        "get": operations["getOAuth2Authorize"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 declare interface operations {
     deleteAlert: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -482,9 +494,7 @@ declare interface operations {
     };
     deleteApplication: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -499,9 +509,7 @@ declare interface operations {
     };
     deleteIntervention: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -516,9 +524,7 @@ declare interface operations {
     };
     deleteProject: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -533,9 +539,7 @@ declare interface operations {
     };
     deleteUserOrganisationAlert: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -587,9 +591,7 @@ declare interface operations {
     };
     deleteUserOrganisationAlertAttachment: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -608,9 +610,7 @@ declare interface operations {
     putUserOrganisationAlertAttachment: {
         requestBody: components["requestBodies"]["Attachment"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -631,9 +631,7 @@ declare interface operations {
     };
     deleteUserOrganisationAlertImage: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -652,9 +650,7 @@ declare interface operations {
     putUserOrganisationAlertImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -675,9 +671,7 @@ declare interface operations {
     };
     deleteUserOrganisationApplication: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -714,9 +708,7 @@ declare interface operations {
     };
     deleteUserOrganisationIntervention: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -733,9 +725,7 @@ declare interface operations {
     };
     deleteUserOrganisationInterventionImage: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -754,9 +744,7 @@ declare interface operations {
     putUserOrganisationInterventionImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -777,9 +765,7 @@ declare interface operations {
     };
     deleteUserOrganisationMembership: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -796,9 +782,7 @@ declare interface operations {
     };
     deleteUserOrganisationProject: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -835,9 +819,7 @@ declare interface operations {
     };
     deleteUserOrganisationSensorSeries: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -887,9 +869,7 @@ declare interface operations {
     };
     getMySelf: {
         responses: {
-            302: {
-                body: unknown;
-            };
+            302: object;
         };
         parameters: {
             header: {
@@ -1099,7 +1079,7 @@ declare interface operations {
                 withImages: components["parameters"]["WithImages"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
             };
             header: {
@@ -1124,7 +1104,7 @@ declare interface operations {
                 withReportsIds?: components["parameters"]["OptionalWithReportsIds"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["reportsSortBy"];
                 direction: components["parameters"]["direction"];
@@ -1269,7 +1249,7 @@ declare interface operations {
             };
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 valuesNames: components["parameters"]["valuesNames"];
@@ -1311,7 +1291,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
@@ -1352,7 +1332,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
@@ -1390,7 +1370,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 valuesNames: components["parameters"]["valuesNames"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
                 withValuedLabelsNames?: components["parameters"]["OptionalWithValuedLabelsNames"];
@@ -1419,7 +1399,7 @@ declare interface operations {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
                 withValuedLabelsNames?: components["parameters"]["OptionalWithValuedLabelsNames"];
@@ -1457,7 +1437,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
@@ -1511,9 +1491,7 @@ declare interface operations {
     putReport: {
         requestBody: components["requestBodies"]["Report"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -1701,7 +1679,7 @@ declare interface operations {
                 withImages: components["parameters"]["WithImages"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["alertsSortBy"];
                 direction: components["parameters"]["direction"];
@@ -1837,7 +1815,7 @@ declare interface operations {
                 withPriorities: components["parameters"]["withPriorities"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["tasksSortBy"];
                 direction: components["parameters"]["direction"];
@@ -1961,9 +1939,7 @@ declare interface operations {
     };
     postAuthLogout: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             header: {
@@ -2076,9 +2052,7 @@ declare interface operations {
     postOrganisationData: {
         requestBody: components["schemas"]["InputData"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -2097,9 +2071,7 @@ declare interface operations {
             email: string;
         };
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             header: {
@@ -2115,9 +2087,7 @@ declare interface operations {
             organisationId: components["schemas"]["OrganisationUUID"];
         };
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             path: {
@@ -2237,9 +2207,7 @@ declare interface operations {
             userId: components["schemas"]["UserUUID"];
         };
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -2255,13 +2223,11 @@ declare interface operations {
     };
     postUserOrganisationNotificationRead: {
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             query: {
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
             };
             path: {
@@ -2298,9 +2264,7 @@ declare interface operations {
     putAttachment: {
         requestBody: components["requestBodies"]["Attachment"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -2324,9 +2288,7 @@ declare interface operations {
     putImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             query: {
@@ -2349,9 +2311,7 @@ declare interface operations {
     putNotificationEvent: {
         requestBody: components["schemas"]["NotificationEvent"];
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -2367,9 +2327,7 @@ declare interface operations {
     putOrganisationFactoryEvent: {
         requestBody: components["schemas"]["EventModel"];
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -2393,9 +2351,7 @@ declare interface operations {
             userFeedback: components["schemas"]["userFeedback"];
         };
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -2535,9 +2491,7 @@ declare interface operations {
     };
     getOAuth2Authorize: {
         responses: {
-            302: {
-                body: unknown;
-            };
+            302: object;
         };
         parameters: {
             query: {
@@ -2728,7 +2682,7 @@ declare interface components {
         start: components["schemas"]["Start"];
         cookie: string;
         projectCode: components["schemas"]["ProjectCode"];
-        from: components["schemas"]["Date"];
+        "from": components["schemas"]["Date"];
         to: components["schemas"]["Date"];
         attachmentId: components["schemas"]["AttachmentUUID"];
         withReportId: components["schemas"]["ReportUUID"];
@@ -4625,168 +4579,168 @@ declare namespace Enums {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json and filterStatuses 200/201/202/300 and brandedTypes 1`] = `
 "declare interface paths {
     "/alerts/{alertId}": {
-        delete: operations["deleteAlert"];
+        "delete": operations["deleteAlert"];
     };
     "/applications/{applicationId}": {
-        delete: operations["deleteApplication"];
+        "delete": operations["deleteApplication"];
     };
     "/interventions/{interventionId}": {
-        delete: operations["deleteIntervention"];
+        "delete": operations["deleteIntervention"];
     };
     "/projects/{projectId}": {
-        delete: operations["deleteProject"];
+        "delete": operations["deleteProject"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}": {
-        delete: operations["deleteUserOrganisationAlert"];
-        get: operations["getUserOrganisationAlert"];
+        "delete": operations["deleteUserOrganisationAlert"];
+        "get": operations["getUserOrganisationAlert"];
         put: operations["putUserOrganisationAlert"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}/attachments/{attachmentId}": {
-        delete: operations["deleteUserOrganisationAlertAttachment"];
+        "delete": operations["deleteUserOrganisationAlertAttachment"];
         put: operations["putUserOrganisationAlertAttachment"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}/images/{imageId}": {
-        delete: operations["deleteUserOrganisationAlertImage"];
+        "delete": operations["deleteUserOrganisationAlertImage"];
         put: operations["putUserOrganisationAlertImage"];
     };
     "/users/{userId}/organisations/{organisationId}/applications/{applicationId}": {
-        delete: operations["deleteUserOrganisationApplication"];
+        "delete": operations["deleteUserOrganisationApplication"];
         put: operations["putUserOrganisationApplication"];
     };
     "/users/{userId}/organisations/{organisationId}/interventions/{interventionId}": {
-        delete: operations["deleteUserOrganisationIntervention"];
+        "delete": operations["deleteUserOrganisationIntervention"];
     };
     "/users/{userId}/organisations/{organisationId}/interventions/{interventionId}/images/{imageId}": {
-        delete: operations["deleteUserOrganisationInterventionImage"];
+        "delete": operations["deleteUserOrganisationInterventionImage"];
         put: operations["putUserOrganisationInterventionImage"];
     };
     "/users/{userId}/organisations/{organisationId}/memberships/{collaboratorId}": {
-        delete: operations["deleteUserOrganisationMembership"];
+        "delete": operations["deleteUserOrganisationMembership"];
     };
     "/users/{userId}/organisations/{organisationId}/projects/{projectId}": {
-        delete: operations["deleteUserOrganisationProject"];
+        "delete": operations["deleteUserOrganisationProject"];
         put: operations["putUserOrganisationProject"];
     };
     "/users/{userId}/organisations/{organisationId}/sensors/{sensorId}/series/{valueName}": {
-        delete: operations["deleteUserOrganisationSensorSeries"];
+        "delete": operations["deleteUserOrganisationSensorSeries"];
     };
     "/alerts/stats": {
-        get: operations["getAlertsStats"];
+        "get": operations["getAlertsStats"];
     };
     "/auth/profile": {
-        get: operations["getAuthProfile"];
+        "get": operations["getAuthProfile"];
     };
     "/me": {
-        get: operations["getMySelf"];
+        "get": operations["getMySelf"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/organisations/{organisationId}/factories/{factoryId}": {
-        get: operations["getOrganisationFactory"];
+        "get": operations["getOrganisationFactory"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/alerts/stats": {
-        get: operations["getOrganisationFactoryAlertsStats"];
+        "get": operations["getOrganisationFactoryAlertsStats"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/assets/{assetId}": {
-        get: operations["getOrganisationFactoryAsset"];
+        "get": operations["getOrganisationFactoryAsset"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/assets": {
-        get: operations["getOrganisationFactoryAssets"];
+        "get": operations["getOrganisationFactoryAssets"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/labels": {
-        get: operations["getOrganisationFactoryDataLabels"];
+        "get": operations["getOrganisationFactoryDataLabels"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/events": {
-        get: operations["getOrganisationFactoryEvents"];
+        "get": operations["getOrganisationFactoryEvents"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/interventions/{interventionId}": {
-        get: operations["getOrganisationFactoryIntervention"];
+        "get": operations["getOrganisationFactoryIntervention"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/interventions": {
-        get: operations["getOrganisationFactoryInterventions"];
+        "get": operations["getOrganisationFactoryInterventions"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/reports": {
-        get: operations["getOrganisationFactoryReports"];
+        "get": operations["getOrganisationFactoryReports"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/sensors/{sensorId}": {
-        get: operations["getOrganisationFactorySensor"];
+        "get": operations["getOrganisationFactorySensor"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/sensors": {
-        get: operations["getOrganisationFactorySensors"];
+        "get": operations["getOrganisationFactorySensors"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/trends": {
-        get: operations["getOrganisationFactoryTrends"];
+        "get": operations["getOrganisationFactoryTrends"];
     };
     "/organisations/{organisationId}/projects/{projectId}": {
-        get: operations["getOrganisationProject"];
+        "get": operations["getOrganisationProject"];
     };
     "/organisations/{organisationId}/projects": {
-        get: operations["getOrganisationProjects"];
+        "get": operations["getOrganisationProjects"];
     };
     "/organisations/{organisationId}/sensors/aggregateData": {
-        get: operations["getOrganisationSensorsAggregateData"];
+        "get": operations["getOrganisationSensorsAggregateData"];
     };
     "/organisations/{organisationId}/sensors/aggregateEventData": {
-        get: operations["getOrganisationSensorsAggregateEventData"];
+        "get": operations["getOrganisationSensorsAggregateEventData"];
     };
     "/organisations/{organisationId}/sensors/aggregateEventRangeData": {
-        get: operations["getOrganisationSensorsAggregateEventRangeData"];
+        "get": operations["getOrganisationSensorsAggregateEventRangeData"];
     };
     "/organisations/{organisationId}/sensors/data": {
-        get: operations["getOrganisationSensorsData"];
+        "get": operations["getOrganisationSensorsData"];
     };
     "/organisations/{organisationId}/sensors/eventData": {
-        get: operations["getOrganisationSensorsEventData"];
+        "get": operations["getOrganisationSensorsEventData"];
     };
     "/organisations/{organisationId}/sensors/eventRangeDataSchema": {
-        get: operations["getOrganisationSensorsEventRangeData"];
+        "get": operations["getOrganisationSensorsEventRangeData"];
     };
     "/organisations/{organisationId}/search": {
-        get: operations["getOrganisationUniversalSearch"];
+        "get": operations["getOrganisationUniversalSearch"];
     };
     "/reports/{reportId}": {
         put: operations["putReport"];
     };
     "/search": {
-        get: operations["getUniversalSearch"];
+        "get": operations["getUniversalSearch"];
     };
     "/users/{userId}": {
-        get: operations["getUser"];
+        "get": operations["getUser"];
         put: operations["putUser"];
     };
     "/users/{userId}/factories": {
-        get: operations["getUserFactories"];
+        "get": operations["getUserFactories"];
     };
     "/users/{userId}/notifications": {
-        get: operations["getUserNotifications"];
+        "get": operations["getUserNotifications"];
     };
     "/users/{userId}/organisations/{organisationId}": {
-        get: operations["getUserOrganisation"];
+        "get": operations["getUserOrganisation"];
         put: operations["putUserOrganisation"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts": {
-        get: operations["getUserOrganisationAlerts"];
+        "get": operations["getUserOrganisationAlerts"];
     };
     "/users/{userId}/organisations/{organisationId}/applications": {
-        get: operations["getUserOrganisationApplications"];
+        "get": operations["getUserOrganisationApplications"];
         post: operations["postUserOrganisationApplication"];
     };
     "/users/{userId}/organisations/{organisationId}/factories": {
-        get: operations["getUserOrganisationFactories"];
+        "get": operations["getUserOrganisationFactories"];
         post: operations["postUserOrganisationFactory"];
     };
     "/users/{userId}/organisations/{organisationId}/factories/{factoryId}/preferences": {
-        get: operations["getUserOrganisationFactoryPreferences"];
+        "get": operations["getUserOrganisationFactoryPreferences"];
     };
     "/users/{userId}/organisations/{organisationId}/tasks": {
-        get: operations["getUserOrganisationTasks"];
+        "get": operations["getUserOrganisationTasks"];
     };
     "/users/{userId}/organisations/{organisationId}/users": {
-        get: operations["getUserOrganisationUsers"];
+        "get": operations["getUserOrganisationUsers"];
     };
     "/users/{userId}/organisations": {
-        get: operations["getUserOrganisations"];
+        "get": operations["getUserOrganisations"];
         post: operations["postUserOrganisation"];
     };
     "/users": {
@@ -4877,10 +4831,10 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         put: operations["putUserOrganisationFactorySensor"];
     };
     "/oauth2/authorize": {
-        get: operations["getOAuth2Authorize"];
+        "get": operations["getOAuth2Authorize"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 declare interface operations {
@@ -4999,9 +4953,7 @@ declare interface operations {
     putUserOrganisationAlertAttachment: {
         requestBody: components["requestBodies"]["Attachment"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -5038,9 +4990,7 @@ declare interface operations {
     putUserOrganisationAlertImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -5125,9 +5075,7 @@ declare interface operations {
     putUserOrganisationInterventionImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -5450,7 +5398,7 @@ declare interface operations {
                 withImages: components["parameters"]["WithImages"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
             };
             header: {
@@ -5475,7 +5423,7 @@ declare interface operations {
                 withReportsIds?: components["parameters"]["OptionalWithReportsIds"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["reportsSortBy"];
                 direction: components["parameters"]["direction"];
@@ -5620,7 +5568,7 @@ declare interface operations {
             };
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 valuesNames: components["parameters"]["valuesNames"];
@@ -5662,7 +5610,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
@@ -5703,7 +5651,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
@@ -5741,7 +5689,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 valuesNames: components["parameters"]["valuesNames"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
                 withValuedLabelsNames?: components["parameters"]["OptionalWithValuedLabelsNames"];
@@ -5770,7 +5718,7 @@ declare interface operations {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
                 withValuedLabelsNames?: components["parameters"]["OptionalWithValuedLabelsNames"];
@@ -5808,7 +5756,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
@@ -5862,9 +5810,7 @@ declare interface operations {
     putReport: {
         requestBody: components["requestBodies"]["Report"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -6052,7 +5998,7 @@ declare interface operations {
                 withImages: components["parameters"]["WithImages"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["alertsSortBy"];
                 direction: components["parameters"]["direction"];
@@ -6188,7 +6134,7 @@ declare interface operations {
                 withPriorities: components["parameters"]["withPriorities"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["tasksSortBy"];
                 direction: components["parameters"]["direction"];
@@ -6415,9 +6361,7 @@ declare interface operations {
     postOrganisationData: {
         requestBody: components["schemas"]["InputData"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -6436,9 +6380,7 @@ declare interface operations {
             email: string;
         };
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             header: {
@@ -6454,9 +6396,7 @@ declare interface operations {
             organisationId: components["schemas"]["OrganisationUUID"];
         };
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             path: {
@@ -6576,9 +6516,7 @@ declare interface operations {
             userId: components["schemas"]["UserUUID"];
         };
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -6594,13 +6532,11 @@ declare interface operations {
     };
     postUserOrganisationNotificationRead: {
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             query: {
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
             };
             path: {
@@ -6637,9 +6573,7 @@ declare interface operations {
     putAttachment: {
         requestBody: components["requestBodies"]["Attachment"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -6663,9 +6597,7 @@ declare interface operations {
     putImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             query: {
@@ -6722,9 +6654,7 @@ declare interface operations {
             userFeedback: components["schemas"]["userFeedback"];
         };
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -7052,7 +6982,7 @@ declare interface components {
         start: components["schemas"]["Start"];
         cookie: string;
         projectCode: components["schemas"]["ProjectCode"];
-        from: components["schemas"]["Date"];
+        "from": components["schemas"]["Date"];
         to: components["schemas"]["Date"];
         attachmentId: components["schemas"]["AttachmentUUID"];
         withReportId: components["schemas"]["ReportUUID"];
@@ -8833,168 +8763,168 @@ declare interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.json and generateUnusedSchemas option to true 1`] = `
 "export interface paths {
     "/alerts/{alertId}": {
-        delete: operations["deleteAlert"];
+        "delete": operations["deleteAlert"];
     };
     "/applications/{applicationId}": {
-        delete: operations["deleteApplication"];
+        "delete": operations["deleteApplication"];
     };
     "/interventions/{interventionId}": {
-        delete: operations["deleteIntervention"];
+        "delete": operations["deleteIntervention"];
     };
     "/projects/{projectId}": {
-        delete: operations["deleteProject"];
+        "delete": operations["deleteProject"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}": {
-        delete: operations["deleteUserOrganisationAlert"];
-        get: operations["getUserOrganisationAlert"];
+        "delete": operations["deleteUserOrganisationAlert"];
+        "get": operations["getUserOrganisationAlert"];
         put: operations["putUserOrganisationAlert"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}/attachments/{attachmentId}": {
-        delete: operations["deleteUserOrganisationAlertAttachment"];
+        "delete": operations["deleteUserOrganisationAlertAttachment"];
         put: operations["putUserOrganisationAlertAttachment"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts/{alertId}/images/{imageId}": {
-        delete: operations["deleteUserOrganisationAlertImage"];
+        "delete": operations["deleteUserOrganisationAlertImage"];
         put: operations["putUserOrganisationAlertImage"];
     };
     "/users/{userId}/organisations/{organisationId}/applications/{applicationId}": {
-        delete: operations["deleteUserOrganisationApplication"];
+        "delete": operations["deleteUserOrganisationApplication"];
         put: operations["putUserOrganisationApplication"];
     };
     "/users/{userId}/organisations/{organisationId}/interventions/{interventionId}": {
-        delete: operations["deleteUserOrganisationIntervention"];
+        "delete": operations["deleteUserOrganisationIntervention"];
     };
     "/users/{userId}/organisations/{organisationId}/interventions/{interventionId}/images/{imageId}": {
-        delete: operations["deleteUserOrganisationInterventionImage"];
+        "delete": operations["deleteUserOrganisationInterventionImage"];
         put: operations["putUserOrganisationInterventionImage"];
     };
     "/users/{userId}/organisations/{organisationId}/memberships/{collaboratorId}": {
-        delete: operations["deleteUserOrganisationMembership"];
+        "delete": operations["deleteUserOrganisationMembership"];
     };
     "/users/{userId}/organisations/{organisationId}/projects/{projectId}": {
-        delete: operations["deleteUserOrganisationProject"];
+        "delete": operations["deleteUserOrganisationProject"];
         put: operations["putUserOrganisationProject"];
     };
     "/users/{userId}/organisations/{organisationId}/sensors/{sensorId}/series/{valueName}": {
-        delete: operations["deleteUserOrganisationSensorSeries"];
+        "delete": operations["deleteUserOrganisationSensorSeries"];
     };
     "/alerts/stats": {
-        get: operations["getAlertsStats"];
+        "get": operations["getAlertsStats"];
     };
     "/auth/profile": {
-        get: operations["getAuthProfile"];
+        "get": operations["getAuthProfile"];
     };
     "/me": {
-        get: operations["getMySelf"];
+        "get": operations["getMySelf"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/organisations/{organisationId}/factories/{factoryId}": {
-        get: operations["getOrganisationFactory"];
+        "get": operations["getOrganisationFactory"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/alerts/stats": {
-        get: operations["getOrganisationFactoryAlertsStats"];
+        "get": operations["getOrganisationFactoryAlertsStats"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/assets/{assetId}": {
-        get: operations["getOrganisationFactoryAsset"];
+        "get": operations["getOrganisationFactoryAsset"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/assets": {
-        get: operations["getOrganisationFactoryAssets"];
+        "get": operations["getOrganisationFactoryAssets"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/labels": {
-        get: operations["getOrganisationFactoryDataLabels"];
+        "get": operations["getOrganisationFactoryDataLabels"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/events": {
-        get: operations["getOrganisationFactoryEvents"];
+        "get": operations["getOrganisationFactoryEvents"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/interventions/{interventionId}": {
-        get: operations["getOrganisationFactoryIntervention"];
+        "get": operations["getOrganisationFactoryIntervention"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/interventions": {
-        get: operations["getOrganisationFactoryInterventions"];
+        "get": operations["getOrganisationFactoryInterventions"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/reports": {
-        get: operations["getOrganisationFactoryReports"];
+        "get": operations["getOrganisationFactoryReports"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/sensors/{sensorId}": {
-        get: operations["getOrganisationFactorySensor"];
+        "get": operations["getOrganisationFactorySensor"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/sensors": {
-        get: operations["getOrganisationFactorySensors"];
+        "get": operations["getOrganisationFactorySensors"];
     };
     "/organisations/{organisationId}/factories/{factoryId}/trends": {
-        get: operations["getOrganisationFactoryTrends"];
+        "get": operations["getOrganisationFactoryTrends"];
     };
     "/organisations/{organisationId}/projects/{projectId}": {
-        get: operations["getOrganisationProject"];
+        "get": operations["getOrganisationProject"];
     };
     "/organisations/{organisationId}/projects": {
-        get: operations["getOrganisationProjects"];
+        "get": operations["getOrganisationProjects"];
     };
     "/organisations/{organisationId}/sensors/aggregateData": {
-        get: operations["getOrganisationSensorsAggregateData"];
+        "get": operations["getOrganisationSensorsAggregateData"];
     };
     "/organisations/{organisationId}/sensors/aggregateEventData": {
-        get: operations["getOrganisationSensorsAggregateEventData"];
+        "get": operations["getOrganisationSensorsAggregateEventData"];
     };
     "/organisations/{organisationId}/sensors/aggregateEventRangeData": {
-        get: operations["getOrganisationSensorsAggregateEventRangeData"];
+        "get": operations["getOrganisationSensorsAggregateEventRangeData"];
     };
     "/organisations/{organisationId}/sensors/data": {
-        get: operations["getOrganisationSensorsData"];
+        "get": operations["getOrganisationSensorsData"];
     };
     "/organisations/{organisationId}/sensors/eventData": {
-        get: operations["getOrganisationSensorsEventData"];
+        "get": operations["getOrganisationSensorsEventData"];
     };
     "/organisations/{organisationId}/sensors/eventRangeDataSchema": {
-        get: operations["getOrganisationSensorsEventRangeData"];
+        "get": operations["getOrganisationSensorsEventRangeData"];
     };
     "/organisations/{organisationId}/search": {
-        get: operations["getOrganisationUniversalSearch"];
+        "get": operations["getOrganisationUniversalSearch"];
     };
     "/reports/{reportId}": {
         put: operations["putReport"];
     };
     "/search": {
-        get: operations["getUniversalSearch"];
+        "get": operations["getUniversalSearch"];
     };
     "/users/{userId}": {
-        get: operations["getUser"];
+        "get": operations["getUser"];
         put: operations["putUser"];
     };
     "/users/{userId}/factories": {
-        get: operations["getUserFactories"];
+        "get": operations["getUserFactories"];
     };
     "/users/{userId}/notifications": {
-        get: operations["getUserNotifications"];
+        "get": operations["getUserNotifications"];
     };
     "/users/{userId}/organisations/{organisationId}": {
-        get: operations["getUserOrganisation"];
+        "get": operations["getUserOrganisation"];
         put: operations["putUserOrganisation"];
     };
     "/users/{userId}/organisations/{organisationId}/alerts": {
-        get: operations["getUserOrganisationAlerts"];
+        "get": operations["getUserOrganisationAlerts"];
     };
     "/users/{userId}/organisations/{organisationId}/applications": {
-        get: operations["getUserOrganisationApplications"];
+        "get": operations["getUserOrganisationApplications"];
         post: operations["postUserOrganisationApplication"];
     };
     "/users/{userId}/organisations/{organisationId}/factories": {
-        get: operations["getUserOrganisationFactories"];
+        "get": operations["getUserOrganisationFactories"];
         post: operations["postUserOrganisationFactory"];
     };
     "/users/{userId}/organisations/{organisationId}/factories/{factoryId}/preferences": {
-        get: operations["getUserOrganisationFactoryPreferences"];
+        "get": operations["getUserOrganisationFactoryPreferences"];
     };
     "/users/{userId}/organisations/{organisationId}/tasks": {
-        get: operations["getUserOrganisationTasks"];
+        "get": operations["getUserOrganisationTasks"];
     };
     "/users/{userId}/organisations/{organisationId}/users": {
-        get: operations["getUserOrganisationUsers"];
+        "get": operations["getUserOrganisationUsers"];
     };
     "/users/{userId}/organisations": {
-        get: operations["getUserOrganisations"];
+        "get": operations["getUserOrganisations"];
         post: operations["postUserOrganisation"];
     };
     "/users": {
@@ -9085,18 +9015,16 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with diagrams.j
         put: operations["putUserOrganisationFactorySensor"];
     };
     "/oauth2/authorize": {
-        get: operations["getOAuth2Authorize"];
+        "get": operations["getOAuth2Authorize"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 export interface operations {
     deleteAlert: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9111,9 +9039,7 @@ export interface operations {
     };
     deleteApplication: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9128,9 +9054,7 @@ export interface operations {
     };
     deleteIntervention: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9145,9 +9069,7 @@ export interface operations {
     };
     deleteProject: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9162,9 +9084,7 @@ export interface operations {
     };
     deleteUserOrganisationAlert: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9216,9 +9136,7 @@ export interface operations {
     };
     deleteUserOrganisationAlertAttachment: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9237,9 +9155,7 @@ export interface operations {
     putUserOrganisationAlertAttachment: {
         requestBody: components["requestBodies"]["Attachment"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -9260,9 +9176,7 @@ export interface operations {
     };
     deleteUserOrganisationAlertImage: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9281,9 +9195,7 @@ export interface operations {
     putUserOrganisationAlertImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -9304,9 +9216,7 @@ export interface operations {
     };
     deleteUserOrganisationApplication: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9343,9 +9253,7 @@ export interface operations {
     };
     deleteUserOrganisationIntervention: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9362,9 +9270,7 @@ export interface operations {
     };
     deleteUserOrganisationInterventionImage: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9383,9 +9289,7 @@ export interface operations {
     putUserOrganisationInterventionImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -9406,9 +9310,7 @@ export interface operations {
     };
     deleteUserOrganisationMembership: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9425,9 +9327,7 @@ export interface operations {
     };
     deleteUserOrganisationProject: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9464,9 +9364,7 @@ export interface operations {
     };
     deleteUserOrganisationSensorSeries: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -9516,9 +9414,7 @@ export interface operations {
     };
     getMySelf: {
         responses: {
-            302: {
-                body: unknown;
-            };
+            302: object;
         };
         parameters: {
             header: {
@@ -9728,7 +9624,7 @@ export interface operations {
                 withImages: components["parameters"]["WithImages"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
             };
             header: {
@@ -9753,7 +9649,7 @@ export interface operations {
                 withReportsIds?: components["parameters"]["OptionalWithReportsIds"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["reportsSortBy"];
                 direction: components["parameters"]["direction"];
@@ -9898,7 +9794,7 @@ export interface operations {
             };
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 valuesNames: components["parameters"]["valuesNames"];
@@ -9940,7 +9836,7 @@ export interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
@@ -9981,7 +9877,7 @@ export interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 aggregations: components["parameters"]["aggregations"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
@@ -10019,7 +9915,7 @@ export interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 valuesNames: components["parameters"]["valuesNames"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
                 withValuedLabelsNames?: components["parameters"]["OptionalWithValuedLabelsNames"];
@@ -10048,7 +9944,7 @@ export interface operations {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
                 withValuedLabelsNames?: components["parameters"]["OptionalWithValuedLabelsNames"];
@@ -10086,7 +9982,7 @@ export interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
                 eventTypes: components["parameters"]["sensorEventTypesQueryParameter"];
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
                 eventFields: components["parameters"]["eventFieldsQueryParameter"];
                 withDataLabels?: components["parameters"]["OptionalWithDataLabels"];
@@ -10140,9 +10036,7 @@ export interface operations {
     putReport: {
         requestBody: components["requestBodies"]["Report"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -10330,7 +10224,7 @@ export interface operations {
                 withImages: components["parameters"]["WithImages"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["alertsSortBy"];
                 direction: components["parameters"]["direction"];
@@ -10466,7 +10360,7 @@ export interface operations {
                 withPriorities: components["parameters"]["withPriorities"];
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
-                from?: components["parameters"]["fromFilter"];
+                "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
                 sortBy: components["parameters"]["tasksSortBy"];
                 direction: components["parameters"]["direction"];
@@ -10590,9 +10484,7 @@ export interface operations {
     };
     postAuthLogout: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             header: {
@@ -10705,9 +10597,7 @@ export interface operations {
     postOrganisationData: {
         requestBody: components["schemas"]["InputData"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -10726,9 +10616,7 @@ export interface operations {
             email: string;
         };
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             header: {
@@ -10744,9 +10632,7 @@ export interface operations {
             organisationId: components["schemas"]["OrganisationUUID"];
         };
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             path: {
@@ -10866,9 +10752,7 @@ export interface operations {
             userId: components["schemas"]["UserUUID"];
         };
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -10884,13 +10768,11 @@ export interface operations {
     };
     postUserOrganisationNotificationRead: {
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             query: {
-                from: components["parameters"]["from"];
+                "from": components["parameters"]["from"];
                 to: components["parameters"]["to"];
             };
             path: {
@@ -10927,9 +10809,7 @@ export interface operations {
     putAttachment: {
         requestBody: components["requestBodies"]["Attachment"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -10953,9 +10833,7 @@ export interface operations {
     putImage: {
         requestBody: components["requestBodies"]["Image"];
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             query: {
@@ -10978,9 +10856,7 @@ export interface operations {
     putNotificationEvent: {
         requestBody: components["schemas"]["NotificationEvent"];
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -10996,9 +10872,7 @@ export interface operations {
     putOrganisationFactoryEvent: {
         requestBody: components["schemas"]["EventModel"];
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             path: {
@@ -11022,9 +10896,7 @@ export interface operations {
             userFeedback: components["schemas"]["userFeedback"];
         };
         responses: {
-            201: {
-                body: unknown;
-            };
+            201: object;
         };
         parameters: {
             path: {
@@ -11164,9 +11036,7 @@ export interface operations {
     };
     getOAuth2Authorize: {
         responses: {
-            302: {
-                body: unknown;
-            };
+            302: object;
         };
         parameters: {
             query: {
@@ -11357,7 +11227,7 @@ export interface components {
         start: components["schemas"]["Start"];
         cookie: string;
         projectCode: components["schemas"]["ProjectCode"];
-        from: components["schemas"]["Date"];
+        "from": components["schemas"]["Date"];
         to: components["schemas"]["Date"];
         attachmentId: components["schemas"]["AttachmentUUID"];
         withReportId: components["schemas"]["ReportUUID"];
@@ -13428,36 +13298,51 @@ export namespace Enums {
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with parameters_aliasing.json 1`] = `
-"declare interface paths {
+"declare interface components {
+    parameters: {
+        durationUnit: "s" | "m" | "h";
+        durationTime: number;
+    };
+}
+declare interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        parameters: {
+            query: {
+                unit: components["parameters"]["durationUnit"];
+            };
+        };
+        "get": operations["getDelay"];
     };
 }
 declare interface operations {
     getDelay: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             query: {
                 duration: components["parameters"]["durationTime"];
             };
         };
-    };
-}
-declare interface components {
-    parameters: {
-        durationTime: number;
     };
 }"
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with parameters_aliasing.json and filterStatuses 200/201/202/300 and brandedTypes 1`] = `
-"declare interface paths {
+"declare interface components {
+    parameters: {
+        durationUnit: "s" | "m" | "h";
+        durationTime: number;
+    };
+}
+declare interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        parameters: {
+            query: {
+                unit: components["parameters"]["durationUnit"];
+            };
+        };
+        "get": operations["getDelay"];
     };
 }
 declare interface operations {
@@ -13468,37 +13353,36 @@ declare interface operations {
             };
         };
     };
-}
-declare interface components {
-    parameters: {
-        durationTime: number;
-    };
 }"
 `;
 
 exports[`generateOpenAPITypes() with OpenAPI samples should work with parameters_aliasing.json and generateUnusedSchemas option to true 1`] = `
-"export interface paths {
+"export interface components {
+    parameters: {
+        durationUnit: "s" | "m" | "h";
+        durationTime: number;
+    };
+}
+export interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        parameters: {
+            query: {
+                unit: components["parameters"]["durationUnit"];
+            };
+        };
+        "get": operations["getDelay"];
     };
 }
 export interface operations {
     getDelay: {
         responses: {
-            204: {
-                body: unknown;
-            };
+            204: object;
         };
         parameters: {
             query: {
                 duration: components["parameters"]["durationTime"];
             };
         };
-    };
-}
-export interface components {
-    parameters: {
-        durationTime: number;
     };
 }"
 `;
@@ -13510,28 +13394,28 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         post: operations["addPet"];
     };
     "/pet/findByStatus": {
-        get: operations["findPetsByStatus"];
+        "get": operations["findPetsByStatus"];
     };
     "/pet/findByTags": {
-        get: operations["findPetsByTags"];
+        "get": operations["findPetsByTags"];
     };
     "/pet/{petId}": {
-        get: operations["getPetById"];
+        "get": operations["getPetById"];
         post: operations["updatePetWithForm"];
-        delete: operations["deletePet"];
+        "delete": operations["deletePet"];
     };
     "/pet/{petId}/uploadImage": {
         post: operations["uploadFile"];
     };
     "/store/inventory": {
-        get: operations["getInventory"];
+        "get": operations["getInventory"];
     };
     "/store/order": {
         post: operations["placeOrder"];
     };
     "/store/order/{orderId}": {
-        get: operations["getOrderById"];
-        delete: operations["deleteOrder"];
+        "get": operations["getOrderById"];
+        "delete": operations["deleteOrder"];
     };
     "/user": {
         post: operations["createUser"];
@@ -13543,38 +13427,30 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         post: operations["createUsersWithListInput"];
     };
     "/user/login": {
-        get: operations["loginUser"];
+        "get": operations["loginUser"];
     };
     "/user/logout": {
-        get: operations["logoutUser"];
+        "get": operations["logoutUser"];
     };
     "/user/{username}": {
-        get: operations["getUserByName"];
+        "get": operations["getUserByName"];
         put: operations["updateUser"];
-        delete: operations["deleteUser"];
+        "delete": operations["deleteUser"];
     };
 }
 declare interface operations {
     updatePet: {
         requestBody: components["requestBodies"]["Pet"];
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
-            405: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
+            405: object;
         };
     };
     addPet: {
         requestBody: components["requestBodies"]["Pet"];
         responses: {
-            405: {
-                body: unknown;
-            };
+            405: object;
         };
     };
     findPetsByStatus: {
@@ -13582,9 +13458,7 @@ declare interface operations {
             200: {
                 body: components["schemas"]["Pet"][] | components["schemas"]["Pet"][];
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             query: {
@@ -13597,9 +13471,7 @@ declare interface operations {
             200: {
                 body: components["schemas"]["Pet"][] | components["schemas"]["Pet"][];
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             query: {
@@ -13612,12 +13484,8 @@ declare interface operations {
             200: {
                 body: components["schemas"]["Pet"] | components["schemas"]["Pet"];
             };
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -13628,9 +13496,7 @@ declare interface operations {
     updatePetWithForm: {
         requestBody?: components["schemas"]["body"];
         responses: {
-            405: {
-                body: unknown;
-            };
+            405: object;
         };
         parameters: {
             path: {
@@ -13640,9 +13506,7 @@ declare interface operations {
     };
     deletePet: {
         responses: {
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             header: {
@@ -13681,9 +13545,7 @@ declare interface operations {
             200: {
                 body: components["schemas"]["Order"] | components["schemas"]["Order"];
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
     };
     getOrderById: {
@@ -13691,12 +13553,8 @@ declare interface operations {
             200: {
                 body: components["schemas"]["Order"] | components["schemas"]["Order"];
             };
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -13706,12 +13564,8 @@ declare interface operations {
     };
     deleteOrder: {
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -13722,25 +13576,19 @@ declare interface operations {
     createUser: {
         requestBody: components["schemas"]["User"];
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     createUsersWithArrayInput: {
         requestBody: components["requestBodies"]["UserArray"];
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     createUsersWithListInput: {
         requestBody: components["requestBodies"]["UserArray"];
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     loginUser: {
@@ -13752,9 +13600,7 @@ declare interface operations {
                     "X-Expires-After"?: string;
                 };
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             query: {
@@ -13765,9 +13611,7 @@ declare interface operations {
     };
     logoutUser: {
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     getUserByName: {
@@ -13775,12 +13619,8 @@ declare interface operations {
             200: {
                 body: components["schemas"]["User"] | components["schemas"]["User"];
             };
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -13791,12 +13631,8 @@ declare interface operations {
     updateUser: {
         requestBody: components["schemas"]["User"];
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -13806,12 +13642,8 @@ declare interface operations {
     };
     deleteUser: {
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -13896,28 +13728,28 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         post: operations["addPet"];
     };
     "/pet/findByStatus": {
-        get: operations["findPetsByStatus"];
+        "get": operations["findPetsByStatus"];
     };
     "/pet/findByTags": {
-        get: operations["findPetsByTags"];
+        "get": operations["findPetsByTags"];
     };
     "/pet/{petId}": {
-        get: operations["getPetById"];
+        "get": operations["getPetById"];
         post: operations["updatePetWithForm"];
-        delete: operations["deletePet"];
+        "delete": operations["deletePet"];
     };
     "/pet/{petId}/uploadImage": {
         post: operations["uploadFile"];
     };
     "/store/inventory": {
-        get: operations["getInventory"];
+        "get": operations["getInventory"];
     };
     "/store/order": {
         post: operations["placeOrder"];
     };
     "/store/order/{orderId}": {
-        get: operations["getOrderById"];
-        delete: operations["deleteOrder"];
+        "get": operations["getOrderById"];
+        "delete": operations["deleteOrder"];
     };
     "/user": {
         post: operations["createUser"];
@@ -13929,15 +13761,15 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         post: operations["createUsersWithListInput"];
     };
     "/user/login": {
-        get: operations["loginUser"];
+        "get": operations["loginUser"];
     };
     "/user/logout": {
-        get: operations["logoutUser"];
+        "get": operations["logoutUser"];
     };
     "/user/{username}": {
-        get: operations["getUserByName"];
+        "get": operations["getUserByName"];
         put: operations["updateUser"];
-        delete: operations["deleteUser"];
+        "delete": operations["deleteUser"];
     };
 }
 declare interface operations {
@@ -14168,28 +14000,28 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         post: operations["addPet"];
     };
     "/pet/findByStatus": {
-        get: operations["findPetsByStatus"];
+        "get": operations["findPetsByStatus"];
     };
     "/pet/findByTags": {
-        get: operations["findPetsByTags"];
+        "get": operations["findPetsByTags"];
     };
     "/pet/{petId}": {
-        get: operations["getPetById"];
+        "get": operations["getPetById"];
         post: operations["updatePetWithForm"];
-        delete: operations["deletePet"];
+        "delete": operations["deletePet"];
     };
     "/pet/{petId}/uploadImage": {
         post: operations["uploadFile"];
     };
     "/store/inventory": {
-        get: operations["getInventory"];
+        "get": operations["getInventory"];
     };
     "/store/order": {
         post: operations["placeOrder"];
     };
     "/store/order/{orderId}": {
-        get: operations["getOrderById"];
-        delete: operations["deleteOrder"];
+        "get": operations["getOrderById"];
+        "delete": operations["deleteOrder"];
     };
     "/user": {
         post: operations["createUser"];
@@ -14201,38 +14033,30 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with pet_store.
         post: operations["createUsersWithListInput"];
     };
     "/user/login": {
-        get: operations["loginUser"];
+        "get": operations["loginUser"];
     };
     "/user/logout": {
-        get: operations["logoutUser"];
+        "get": operations["logoutUser"];
     };
     "/user/{username}": {
-        get: operations["getUserByName"];
+        "get": operations["getUserByName"];
         put: operations["updateUser"];
-        delete: operations["deleteUser"];
+        "delete": operations["deleteUser"];
     };
 }
 export interface operations {
     updatePet: {
         requestBody: components["requestBodies"]["Pet"];
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
-            405: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
+            405: object;
         };
     };
     addPet: {
         requestBody: components["requestBodies"]["Pet"];
         responses: {
-            405: {
-                body: unknown;
-            };
+            405: object;
         };
     };
     findPetsByStatus: {
@@ -14240,9 +14064,7 @@ export interface operations {
             200: {
                 body: components["schemas"]["Pet"][] | components["schemas"]["Pet"][];
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             query: {
@@ -14255,9 +14077,7 @@ export interface operations {
             200: {
                 body: components["schemas"]["Pet"][] | components["schemas"]["Pet"][];
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             query: {
@@ -14270,12 +14090,8 @@ export interface operations {
             200: {
                 body: components["schemas"]["Pet"] | components["schemas"]["Pet"];
             };
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -14286,9 +14102,7 @@ export interface operations {
     updatePetWithForm: {
         requestBody?: components["schemas"]["body"];
         responses: {
-            405: {
-                body: unknown;
-            };
+            405: object;
         };
         parameters: {
             path: {
@@ -14298,9 +14112,7 @@ export interface operations {
     };
     deletePet: {
         responses: {
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             header: {
@@ -14339,9 +14151,7 @@ export interface operations {
             200: {
                 body: components["schemas"]["Order"] | components["schemas"]["Order"];
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
     };
     getOrderById: {
@@ -14349,12 +14159,8 @@ export interface operations {
             200: {
                 body: components["schemas"]["Order"] | components["schemas"]["Order"];
             };
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -14364,12 +14170,8 @@ export interface operations {
     };
     deleteOrder: {
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -14380,25 +14182,19 @@ export interface operations {
     createUser: {
         requestBody: components["schemas"]["User"];
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     createUsersWithArrayInput: {
         requestBody: components["requestBodies"]["UserArray"];
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     createUsersWithListInput: {
         requestBody: components["requestBodies"]["UserArray"];
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     loginUser: {
@@ -14410,9 +14206,7 @@ export interface operations {
                     "X-Expires-After"?: string;
                 };
             };
-            400: {
-                body: unknown;
-            };
+            400: object;
         };
         parameters: {
             query: {
@@ -14423,9 +14217,7 @@ export interface operations {
     };
     logoutUser: {
         responses: {
-            default: {
-                body: unknown;
-            };
+            "default": object;
         };
     };
     getUserByName: {
@@ -14433,12 +14225,8 @@ export interface operations {
             200: {
                 body: components["schemas"]["User"] | components["schemas"]["User"];
             };
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -14449,12 +14237,8 @@ export interface operations {
     updateUser: {
         requestBody: components["schemas"]["User"];
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -14464,12 +14248,8 @@ export interface operations {
     };
     deleteUser: {
         responses: {
-            400: {
-                body: unknown;
-            };
-            404: {
-                body: unknown;
-            };
+            400: object;
+            404: object;
         };
         parameters: {
             path: {
@@ -14557,9 +14337,7 @@ declare interface operations {
     WebhooksNewPet: {
         requestBody?: components["schemas"]["Pet"];
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
     };
 }
@@ -14584,9 +14362,7 @@ declare interface operations {
     WebhooksNewPet: {
         requestBody?: components["schemas"]["Pet"];
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
     };
 }
@@ -14611,9 +14387,7 @@ export interface operations {
     WebhooksNewPet: {
         requestBody?: components["schemas"]["Pet"];
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
     };
 }
@@ -14631,36 +14405,32 @@ export interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json 1`] = `
 "declare interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        "get": operations["getDelay"];
     };
     "/diagnostic": {
-        get: operations["getDiagnostic"];
+        "get": operations["getDiagnostic"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/{pathParam1}/{pathParam2}": {
-        get: operations["getParameters"];
+        "get": operations["getParameters"];
     };
     "/time": {
-        get: operations["getTime"];
+        "get": operations["getTime"];
     };
     "/echo": {
         put: operations["putEcho"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 declare interface operations {
     getDelay: {
         responses: {
-            200: {
-                body: unknown;
-            };
-            204: {
-                body: unknown;
-            };
+            200: object;
+            204: object;
         };
         parameters: {
             query: {
@@ -14767,33 +14537,31 @@ declare interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json and filterStatuses 200/201/202/300 and brandedTypes 1`] = `
 "declare interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        "get": operations["getDelay"];
     };
     "/diagnostic": {
-        get: operations["getDiagnostic"];
+        "get": operations["getDiagnostic"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/{pathParam1}/{pathParam2}": {
-        get: operations["getParameters"];
+        "get": operations["getParameters"];
     };
     "/time": {
-        get: operations["getTime"];
+        "get": operations["getTime"];
     };
     "/echo": {
         put: operations["putEcho"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 declare interface operations {
     getDelay: {
         responses: {
-            200: {
-                body: unknown;
-            };
+            200: object;
         };
         parameters: {
             query: {
@@ -14899,36 +14667,32 @@ declare interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example.json and generateUnusedSchemas option to true 1`] = `
 "export interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        "get": operations["getDelay"];
     };
     "/diagnostic": {
-        get: operations["getDiagnostic"];
+        "get": operations["getDiagnostic"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/{pathParam1}/{pathParam2}": {
-        get: operations["getParameters"];
+        "get": operations["getParameters"];
     };
     "/time": {
-        get: operations["getTime"];
+        "get": operations["getTime"];
     };
     "/echo": {
         put: operations["putEcho"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 export interface operations {
     getDelay: {
         responses: {
-            200: {
-                body: unknown;
-            };
-            204: {
-                body: unknown;
-            };
+            200: object;
+            204: object;
         };
         parameters: {
             query: {
@@ -15035,25 +14799,25 @@ export interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example_components.json 1`] = `
 "declare interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        "get": operations["getDelay"];
     };
     "/diag": {
-        get: operations["getDiagnostic"];
+        "get": operations["getDiagnostic"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/{pathParam1}/{pathParam2}": {
-        get: operations["getParameters"];
+        "get": operations["getParameters"];
     };
     "/time": {
-        get: operations["getTime"];
+        "get": operations["getTime"];
     };
     "/echo": {
         put: operations["putEcho"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 declare interface operations {
@@ -15110,9 +14874,7 @@ declare interface operations {
 }
 declare interface components {
     responses: {
-        Delay204: {
-            body: unknown;
-        };
+        Delay204: object;
         Diagnostic200: {
             body: {
                 transactions: {
@@ -15172,25 +14934,25 @@ declare interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example_components.json and filterStatuses 200/201/202/300 and brandedTypes 1`] = `
 "declare interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        "get": operations["getDelay"];
     };
     "/diag": {
-        get: operations["getDiagnostic"];
+        "get": operations["getDiagnostic"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/{pathParam1}/{pathParam2}": {
-        get: operations["getParameters"];
+        "get": operations["getParameters"];
     };
     "/time": {
-        get: operations["getTime"];
+        "get": operations["getTime"];
     };
     "/echo": {
         put: operations["putEcho"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 declare interface operations {
@@ -15287,25 +15049,25 @@ declare interface components {
 exports[`generateOpenAPITypes() with OpenAPI samples should work with whook_example_components.json and generateUnusedSchemas option to true 1`] = `
 "export interface paths {
     "/delay": {
-        get: operations["getDelay"];
+        "get": operations["getDelay"];
     };
     "/diag": {
-        get: operations["getDiagnostic"];
+        "get": operations["getDiagnostic"];
     };
     "/openAPI": {
-        get: operations["getOpenAPI"];
+        "get": operations["getOpenAPI"];
     };
     "/{pathParam1}/{pathParam2}": {
-        get: operations["getParameters"];
+        "get": operations["getParameters"];
     };
     "/time": {
-        get: operations["getTime"];
+        "get": operations["getTime"];
     };
     "/echo": {
         put: operations["putEcho"];
     };
     "/ping": {
-        get: operations["getPing"];
+        "get": operations["getPing"];
     };
 }
 export interface operations {
@@ -15362,9 +15124,7 @@ export interface operations {
 }
 export interface components {
     responses: {
-        Delay204: {
-            body: unknown;
-        };
+        Delay204: object;
         Diagnostic200: {
             body: {
                 transactions: {

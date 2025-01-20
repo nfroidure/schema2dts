@@ -4,20 +4,26 @@ import {
   type TypeReferenceNode,
   type EntityName,
   type TypeNode,
+  SyntaxKind,
+  tokenToString,
 } from 'typescript';
-import { type JSONSchema7Type } from 'json-schema';
+import { type JSONSchemaValue } from '../types/jsonSchema.js';
 
-// TODO: check real rules
+const RESERVED_KEYWORDS = Object.keys(SyntaxKind).map((t) =>
+  tokenToString(SyntaxKind[t]),
+);
+
+// It forbids more than really forbidden (for example "get")
+// but better than let pass syntax errors
 export function canBeIdentifier(str: string) {
-  return !(
-    str.includes('/') ||
-    str.includes('-') ||
-    str.includes('{') ||
-    str.includes('}')
-  );
+  return !RESERVED_KEYWORDS.includes(str) && /^[a-z_$][a-z0-9_$]*$/i.test(str);
 }
 
-export function buildLiteralType(value: JSONSchema7Type): TypeNode {
+export function canBePropertySignature(str: string) {
+  return !RESERVED_KEYWORDS.includes(str) && /^[a-z0-9_$]+$/i.test(str);
+}
+
+export function buildLiteralType(value: JSONSchemaValue): TypeNode {
   switch (typeof value) {
     case 'number':
       return factory.createLiteralTypeNode(factory.createNumericLiteral(value));
@@ -30,7 +36,7 @@ export function buildLiteralType(value: JSONSchema7Type): TypeNode {
     case 'object':
       if (value instanceof Array) {
         return factory.createTupleTypeNode(value.map(buildLiteralType));
-      } else if (value == null) {
+      } else if (value === null) {
         return factory.createLiteralTypeNode(factory.createNull());
       } else {
         return factory.createTypeLiteralNode(

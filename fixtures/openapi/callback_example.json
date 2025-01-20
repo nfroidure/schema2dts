@@ -24,6 +24,11 @@
         "responses": {
           "201": {
             "description": "subscription successfully created",
+            "headers": {
+              "x-test-3": {
+                "$ref": "#/components/headers/x-test-2"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -83,6 +88,13 @@
     }
   },
   "components": {
+    "headers": {
+      "x-test-2": {
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
     "callbacks": {
       "OnValidatedClone": {
         "$ref": "#/components/callbacks/OnValidated"
@@ -92,7 +104,14 @@
           "put": {
             "responses": {
               "201": {
-                "description": "Ok, validated!"
+                "description": "Ok, validated!",
+                "headers": {
+                  "x-test": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           }

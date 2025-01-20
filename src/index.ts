@@ -1,5 +1,4 @@
 import initDebug from 'debug';
-import { type OpenAPIV3_1 } from 'openapi-types';
 import {
   SyntaxKind,
   NodeFlags,
@@ -27,7 +26,7 @@ import {
   buildTypeReference,
   buildIdentifier,
   buildInterfaceReference,
-  canBeIdentifier,
+  canBePropertySignature,
 } from './utils/typeDefinitions.js';
 import {
   DEFAULT_JSON_SCHEMA_OPTIONS,
@@ -39,8 +38,8 @@ import {
   splitRef,
   type JSONSchemaContext,
   type JSONSchemaOptions,
-  type JSONSchema,
 } from './utils/jsonSchema.js';
+import { type JSONSchema } from './types/jsonSchema.js';
 import initTypeDefinitionBuilder, {
   type TypeDefinitionBuilderService,
 } from './services/typeDefinitionBuilder.js';
@@ -51,6 +50,7 @@ import {
   type OpenAPITypesGenerationOptions,
 } from './utils/openAPI.js';
 import { YError } from 'yerror';
+import { OpenAPI } from './types/openAPI.js';
 
 const debug = initDebug('schema2dts');
 
@@ -69,7 +69,7 @@ const debug = initDebug('schema2dts');
  * @returns {TypeScript.NodeArray}
  */
 export async function generateOpenAPITypes(
-  rootOpenAPI: OpenAPIV3_1.Document,
+  rootOpenAPI: OpenAPI,
   {
     baseName = DEFAULT_OPEN_API_OPTIONS.baseName,
     basePath = DEFAULT_OPEN_API_OPTIONS.basePath,
@@ -171,7 +171,7 @@ export async function generateJSONSchemaTypes(
 export async function gatherFragments(
   context: JSONSchemaContext | OpenAPIContext,
   typeDefinitionBuilder: TypeDefinitionBuilderService,
-  document: JSONSchema | OpenAPIV3_1.Document,
+  document: JSONSchema | OpenAPI,
 ): Promise<NodeArray<Statement>> {
   const statements: Statement[] = [];
   let assumedFragmentsToBuild = typeDefinitionBuilder.list('assumed');
@@ -181,21 +181,25 @@ export async function gatherFragments(
   while (assumedFragmentsToBuild.length) {
     for (const assumedFragmentToBuild of assumedFragmentsToBuild) {
       const namespace = splitRef(assumedFragmentToBuild.ref);
-      const subSchema = await resolve<JSONSchema, JSONSchema>(
+      const subSchema = await resolve(
         document as JSONSchema,
         namespace,
       );
 
-      if (subSchema.$ref) {
+      if (
+        typeof subSchema === 'object' &&
+        '$ref' in subSchema &&
+        subSchema.$ref
+      ) {
         typeDefinitionBuilder.register({
           ref: assumedFragmentToBuild.ref,
           type: 'interfaceMember',
           namespace,
-          destination: subSchema.$ref,
+          destination: subSchema.$ref as string,
         });
         typeDefinitionBuilder.register({
           type: 'assumed',
-          ref: subSchema.$ref,
+          ref: subSchema.$ref as string,
         });
         continue;
       }
@@ -259,7 +263,7 @@ export async function gatherFragments(
         if (!propertySignature) {
           propertySignature = factory.createPropertySignature(
             undefined,
-            canBeIdentifier(fragment.namespace[i])
+            canBePropertySignature(fragment.namespace[i])
               ? factory.createIdentifier(fragment.namespace[i])
               : factory.createStringLiteral(fragment.namespace[i]),
             undefined,
@@ -287,7 +291,7 @@ export async function gatherFragments(
           curTypeElements.push(
             factory.createPropertySignature(
               undefined,
-              canBeIdentifier(propertyName)
+              canBePropertySignature(propertyName)
                 ? factory.createIdentifier(propertyName)
                 : factory.createStringLiteral(propertyName),
               fragment.optional
@@ -303,7 +307,7 @@ export async function gatherFragments(
           curTypeElements.push(
             factory.createPropertySignature(
               undefined,
-              canBeIdentifier(propertyName)
+              canBePropertySignature(propertyName)
                 ? factory.createIdentifier(propertyName)
                 : factory.createStringLiteral(propertyName),
               fragment.optional
@@ -319,7 +323,7 @@ export async function gatherFragments(
         curTypeElements.push(
           factory.createPropertySignature(
             undefined,
-            canBeIdentifier(propertyName)
+            canBePropertySignature(propertyName)
               ? factory.createIdentifier(propertyName)
               : factory.createStringLiteral(propertyName),
             fragment.optional

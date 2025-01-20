@@ -1,10 +1,5 @@
 import { YError } from 'yerror';
 import {
-  type JSONSchema7TypeName,
-  type JSONSchema7,
-  type JSONSchema7Definition,
-} from 'json-schema';
-import {
   buildLiteralType,
   buildTypeReference,
   buildIdentifier,
@@ -17,6 +12,19 @@ import {
   type TypeNode,
 } from 'typescript';
 import { type Fragment } from './fragments.js';
+import {
+  type ComposedJSONSchema,
+  type ArrayJSONSchema,
+  type JSONSchema,
+  type JSONSchemaPrimitive,
+  type ObjectJSONSchema,
+} from '../types/jsonSchema.js';
+import {
+  OpenAPIExtension,
+  OpenAPIReference,
+  OpenAPIReferenceable,
+  type OpenAPI,
+} from '../types/openAPI.js';
 
 export const ALL_TYPES = 'all' as const;
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
@@ -40,8 +48,6 @@ export type JSONSchemaOptions = {
 export type JSONSchemaContext = {
   jsonSchemaOptions: JSONSchemaOptions;
 };
-export type JSONSchema = JSONSchema7;
-export type JSONSchemaDefinition = JSONSchema7Definition;
 export type Reference = { $ref: string };
 export type BaseResult = {
   fragments?: Fragment[];
@@ -55,7 +61,9 @@ export async function jsonSchemaToFragments(
 ): Promise<Fragment[]> {
   const { type: typeNode, fragments } = await schemaToTypeNode(context, schema);
   const identifier = buildIdentifier(
-    context.jsonSchemaOptions.baseName || schema?.title || 'Unknown',
+    context.jsonSchemaOptions.baseName ||
+      (typeof schema === 'object' && schema?.title) ||
+      'Unknown',
   );
   const finalSchema = eventuallyIdentifySchema(schema, identifier);
   const finalType = await eventuallyBrandType(context, finalSchema, typeNode);
@@ -81,7 +89,7 @@ export async function jsonSchemaToFragments(
 
 export async function schemaToTypeNode(
   context: JSONSchemaContext,
-  schema: JSONSchemaDefinition,
+  schema: JSONSchema,
 ): Promise<TypeNodeResult> {
   const { types, ...resultRest } = await schemaToTypes(context, schema);
 
@@ -93,8 +101,8 @@ export async function schemaToTypeNode(
 
 export async function schemaToTypes(
   context: JSONSchemaContext,
-  schema: JSONSchemaDefinition,
-  parentType?: JSONSchema7TypeName | JSONSchema7TypeName[],
+  schema: JSONSchema,
+  parentType?: JSONSchemaPrimitive | JSONSchemaPrimitive[],
 ): Promise<TypeNodesResult> {
   if (typeof schema === 'boolean') {
     if (schema) {
@@ -118,11 +126,11 @@ export async function schemaToTypes(
   }
   if (typeof schema.type === 'undefined') {
     if ('properties' in schema) {
-      schema.type = 'object';
+      (schema as unknown as ObjectJSONSchema).type = 'object';
     }
   }
 
-  if (schema.$ref) {
+  if ('$ref' in schema && typeof schema.$ref === 'string') {
     const referenceParts = splitRef(schema.$ref);
 
     return {
@@ -179,7 +187,15 @@ export async function schemaToTypes(
     };
   } else if (schema.type) {
     return await handleTypedSchema(context, schema);
-  } else if (schema.anyOf || schema.allOf || schema.oneOf) {
+  } else if (
+    ('anyOf' in schema &&
+      schema.anyOf instanceof Array &&
+      schema.anyOf?.length) ||
+    ('allOf' in schema &&
+      schema.allOf instanceof Array &&
+      schema.allOf?.length) ||
+    ('oneOf' in schema && schema.oneOf instanceof Array && schema.oneOf?.length)
+  ) {
     return handleComposedSchemas(context, schema);
   } else if (parentType) {
     // Inject type from parent
@@ -195,7 +211,7 @@ export async function schemaToTypes(
 // Handle schema where type is defined
 export async function handleTypedSchema(
   context: JSONSchemaContext,
-  schema: JSONSchema,
+  schema: Exclude<JSONSchema, boolean | null>,
 ): Promise<TypeNodesResult> {
   const types = schema.type instanceof Array ? schema.type : [schema.type];
   const baseResults: TypeNodeResult[] = await Promise.all(
@@ -207,11 +223,11 @@ export async function handleTypedSchema(
           return {
             type: factory.createKeywordTypeNode(SyntaxKind.BooleanKeyword),
           };
-        case 'integer':
+        case 'number':
           return {
             type: factory.createKeywordTypeNode(SyntaxKind.NumberKeyword),
           };
-        case 'number':
+        case 'integer':
           return {
             type: factory.createKeywordTypeNode(SyntaxKind.NumberKeyword),
           };
@@ -220,9 +236,9 @@ export async function handleTypedSchema(
             type: factory.createKeywordTypeNode(SyntaxKind.StringKeyword),
           };
         case 'object':
-          return await buildObjectTypeNode(context, schema);
+          return await buildObjectTypeNode(context, schema as ObjectJSONSchema);
         case 'array':
-          return await buildArrayTypeNode(context, schema);
+          return await buildArrayTypeNode(context, schema as ArrayJSONSchema);
         default:
           throw new YError('E_BAD_TYPE', type);
       }
@@ -255,10 +271,10 @@ export async function handleTypedSchema(
 // Handle oneOf / anyOf / allOf
 async function handleComposedSchemas(
   context: JSONSchemaContext,
-  schema: JSONSchema,
+  schema: ComposedJSONSchema,
 ): Promise<TypeNodesResult> {
   const results = await Promise.all(
-    ((schema.anyOf || schema.allOf || schema.oneOf) as JSONSchema[]).map(
+    (schema.anyOf || schema.allOf || schema.oneOf || []).map(
       async (innerSchema) =>
         await schemaToTypes(context, innerSchema, schema.type),
     ),
@@ -296,7 +312,7 @@ async function handleComposedSchemas(
 
 export async function buildObjectTypeNode(
   context: JSONSchemaContext,
-  schema: JSONSchema,
+  schema: ObjectJSONSchema,
 ): Promise<TypeNodeResult> {
   const requiredProperties =
     schema.required && schema.required instanceof Array ? schema.required : [];
@@ -305,14 +321,12 @@ export async function buildObjectTypeNode(
 
   if (schema.properties) {
     for (const propertyName of Object.keys(schema.properties)) {
-      const property = schema.properties?.[
-        propertyName
-      ] as JSONSchema7Definition;
+      const property = schema.properties?.[propertyName];
       const required = requiredProperties.includes(propertyName);
-      const readOnly = (property as JSONSchema7).readOnly;
+      const readOnly = typeof property === 'object' && property.readOnly;
       const { types, ...resultRest } = await schemaToTypes(
         context,
-        eventuallyIdentifySchema(property as JSONSchema, propertyName),
+        eventuallyIdentifySchema(property, propertyName),
       );
       const isSuitableAsIdentifierName = /^[a-z_$][a-z0-9_$]*$/i.test(
         propertyName,
@@ -359,12 +373,13 @@ export async function buildObjectTypeNode(
           async (propertyPattern) => {
             const property = schema.patternProperties?.[
               propertyPattern
-            ] as JSONSchema7Definition;
+            ] as JSONSchema;
             const required = requiredProperties.includes(propertyPattern);
-            const readOnly = !!(property as JSONSchema7).readOnly;
+            const readOnly =
+              typeof property === 'object' && !!property.readOnly;
             const { types, ...resultRest } = await schemaToTypes(
               context,
-              property as JSONSchema,
+              property,
             );
 
             return {
@@ -444,7 +459,7 @@ export async function buildObjectTypeNode(
 
 export async function buildArrayTypeNode(
   context: JSONSchemaContext,
-  schema: JSONSchema,
+  schema: ArrayJSONSchema,
 ): Promise<TypeNodeResult> {
   if (typeof schema.maxItems === 'number' && schema.maxItems <= 0) {
     return {
@@ -454,34 +469,19 @@ export async function buildArrayTypeNode(
     };
   }
 
-  const additionalItems =
-    schema.additionalItems ||
-    // Backward compatibility with old JSONSchema behavior
-    (typeof schema.items !== 'boolean' && !(schema.items instanceof Array)
-      ? schema.items
-      : undefined);
-  const prefixItems: JSONSchema[] =
-    // Here, we are supporting the new way to declare tuples
-    // in the last JSONSchema Draft
-    // (see https://json-schema.org/understanding-json-schema/reference/array#tupleValidation )
-    (schema as unknown as { prefixItems: JSONSchema[] }).prefixItems ||
-    (typeof schema.items === 'object' && schema.items instanceof Array)
-      ? (schema.items as unknown as JSONSchema[])
-      : [];
-
-  if (prefixItems.length) {
+  if ('prefixItems' in schema && schema.prefixItems?.length) {
     const results = await Promise.all(
-      prefixItems.map((schema) => schemaToTypes(context, schema)),
+      schema.prefixItems.map((schema) => schemaToTypes(context, schema)),
     );
     const types = results.map(({ types }) =>
       types.length > 1 ? factory.createUnionTypeNode(types) : types[0],
     );
     let resultsRests = combineResultRest(results);
 
-    if (additionalItems) {
+    if ('items' in schema && typeof schema.items !== 'undefined') {
       const { types: additionalTypes, ...resultRest } = await schemaToTypes(
         context,
-        additionalItems,
+        schema.items,
       );
 
       resultsRests = combineResultRest([resultsRests, resultRest]);
@@ -502,9 +502,10 @@ export async function buildArrayTypeNode(
       type: factory.createTupleTypeNode(types),
     };
   } else {
-    const { types, ...resultRest } = additionalItems
-      ? await schemaToTypes(context, additionalItems)
-      : { types: [factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword)] };
+    const { types, ...resultRest } =
+      'items' in schema && typeof schema.items !== 'undefined'
+        ? await schemaToTypes(context, schema.items)
+        : { types: [factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword)] };
 
     // Switch from arrays to tuples for small fixed length arrays
     if (
@@ -570,53 +571,63 @@ export function splitRef(ref: string): string[] {
     .filter((s) => s);
 }
 
-export async function resolve<T, U>(
+export async function resolve<
+  D,
+  X extends OpenAPIExtension,
+  T extends OpenAPI<D, X> | JSONSchema,
+>(
   root: T,
   namespaceParts: string[],
-): Promise<U> {
+): Promise<T extends OpenAPI<D, X> ? OpenAPIReferenceable<D, X> : JSONSchema> {
   if (typeof root === 'undefined') {
     throw new YError('E_RESOLVE', namespaceParts, '__root');
   }
-
-  return namespaceParts.reduce(
-    (curSchema, part) => {
-      if (typeof curSchema[part] === 'undefined') {
-        throw new YError('E_RESOLVE', namespaceParts, part);
-      }
-      return curSchema[part];
-    },
-    root as unknown as U,
-  ) as U;
+  return namespaceParts.reduce((curSchema, part) => {
+    if (typeof curSchema[part] === 'undefined') {
+      throw new YError('E_RESOLVE', namespaceParts, part);
+    }
+    return curSchema[part];
+  }, root) as T extends OpenAPI<D, X> ? OpenAPIReferenceable<D, X> : JSONSchema;
 }
 
-export async function ensureResolved<T, U>(
+export async function ensureResolved<
+  D,
+  X extends OpenAPIExtension,
+  T extends OpenAPI<D, X> | JSONSchema,
+>(
   root: T,
-  object: U | Reference,
-): Promise<U> {
-  let resolvedObject = object;
+  object: T extends OpenAPI<D, X>
+    ? OpenAPIReferenceable<D, X> | OpenAPIReference<OpenAPIReferenceable<D, X>>
+    : JSONSchema,
+): Promise<T extends OpenAPI<D, X> ? OpenAPIReferenceable<D, X> : JSONSchema> {
+  let resolvedObject = object as Reference;
 
-  while ('$ref' in (resolvedObject as Reference)) {
-    resolvedObject = await resolve<T, U>(
+  while ('$ref' in resolvedObject) {
+    resolvedObject = (await resolve(
       root,
-      splitRef((resolvedObject as Reference).$ref),
-    );
+      splitRef(resolvedObject.$ref),
+    )) as Reference;
   }
 
-  return resolvedObject as U;
+  return resolvedObject;
 }
 
-export function eventuallyIdentifySchema(schema: JSONSchema, title: string) {
-  return typeof schema === 'object' && schema
-    ? {
-        title,
-        ...schema,
-      }
-    : schema;
+export function eventuallyIdentifySchema(
+  schema: JSONSchema,
+  title: string,
+): JSONSchema {
+  if (typeof schema !== 'boolean' && schema != null) {
+    return {
+      title,
+      ...schema,
+    } as JSONSchema;
+  }
+  return schema as JSONSchema;
 }
 
 export async function eventuallyBrandType(
   context: JSONSchemaContext,
-  schema: JSONSchemaDefinition,
+  schema: JSONSchema,
   typeNode: TypeNode,
 ): Promise<TypeNode> {
   if (

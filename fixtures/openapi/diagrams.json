@@ -9189,13 +9189,12 @@
               "type": "array",
               "items": {
                 "type": "array",
-                "items": [
+                "prefixItems": [
                   { "type": "string" },
                   { "type": "number" },
                   { "type": "number" },
                   { "type": "array", "items": { "type": "string" } }
                 ],
-                "additionalItems": false,
                 "minItems": 4,
                 "maxItems": 4
               }
