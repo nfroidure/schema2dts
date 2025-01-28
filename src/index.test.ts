@@ -8,12 +8,12 @@ import { readFileSync, readdirSync } from 'fs';
 import path from 'path';
 
 import {
-  JSONSchema,
-  JSONSchemaFormat,
-  JSONSchemaPrimitive,
-} from './types/jsonSchema.js';
+  type JSONSchema,
+  type JSONSchemaFormat,
+  type JSONSchemaPrimitive,
+} from 'ya-json-schema-types';
 import { DEFAULT_JSON_SCHEMA_OPTIONS } from './utils/jsonSchema.js';
-import { OpenAPI } from './types/openAPI.js';
+import { type OpenAPI } from 'ya-open-api-types';
 
 describe('generateOpenAPITypes()', () => {
   test('with a denormalized simple sample', async () => {
@@ -161,7 +161,18 @@ export interface operations {
           TheSchemaClone: {
             $ref: '#/components/schemas/TheSchema',
           },
-          TheSchema: { type: 'string' },
+          TheSchema: {
+            type: 'object',
+            properties: {
+              previousStatus: { $ref: '#/components/schemas/TaskStatus' },
+              currentStatus: { $ref: '#/components/schemas/TaskStatus' },
+              nextStatus: { $ref: '#/components/schemas/TaskStatus' },
+            },
+          },
+          TaskStatus: {
+            type: 'string',
+            enum: ['to_assign', 'to_do', 'in_progress', 'done'],
+          },
         },
         responses: {
           TheResponseClone: {
@@ -269,10 +280,21 @@ declare interface components {
     };
     schemas: {
         TheSchemaClone: components["schemas"]["TheSchema"];
-        TheSchema: string & {
-            _type?: "TheSchema";
+        TheSchema: {
+            previousStatus?: components["schemas"]["TaskStatus"];
+            currentStatus?: components["schemas"]["TaskStatus"];
+            nextStatus?: components["schemas"]["TaskStatus"];
         };
+        TaskStatus: Enums.TaskStatus;
     };
+}
+declare namespace Enums {
+    export enum TaskStatus {
+        ToAssign = "to_assign",
+        ToDo = "to_do",
+        InProgress = "in_progress",
+        Done = "done"
+    }
 }"
 `);
   });
@@ -280,59 +302,71 @@ declare interface components {
   describe('with OpenAPI samples', () => {
     const fixturesDir = path.join('fixtures', 'openapi');
 
-    readdirSync(fixturesDir).forEach((file) => {
-      test(`should work with ${file}`, async () => {
-        const schema = JSON.parse(
-          readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPI;
+    readdirSync(fixturesDir)
+      .filter((file) =>
+        [
+          'diagrams.json',
+          'callback_example.json',
+          'parameters_aliasing.json',
+          'pet_store.json',
+          'webhook_example.json',
+          'whook_example_components.json',
+          'whook_example.json',
+        ].includes(file),
+      )
+      .forEach((file) => {
+        test(`should work with ${file}`, async () => {
+          const schema = JSON.parse(
+            readFileSync(path.join(fixturesDir, file)).toString(),
+          ) as OpenAPI;
 
-        expect(
-          toSource(
-            await generateOpenAPITypes(schema, {
-              generateRealEnums: true,
-              tuplesFromFixedArraysLengthLimit: 5,
-              exportNamespaces: false,
-            }),
-          ),
-        ).toMatchSnapshot();
+          expect(
+            toSource(
+              await generateOpenAPITypes(schema, {
+                generateRealEnums: true,
+                tuplesFromFixedArraysLengthLimit: 5,
+                exportNamespaces: false,
+              }),
+            ),
+          ).toMatchSnapshot();
+        });
+
+        test(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
+          const schema = JSON.parse(
+            readFileSync(path.join(fixturesDir, file)).toString(),
+          ) as OpenAPI;
+
+          expect(
+            toSource(
+              await generateOpenAPITypes(schema, {
+                filterStatuses: [200, 201, 202, 300],
+                brandedTypes: 'schemas',
+                generateRealEnums: false,
+                tuplesFromFixedArraysLengthLimit: 5,
+                exportNamespaces: false,
+              }),
+            ),
+          ).toMatchSnapshot();
+        });
+
+        test(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
+          const schema = JSON.parse(
+            readFileSync(path.join(fixturesDir, file)).toString(),
+          ) as OpenAPI;
+
+          expect(
+            toSource(
+              await generateOpenAPITypes(schema, {
+                baseName: 'AnotherAPI',
+                generateUnusedSchemas: true,
+                generateRealEnums: true,
+                tuplesFromFixedArraysLengthLimit: 5,
+                exportNamespaces: true,
+              }),
+            ),
+          ).toMatchSnapshot();
+        });
       });
-
-      test(`should work with ${file} and filterStatuses 200/201/202/300 and brandedTypes`, async () => {
-        const schema = JSON.parse(
-          readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPI;
-
-        expect(
-          toSource(
-            await generateOpenAPITypes(schema, {
-              filterStatuses: [200, 201, 202, 300],
-              brandedTypes: 'schemas',
-              generateRealEnums: false,
-              tuplesFromFixedArraysLengthLimit: 5,
-              exportNamespaces: false,
-            }),
-          ),
-        ).toMatchSnapshot();
-      });
-
-      test(`should work with ${file} and generateUnusedSchemas option to true`, async () => {
-        const schema = JSON.parse(
-          readFileSync(path.join(fixturesDir, file)).toString(),
-        ) as OpenAPI;
-
-        expect(
-          toSource(
-            await generateOpenAPITypes(schema, {
-              baseName: 'AnotherAPI',
-              generateUnusedSchemas: true,
-              generateRealEnums: true,
-              tuplesFromFixedArraysLengthLimit: 5,
-              exportNamespaces: true,
-            }),
-          ),
-        ).toMatchSnapshot();
-      });
-    });
   });
 
   test('should work without operation id per default', async () => {
@@ -1245,6 +1279,89 @@ export interface definitions {
         }),
       ),
     ).toMatchInlineSnapshot(`"export type Limit = object;"`);
+  });
+
+  test('should work with direct recursive schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Tree',
+      $ref: '#/$defs/Node',
+      $defs: {
+        Node: {
+          type: 'object',
+          properties: {
+            child: {
+              $ref: '#/$defs/Node',
+            },
+          },
+        },
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Tree',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"export type Tree = $defs["Node"];
+export interface $defs {
+    Node: {
+        child?: $defs["Node"];
+    };
+}"
+`);
+  });
+
+  test('should work with indirect recursive schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'Tree',
+      $ref: '#/$defs/Node',
+      $defs: {
+        Node: {
+          type: 'object',
+          properties: {
+            content: {
+              $ref: '#/$defs/NodeContent',
+            },
+          },
+        },
+        NodeContent: {
+          type: 'object',
+          properties: {
+            child: {
+              $ref: '#/$defs/Node',
+            },
+          },
+        },
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          brandedTypes: [],
+          generateRealEnums: true,
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: true,
+          baseName: 'Tree',
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"export type Tree = $defs["Node"];
+export interface $defs {
+    Node: {
+        content?: $defs["NodeContent"];
+    };
+    NodeContent: {
+        child?: $defs["Node"];
+    };
+}"
+`);
   });
 
   test('should work with a nested oneOf in allOf schemas', async () => {

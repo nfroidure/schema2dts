@@ -18,13 +18,8 @@ import {
   type JSONSchema,
   type JSONSchemaPrimitive,
   type ObjectJSONSchema,
-} from '../types/jsonSchema.js';
-import {
-  OpenAPIExtension,
-  OpenAPIReference,
-  OpenAPIReferenceable,
-  type OpenAPI,
-} from '../types/openAPI.js';
+} from 'ya-json-schema-types';
+import { relativeReferenceToNamespace } from 'ya-open-api-types';
 
 export const ALL_TYPES = 'all' as const;
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
@@ -131,7 +126,7 @@ export async function schemaToTypes(
   }
 
   if ('$ref' in schema && typeof schema.$ref === 'string') {
-    const referenceParts = splitRef(schema.$ref);
+    const referenceParts = relativeReferenceToNamespace(schema.$ref);
 
     return {
       types: [buildInterfaceReference(referenceParts)],
@@ -562,54 +557,6 @@ export async function buildArrayTypeNode(
       ),
     };
   }
-}
-
-export function splitRef(ref: string): string[] {
-  return ref
-    .replace(/^#\//, '')
-    .split('/')
-    .filter((s) => s);
-}
-
-export async function resolve<
-  D,
-  X extends OpenAPIExtension,
-  T extends OpenAPI<D, X> | JSONSchema,
->(
-  root: T,
-  namespaceParts: string[],
-): Promise<T extends OpenAPI<D, X> ? OpenAPIReferenceable<D, X> : JSONSchema> {
-  if (typeof root === 'undefined') {
-    throw new YError('E_RESOLVE', namespaceParts, '__root');
-  }
-  return namespaceParts.reduce((curSchema, part) => {
-    if (typeof curSchema[part] === 'undefined') {
-      throw new YError('E_RESOLVE', namespaceParts, part);
-    }
-    return curSchema[part];
-  }, root) as T extends OpenAPI<D, X> ? OpenAPIReferenceable<D, X> : JSONSchema;
-}
-
-export async function ensureResolved<
-  D,
-  X extends OpenAPIExtension,
-  T extends OpenAPI<D, X> | JSONSchema,
->(
-  root: T,
-  object: T extends OpenAPI<D, X>
-    ? OpenAPIReferenceable<D, X> | OpenAPIReference<OpenAPIReferenceable<D, X>>
-    : JSONSchema,
-): Promise<T extends OpenAPI<D, X> ? OpenAPIReferenceable<D, X> : JSONSchema> {
-  let resolvedObject = object as Reference;
-
-  while ('$ref' in resolvedObject) {
-    resolvedObject = (await resolve(
-      root,
-      splitRef(resolvedObject.$ref),
-    )) as Reference;
-  }
-
-  return resolvedObject;
 }
 
 export function eventuallyIdentifySchema(

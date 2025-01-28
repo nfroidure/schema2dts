@@ -7,7 +7,7 @@ import {
   SyntaxKind,
   tokenToString,
 } from 'typescript';
-import { type JSONSchemaValue } from '../types/jsonSchema.js';
+import { type JSONSchemaValue } from 'ya-json-schema-types';
 
 const RESERVED_KEYWORDS = Object.keys(SyntaxKind).map((t) =>
   tokenToString(SyntaxKind[t]),

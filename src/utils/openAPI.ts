@@ -1,12 +1,9 @@
 import {
   ALL_TYPES,
-  ensureResolved,
-  resolve,
   schemaToTypeNode,
-  splitRef,
   type JSONSchemaContext,
 } from './jsonSchema.js';
-import { type Fragment } from './fragments.js';
+import { combineFragments, type Fragment } from './fragments.js';
 import { buildIdentifier } from './typeDefinitions.js';
 import { YError } from 'yerror';
 import { factory, SyntaxKind, type TypeNode } from 'typescript';
@@ -22,8 +19,11 @@ import {
   type OpenAPIRequestBody,
   type OpenAPIResponse,
   type OpenAPIParameter,
-} from '../types/openAPI.js';
-import { JSONSchema } from '../types/jsonSchema.js';
+  relativeReferenceToNamespace,
+  resolveNamespace,
+  ensureResolvedObject,
+} from 'ya-open-api-types';
+import { type JSONSchema } from 'ya-json-schema-types';
 
 export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   baseName: 'API',
@@ -110,29 +110,27 @@ export async function openAPIToFragments(
 
         if (fragment.type === 'assumed') {
           if (fragment.ref.startsWith('#/components/pathItems/')) {
-            const namespace = splitRef(fragment.ref);
-            const pathItem = await resolve(document, namespace);
+            const namespace = relativeReferenceToNamespace(fragment.ref);
+            const pathItem = await resolveNamespace(document, namespace);
 
             hasFragmentsToBuild = true;
 
-            return [
-              ...fragments,
+            return combineFragments(fragments, [
               ...(await pathItemToFragments(
                 context,
                 document,
                 pathItem as OpenAPIPathItem<JSONSchema, OpenAPIExtension>,
                 namespace,
               )),
-            ];
+            ]);
           }
           if (fragment.ref.startsWith('#/components/requestBodies/')) {
-            const namespace = splitRef(fragment.ref);
-            const requestBody = await resolve(document, namespace);
+            const namespace = relativeReferenceToNamespace(fragment.ref);
+            const requestBody = await resolveNamespace(document, namespace);
 
             hasFragmentsToBuild = true;
 
-            return [
-              ...fragments,
+            return combineFragments(fragments, [
               ...(await requestBodyToFragments(
                 context,
                 document,
@@ -140,35 +138,33 @@ export async function openAPIToFragments(
                 namespace,
                 false,
               )),
-            ];
+            ]);
           }
           if (fragment.ref.startsWith('#/components/responses/')) {
-            const namespace = splitRef(fragment.ref);
-            const response = (await resolve(
+            const namespace = relativeReferenceToNamespace(fragment.ref);
+            const response = (await resolveNamespace(
               document,
               namespace,
             )) as OpenAPIResponse<JSONSchema, OpenAPIExtension>;
 
             hasFragmentsToBuild = true;
 
-            return [
-              ...fragments,
+            return combineFragments(fragments, [
               ...(await responseToFragments(
                 context,
                 document,
                 response,
                 namespace,
               )),
-            ];
+            ]);
           }
           if (fragment.ref.startsWith('#/components/parameters/')) {
-            const namespace = splitRef(fragment.ref);
-            const parameter = await resolve(document, namespace);
+            const namespace = relativeReferenceToNamespace(fragment.ref);
+            const parameter = await resolveNamespace(document, namespace);
 
             hasFragmentsToBuild = true;
 
-            return [
-              ...fragments,
+            return combineFragments(fragments, [
               ...(await parameterToFragments(
                 context,
                 document,
@@ -176,19 +172,18 @@ export async function openAPIToFragments(
                 namespace,
                 false,
               )),
-            ];
+            ]);
           }
           if (fragment.ref.startsWith('#/components/headers/')) {
-            const namespace = splitRef(fragment.ref);
-            const header = (await resolve(
+            const namespace = relativeReferenceToNamespace(fragment.ref);
+            const header = (await resolveNamespace(
               document,
               namespace,
             )) as OpenAPIHeader<JSONSchema, OpenAPIExtension>;
 
             hasFragmentsToBuild = true;
 
-            return [
-              ...fragments,
+            return combineFragments(fragments, [
               ...(await headerToFragments(
                 context,
                 document,
@@ -196,23 +191,22 @@ export async function openAPIToFragments(
                 namespace,
                 false,
               )),
-            ];
+            ]);
           }
           if (fragment.ref.startsWith('#/components/callbacks/')) {
-            const namespace = splitRef(fragment.ref);
-            const callback = await resolve(document, namespace);
+            const namespace = relativeReferenceToNamespace(fragment.ref);
+            const callback = await resolveNamespace(document, namespace);
 
             hasFragmentsToBuild = true;
 
-            return [
-              ...fragments,
+            return combineFragments(fragments, [
               ...(await callbackToFragments(
                 context,
                 document,
                 callback as OpenAPICallback<JSONSchema, OpenAPIExtension>,
                 namespace,
               )),
-            ];
+            ]);
           }
         }
         return [...fragments, fragment];
@@ -254,7 +248,7 @@ export async function pathItemToFragments(
 
   if (pathItem.parameters && pathItem.parameters.length) {
     for (const parameter of pathItem.parameters) {
-      const resolvedParameter = (await ensureResolved(
+      const resolvedParameter = (await ensureResolvedObject(
         document,
         parameter,
       )) as OpenAPIParameter<JSONSchema, OpenAPIExtension>;
@@ -345,7 +339,7 @@ export async function operationToFragments(
 
   if ('requestBody' in operation && operation.requestBody) {
     const subNamespace = [...namespace, 'requestBody'];
-    const requestBody = (await ensureResolved(
+    const requestBody = (await ensureResolvedObject(
       document,
       operation.requestBody,
     )) as OpenAPIRequestBody<JSONSchema, OpenAPIExtension>;
@@ -392,7 +386,7 @@ export async function operationToFragments(
 
   if (operation.parameters && operation.parameters.length) {
     for (const parameter of operation.parameters) {
-      const resolvedParameter = (await ensureResolved(
+      const resolvedParameter = (await ensureResolvedObject(
         document,
         parameter,
       )) as OpenAPIParameter<JSONSchema, OpenAPIExtension>;
@@ -667,7 +661,7 @@ export async function responseToFragments(
 
   if (response.headers) {
     for (const [headerName, header] of Object.entries(response.headers)) {
-      const resolvedHeader = (await ensureResolved(
+      const resolvedHeader = (await ensureResolvedObject(
         document,
         header,
       )) as OpenAPIHeader<JSONSchema, OpenAPIExtension>;

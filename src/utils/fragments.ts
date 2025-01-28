@@ -58,3 +58,66 @@ export type Fragment =
   | InterfaceMemberFragment
   | DeclarationMemberFragment
   | AssumedFragment;
+
+export function cleanAssumedFragments(fragments: Fragment[]) {
+  process.stdout.write(`\n\n\n\nASSUMED CLEANUP: \n\n`);
+  for (let i = 0; i < fragments.length; i++) {
+    const fragmentsWithSameRef = fragments.filter(
+      (aFragment) => aFragment.ref === fragments[i].ref,
+    );
+
+    if (fragmentsWithSameRef.length > 1) {
+      if (fragments[i].type === 'assumed') {
+        process.stdout.write(`- ${fragments[i].ref} \n`);
+        fragments.splice(i, 1);
+        i--;
+      }
+    }
+  }
+  return fragments;
+}
+
+export function combineFragments(
+  fragments: Fragment[],
+  addedFragments: Fragment[],
+) {
+  for (const fragment of addedFragments) {
+    if (fragment.type !== 'assumed') {
+      fragments = fragments.filter((aFragment) => aFragment.ref !== fragment.ref);
+      fragments = fragments.concat([fragment]);
+    } else if (!assumeRef(fragments, fragment.ref)) {
+      fragments = fragments.concat([fragment]);
+    }
+  }
+
+  return fragments;
+}
+
+export function assumeRef(fragments: Fragment[], ref: FragmentRef): boolean {
+  return fragments.some((fragment) => fragment.ref === ref);
+}
+
+export function findFragments<T extends Fragment['type']>(
+  searchedType: T,
+  fragments: Fragment[],
+): (T extends 'statement'
+  ? StatementFragment
+  : T extends 'interfaceMember'
+    ? InterfaceMemberFragment
+    : T extends 'declarationMember'
+      ? DeclarationMemberFragment
+      : T extends 'assumed'
+        ? AssumedFragment
+        : never)[] {
+  return fragments.filter(
+    ({ type }) => type === searchedType,
+  ) as (T extends 'statement'
+    ? StatementFragment
+    : T extends 'interfaceMember'
+      ? InterfaceMemberFragment
+      : T extends 'declarationMember'
+        ? DeclarationMemberFragment
+        : T extends 'assumed'
+          ? AssumedFragment
+          : never)[];
+}

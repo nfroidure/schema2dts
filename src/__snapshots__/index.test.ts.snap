@@ -2718,12 +2718,6 @@ declare interface components {
         Image: components["schemas"]["BinaryModel"] | components["schemas"]["BinaryModel"];
     };
     schemas: {
-        AlertUUID: string;
-        ApplicationUUID: string;
-        InterventionUUID: string;
-        ProjectUUID: string;
-        UserUUID: string;
-        OrganisationUUID: string;
         AlertItem: {
             item: components["schemas"]["AlertUUID"];
             alerts: components["schemas"]["AlertModelHash"];
@@ -2736,44 +2730,9 @@ declare interface components {
         AttachmentUUID: string;
         BinaryModel: string;
         ImageUUID: string;
-        ApplicationModel: {
-            id?: components["schemas"]["ApplicationUUID"];
-            authorId?: components["schemas"]["UserUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            data: components["schemas"]["ApplicationData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            secret?: string;
-        };
-        ApplicationItem: {
-            item: components["schemas"]["ApplicationUUID"];
-            applications: components["schemas"]["ApplicationModelHash"];
-        };
-        ProjectModel: {
-            id?: components["schemas"]["ProjectUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            author?: components["schemas"]["UserUUID"];
-            data: components["schemas"]["ProjectData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-        };
-        ProjectItem: {
-            item: components["schemas"]["ProjectUUID"];
-            projects: components["schemas"]["ProjectModelHash"];
-        };
-        SensorUUID: string;
         ValueName: string;
         AlertsStats: components["schemas"]["AlertsStat"][];
         FactoriesUUIDS: components["schemas"]["FactoryUUID"][];
-        UserItem: {
-            item: components["schemas"]["UserUUID"];
-            users: components["schemas"]["UserModelHash"];
-        };
-        FactoryItem: {
-            item: components["schemas"]["FactoryUUID"];
-            factories: components["schemas"]["FactoryModelHash"];
-        };
-        FactoryUUID: string;
         AlertsStat: {
             organisationId: components["schemas"]["OrganisationUUID"];
             stats: {
@@ -2784,11 +2743,6 @@ declare interface components {
                 total: number;
             };
         };
-        AssetItem: {
-            item: components["schemas"]["AssetUUID"];
-            assets: components["schemas"]["AssetModelHash"];
-        };
-        AssetUUID: string;
         AssetsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["AssetsUUIDS"];
@@ -2814,25 +2768,8 @@ declare interface components {
         ManufacturingCycles: components["schemas"]["ManufacturingCycle"][];
         EventsUUIDS: components["schemas"]["EventUUID"][];
         EventTypes: components["schemas"]["EventType"][];
-        NonEmptySensorsUUIDS: [
-            components["schemas"]["SensorUUID"],
-            ...components["schemas"]["SensorUUID"][]
-        ];
-        NonEmptyValuesNames: [
-            components["schemas"]["ValueName"],
-            ...components["schemas"]["ValueName"][]
-        ];
         Cursor: string;
         Size: number;
-        Date: string;
-        InterventionItem: {
-            item: components["schemas"]["InterventionUUID"];
-            interventions: components["schemas"]["InterventionModelHash"];
-            alerts?: components["schemas"]["AlertModelHash"];
-            images?: components["schemas"]["ImageModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-            users?: components["schemas"]["UserModelHash"];
-        };
         InterventionsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["InterventionsUUIDS"];
@@ -2852,11 +2789,6 @@ declare interface components {
         };
         ReportsUUIDS: components["schemas"]["ReportUUID"][];
         reportsSortByValue: Enums.ReportsSortByValue;
-        SensorItem: {
-            item: components["schemas"]["SensorUUID"];
-            sensors: components["schemas"]["SensorModelHash"];
-            assets?: components["schemas"]["AssetModelHash"];
-        };
         SensorsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["SensorsUUIDS"];
@@ -2878,9 +2810,11 @@ declare interface components {
         };
         projectsSortByValue: Enums.ProjectsSortByValue;
         ProjectsUUIDS: components["schemas"]["ProjectUUID"][];
+        Tags: components["schemas"]["LabelValue"][];
+        ValuedLabelName: string;
+        LabelValue: string;
+        TimeZone: string;
         aggregations: components["schemas"]["aggregation"][];
-        AssetConfiguration: string;
-        ManufacturingPhase: string;
         measures: {
             date: components["schemas"]["Date"];
             values: number[];
@@ -2888,11 +2822,10 @@ declare interface components {
             labels?: string[][];
             labelsCount?: number[][];
         }[];
-        Tags: components["schemas"]["LabelValue"][];
-        ValuedLabelName: string;
-        LabelValue: string;
-        TimeZone: string;
-        EventFields: components["schemas"]["EventField"][];
+        NonEmptyValuesNames: [
+            components["schemas"]["ValueName"],
+            ...components["schemas"]["ValueName"][]
+        ];
         SensorsEventData: {
             from: components["schemas"]["Date"];
             to: components["schemas"]["Date"];
@@ -2902,6 +2835,14 @@ declare interface components {
             phase?: components["schemas"]["ManufacturingPhase"];
             measures: components["schemas"]["measures"];
         };
+        Date: string;
+        NonEmptySensorsUUIDS: [
+            components["schemas"]["SensorUUID"],
+            ...components["schemas"]["SensorUUID"][]
+        ];
+        EventFields: components["schemas"]["EventField"][];
+        AssetConfiguration: string;
+        ManufacturingPhase: string;
         RangeMeasures: {
             startDate: components["schemas"]["Date"];
             endDate: components["schemas"]["Date"];
@@ -2909,8 +2850,6 @@ declare interface components {
             quality?: number;
             labels?: string[];
         }[][];
-        ReportUUID: string;
-        SearchType: Enums.SearchType;
         SearchFilterType: Enums.SearchFilterType;
         UUID: string;
         ReportModel: components["schemas"]["SynchronizableItem"] & {
@@ -2923,23 +2862,17 @@ declare interface components {
             creation: components["schemas"]["Date"];
             lastModification: components["schemas"]["Date"];
         };
+        FactoryUUID: string;
+        ProjectUUID: string;
+        AssetUUID: string;
+        ApplicationUUID: string;
+        InterventionUUID: string;
+        AlertUUID: string;
+        ReportUUID: string;
+        SensorUUID: string;
+        SearchType: Enums.SearchType;
         OrganisationsUUIDS: components["schemas"]["OrganisationUUID"][];
         UserMembershipStatus: Enums.UserMembershipStatus;
-        UserModel: {
-            id?: components["schemas"]["UserUUID"];
-            roles?: components["schemas"]["Role"][];
-            password?: string;
-            memberships?: components["schemas"]["UserMembership"][];
-            data: components["schemas"]["UserData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            emailStatus?: components["schemas"]["emailStatus"];
-        };
-        FactoriesItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["FactoriesUUIDS"];
-            factories: components["schemas"]["FactoryModelHash"];
-        };
         factoriesSortByValue: Enums.FactoriesSortByValue;
         NotificationsItems: {
             total: components["schemas"]["Total"];
@@ -2947,17 +2880,6 @@ declare interface components {
             notifications: components["schemas"]["NotificationModelHash"];
         };
         NotificationTypes: components["schemas"]["NotificationType"][];
-        OrganisationItem: {
-            item: components["schemas"]["OrganisationUUID"];
-            organisations: components["schemas"]["OrganisationModelHash"];
-        };
-        OrganisationModel: {
-            id?: components["schemas"]["OrganisationUUID"];
-            factoriesIds?: components["schemas"]["FactoriesUUIDS"];
-            data: components["schemas"]["OrganisationData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-        };
         AlertsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["AlertsUUIDS"];
@@ -2980,14 +2902,23 @@ declare interface components {
         };
         applicationsSortByValue: Enums.ApplicationsSortByValue;
         ApplicationsUUIDS: components["schemas"]["ApplicationUUID"][];
-        FactoryModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["FactoryUUID"];
+        ApplicationModel: {
+            id?: components["schemas"]["ApplicationUUID"];
+            authorId?: components["schemas"]["UserUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
-            rootAssetsIds?: components["schemas"]["AssetsUUIDS"];
-            linkedOrganisationsIds?: components["schemas"]["OrganisationsUUIDS"];
-            data: components["schemas"]["FactoryData"];
+            data: components["schemas"]["ApplicationData"];
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
+            secret?: string;
+        };
+        ApplicationItem: {
+            item: components["schemas"]["ApplicationUUID"];
+            applications: components["schemas"]["ApplicationModelHash"];
+        };
+        FactoriesItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["FactoriesUUIDS"];
+            factories: components["schemas"]["FactoryModelHash"];
         };
         AllPreferencesModel: {
             default: components["schemas"]["DefaultPreferencesModel"];
@@ -3022,23 +2953,71 @@ declare interface components {
             organisations: components["schemas"]["OrganisationModelHash"];
         };
         organisationsSortByValue: Enums.OrganisationsSortByValue;
+        OrganisationModel: {
+            id?: components["schemas"]["OrganisationUUID"];
+            factoriesIds?: components["schemas"]["FactoriesUUIDS"];
+            data: components["schemas"]["OrganisationData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        OrganisationItem: {
+            item: components["schemas"]["OrganisationUUID"];
+            organisations: components["schemas"]["OrganisationModelHash"];
+        };
+        UserModel: {
+            id?: components["schemas"]["UserUUID"];
+            roles?: components["schemas"]["Role"][];
+            password?: string;
+            memberships?: components["schemas"]["UserMembership"][];
+            data: components["schemas"]["UserData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            emailStatus?: components["schemas"]["emailStatus"];
+        };
         TokenRequestBody: components["schemas"]["PasswordRequestBody"] | components["schemas"]["AuthorizationCodeRequestBody"] | components["schemas"]["ClientCredentialsRequestBody"] | components["schemas"]["RefreshTokenRequestBody"] | components["schemas"]["VerifyTokenRequestBody"] | components["schemas"]["PasswordChangeBody"];
         InputData: components["schemas"]["GroupedInputData"] | components["schemas"]["DenormalizedInputData"];
         ProjectCode: string;
-        SensorModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["SensorUUID"];
-            factoryId?: components["schemas"]["FactoryUUID"];
+        OrganisationUUID: string;
+        UserOrganisationInvitation: {
+            email: string;
+            givenName: string;
+            familyName: string;
+            membership: components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"];
+        };
+        UserItem: {
+            item: components["schemas"]["UserUUID"];
+            users: components["schemas"]["UserModelHash"];
+        };
+        UserUUID: string;
+        NotificationUUID: string;
+        ProjectModel: {
+            id?: components["schemas"]["ProjectUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
-            assetId?: components["schemas"]["AssetUUID"];
-            data: components["schemas"]["SensorData"];
-            stats?: components["schemas"]["SensorStats"];
-            inferredType?: components["schemas"]["SensorInferredType"];
-            firstEmission?: components["schemas"]["FirstEmission"];
+            author?: components["schemas"]["UserUUID"];
+            data: components["schemas"]["ProjectData"];
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
-            queries?: {
-                [pattern: string]: components["schemas"]["SensorQuery"];
-            };
+        };
+        ProjectItem: {
+            item: components["schemas"]["ProjectUUID"];
+            projects: components["schemas"]["ProjectModelHash"];
+        };
+        NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
+        EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
+        EventUUID: string;
+        userFeedback: number;
+        FactoryModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["FactoryUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            rootAssetsIds?: components["schemas"]["AssetsUUIDS"];
+            linkedOrganisationsIds?: components["schemas"]["OrganisationsUUIDS"];
+            data: components["schemas"]["FactoryData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        FactoryItem: {
+            item: components["schemas"]["FactoryUUID"];
+            factories: components["schemas"]["FactoryModelHash"];
         };
         AssetModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["AssetUUID"];
@@ -3057,6 +3036,10 @@ declare interface components {
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
         };
+        AssetItem: {
+            item: components["schemas"]["AssetUUID"];
+            assets: components["schemas"]["AssetModelHash"];
+        };
         InterventionModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["InterventionUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
@@ -3072,17 +3055,14 @@ declare interface components {
             taskStatus?: components["schemas"]["TaskStatus"];
             data: components["schemas"]["InterventionData"];
         };
-        UserOrganisationInvitation: {
-            email: string;
-            givenName: string;
-            familyName: string;
-            membership: components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"];
+        InterventionItem: {
+            item: components["schemas"]["InterventionUUID"];
+            interventions: components["schemas"]["InterventionModelHash"];
+            alerts?: components["schemas"]["AlertModelHash"];
+            images?: components["schemas"]["ImageModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+            users?: components["schemas"]["UserModelHash"];
         };
-        NotificationUUID: string;
-        NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
-        EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
-        EventUUID: string;
-        userFeedback: number;
         PartialPreferencesModel: {
             displayParentName?: boolean;
             sensorDisplayExternalId?: boolean;
@@ -3094,6 +3074,26 @@ declare interface components {
             showGraphPhases?: boolean;
         };
         PreferenceLevel: Enums.PreferenceLevel;
+        SensorModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["SensorUUID"];
+            factoryId?: components["schemas"]["FactoryUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            assetId?: components["schemas"]["AssetUUID"];
+            data: components["schemas"]["SensorData"];
+            stats?: components["schemas"]["SensorStats"];
+            inferredType?: components["schemas"]["SensorInferredType"];
+            firstEmission?: components["schemas"]["FirstEmission"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            queries?: {
+                [pattern: string]: components["schemas"]["SensorQuery"];
+            };
+        };
+        SensorItem: {
+            item: components["schemas"]["SensorUUID"];
+            sensors: components["schemas"]["SensorModelHash"];
+            assets?: components["schemas"]["AssetModelHash"];
+        };
         AlertModelHash: {
             [pattern: string]: components["schemas"]["AlertModel"];
         };
@@ -4294,6 +4294,10 @@ declare namespace Enums {
         LastModification = "lastModification",
         Name = "name"
     }
+    export enum SearchFilterType {
+        Factory = "factory",
+        Asset = "asset"
+    }
     export enum SearchType {
         User = "user",
         Factory = "factory",
@@ -4305,10 +4309,6 @@ declare namespace Enums {
         Report = "report",
         Sensor = "sensor",
         Organisation = "organisation"
-    }
-    export enum SearchFilterType {
-        Factory = "factory",
-        Asset = "asset"
     }
     export enum UserMembershipStatus {
         Member = "member",
@@ -7018,24 +7018,6 @@ declare interface components {
         Image: components["schemas"]["BinaryModel"] | components["schemas"]["BinaryModel"];
     };
     schemas: {
-        AlertUUID: string & {
-            _type?: "AlertUUID";
-        };
-        ApplicationUUID: string & {
-            _type?: "ApplicationUUID";
-        };
-        InterventionUUID: string & {
-            _type?: "InterventionUUID";
-        };
-        ProjectUUID: string & {
-            _type?: "ProjectUUID";
-        };
-        UserUUID: string & {
-            _type?: "UserUUID";
-        };
-        OrganisationUUID: string & {
-            _type?: "OrganisationUUID";
-        };
         AlertItem: {
             item: components["schemas"]["AlertUUID"];
             alerts: components["schemas"]["AlertModelHash"];
@@ -7054,50 +7036,11 @@ declare interface components {
         ImageUUID: string & {
             _type?: "ImageUUID";
         };
-        ApplicationModel: {
-            id?: components["schemas"]["ApplicationUUID"];
-            authorId?: components["schemas"]["UserUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            data: components["schemas"]["ApplicationData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            secret?: string;
-        };
-        ApplicationItem: {
-            item: components["schemas"]["ApplicationUUID"];
-            applications: components["schemas"]["ApplicationModelHash"];
-        };
-        ProjectModel: {
-            id?: components["schemas"]["ProjectUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            author?: components["schemas"]["UserUUID"];
-            data: components["schemas"]["ProjectData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-        };
-        ProjectItem: {
-            item: components["schemas"]["ProjectUUID"];
-            projects: components["schemas"]["ProjectModelHash"];
-        };
-        SensorUUID: string & {
-            _type?: "SensorUUID";
-        };
         ValueName: string & {
             _type?: "ValueName";
         };
         AlertsStats: components["schemas"]["AlertsStat"][];
         FactoriesUUIDS: components["schemas"]["FactoryUUID"][];
-        UserItem: {
-            item: components["schemas"]["UserUUID"];
-            users: components["schemas"]["UserModelHash"];
-        };
-        FactoryItem: {
-            item: components["schemas"]["FactoryUUID"];
-            factories: components["schemas"]["FactoryModelHash"];
-        };
-        FactoryUUID: string & {
-            _type?: "FactoryUUID";
-        };
         AlertsStat: {
             organisationId: components["schemas"]["OrganisationUUID"];
             stats: {
@@ -7107,13 +7050,6 @@ declare interface components {
                 open: number;
                 total: number;
             };
-        };
-        AssetItem: {
-            item: components["schemas"]["AssetUUID"];
-            assets: components["schemas"]["AssetModelHash"];
-        };
-        AssetUUID: string & {
-            _type?: "AssetUUID";
         };
         AssetsItems: {
             total?: components["schemas"]["Total"];
@@ -7148,30 +7084,11 @@ declare interface components {
         ManufacturingCycles: components["schemas"]["ManufacturingCycle"][];
         EventsUUIDS: components["schemas"]["EventUUID"][];
         EventTypes: components["schemas"]["EventType"][];
-        NonEmptySensorsUUIDS: [
-            components["schemas"]["SensorUUID"],
-            ...components["schemas"]["SensorUUID"][]
-        ];
-        NonEmptyValuesNames: [
-            components["schemas"]["ValueName"],
-            ...components["schemas"]["ValueName"][]
-        ];
         Cursor: string & {
             _type?: "Cursor";
         };
         Size: number & {
             _type?: "Size";
-        };
-        Date: string & {
-            _type?: "Date";
-        };
-        InterventionItem: {
-            item: components["schemas"]["InterventionUUID"];
-            interventions: components["schemas"]["InterventionModelHash"];
-            alerts?: components["schemas"]["AlertModelHash"];
-            images?: components["schemas"]["ImageModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-            users?: components["schemas"]["UserModelHash"];
         };
         InterventionsItems: {
             total?: components["schemas"]["Total"];
@@ -7192,11 +7109,6 @@ declare interface components {
         };
         ReportsUUIDS: components["schemas"]["ReportUUID"][];
         reportsSortByValue: "creation" | "lastModification" | "name";
-        SensorItem: {
-            item: components["schemas"]["SensorUUID"];
-            sensors: components["schemas"]["SensorModelHash"];
-            assets?: components["schemas"]["AssetModelHash"];
-        };
         SensorsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["SensorsUUIDS"];
@@ -7218,20 +7130,6 @@ declare interface components {
         };
         projectsSortByValue: "creation" | "lastModification" | "name";
         ProjectsUUIDS: components["schemas"]["ProjectUUID"][];
-        aggregations: components["schemas"]["aggregation"][];
-        AssetConfiguration: string & {
-            _type?: "AssetConfiguration";
-        };
-        ManufacturingPhase: string & {
-            _type?: "ManufacturingPhase";
-        };
-        measures: {
-            date: components["schemas"]["Date"];
-            values: number[];
-            qualities?: number[];
-            labels?: string[][];
-            labelsCount?: number[][];
-        }[];
         Tags: components["schemas"]["LabelValue"][];
         ValuedLabelName: string & {
             _type?: "ValuedLabelName";
@@ -7242,7 +7140,18 @@ declare interface components {
         TimeZone: string & {
             _type?: "TimeZone";
         };
-        EventFields: components["schemas"]["EventField"][];
+        aggregations: components["schemas"]["aggregation"][];
+        measures: {
+            date: components["schemas"]["Date"];
+            values: number[];
+            qualities?: number[];
+            labels?: string[][];
+            labelsCount?: number[][];
+        }[];
+        NonEmptyValuesNames: [
+            components["schemas"]["ValueName"],
+            ...components["schemas"]["ValueName"][]
+        ];
         SensorsEventData: {
             from: components["schemas"]["Date"];
             to: components["schemas"]["Date"];
@@ -7252,6 +7161,20 @@ declare interface components {
             phase?: components["schemas"]["ManufacturingPhase"];
             measures: components["schemas"]["measures"];
         };
+        Date: string & {
+            _type?: "Date";
+        };
+        NonEmptySensorsUUIDS: [
+            components["schemas"]["SensorUUID"],
+            ...components["schemas"]["SensorUUID"][]
+        ];
+        EventFields: components["schemas"]["EventField"][];
+        AssetConfiguration: string & {
+            _type?: "AssetConfiguration";
+        };
+        ManufacturingPhase: string & {
+            _type?: "ManufacturingPhase";
+        };
         RangeMeasures: {
             startDate: components["schemas"]["Date"];
             endDate: components["schemas"]["Date"];
@@ -7259,12 +7182,6 @@ declare interface components {
             quality?: number;
             labels?: string[];
         }[][];
-        ReportUUID: string & {
-            _type?: "ReportUUID";
-        };
-        SearchType: ("user" | "factory" | "project" | "asset" | "application" | "intervention" | "alert" | "report" | "sensor" | "organisation") & {
-            _type?: "SearchType";
-        };
         SearchFilterType: ("factory" | "asset") & {
             _type?: "SearchFilterType";
         };
@@ -7281,24 +7198,36 @@ declare interface components {
             creation: components["schemas"]["Date"];
             lastModification: components["schemas"]["Date"];
         };
+        FactoryUUID: string & {
+            _type?: "FactoryUUID";
+        };
+        ProjectUUID: string & {
+            _type?: "ProjectUUID";
+        };
+        AssetUUID: string & {
+            _type?: "AssetUUID";
+        };
+        ApplicationUUID: string & {
+            _type?: "ApplicationUUID";
+        };
+        InterventionUUID: string & {
+            _type?: "InterventionUUID";
+        };
+        AlertUUID: string & {
+            _type?: "AlertUUID";
+        };
+        ReportUUID: string & {
+            _type?: "ReportUUID";
+        };
+        SensorUUID: string & {
+            _type?: "SensorUUID";
+        };
+        SearchType: ("user" | "factory" | "project" | "asset" | "application" | "intervention" | "alert" | "report" | "sensor" | "organisation") & {
+            _type?: "SearchType";
+        };
         OrganisationsUUIDS: components["schemas"]["OrganisationUUID"][];
         UserMembershipStatus: ("member" | "pending" | "declined" | "cancelled") & {
             _type?: "UserMembershipStatus";
-        };
-        UserModel: {
-            id?: components["schemas"]["UserUUID"];
-            roles?: components["schemas"]["Role"][];
-            password?: string;
-            memberships?: components["schemas"]["UserMembership"][];
-            data: components["schemas"]["UserData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            emailStatus?: components["schemas"]["emailStatus"];
-        };
-        FactoriesItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["FactoriesUUIDS"];
-            factories: components["schemas"]["FactoryModelHash"];
         };
         factoriesSortByValue: "creation" | "lastModification" | "name";
         NotificationsItems: {
@@ -7307,17 +7236,6 @@ declare interface components {
             notifications: components["schemas"]["NotificationModelHash"];
         };
         NotificationTypes: components["schemas"]["NotificationType"][];
-        OrganisationItem: {
-            item: components["schemas"]["OrganisationUUID"];
-            organisations: components["schemas"]["OrganisationModelHash"];
-        };
-        OrganisationModel: {
-            id?: components["schemas"]["OrganisationUUID"];
-            factoriesIds?: components["schemas"]["FactoriesUUIDS"];
-            data: components["schemas"]["OrganisationData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-        };
         AlertsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["AlertsUUIDS"];
@@ -7340,14 +7258,23 @@ declare interface components {
         };
         applicationsSortByValue: "creation" | "lastModification" | "name";
         ApplicationsUUIDS: components["schemas"]["ApplicationUUID"][];
-        FactoryModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["FactoryUUID"];
+        ApplicationModel: {
+            id?: components["schemas"]["ApplicationUUID"];
+            authorId?: components["schemas"]["UserUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
-            rootAssetsIds?: components["schemas"]["AssetsUUIDS"];
-            linkedOrganisationsIds?: components["schemas"]["OrganisationsUUIDS"];
-            data: components["schemas"]["FactoryData"];
+            data: components["schemas"]["ApplicationData"];
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
+            secret?: string;
+        };
+        ApplicationItem: {
+            item: components["schemas"]["ApplicationUUID"];
+            applications: components["schemas"]["ApplicationModelHash"];
+        };
+        FactoriesItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["FactoriesUUIDS"];
+            factories: components["schemas"]["FactoryModelHash"];
         };
         AllPreferencesModel: {
             default: components["schemas"]["DefaultPreferencesModel"];
@@ -7382,25 +7309,81 @@ declare interface components {
             organisations: components["schemas"]["OrganisationModelHash"];
         };
         organisationsSortByValue: "creation" | "lastModification";
+        OrganisationModel: {
+            id?: components["schemas"]["OrganisationUUID"];
+            factoriesIds?: components["schemas"]["FactoriesUUIDS"];
+            data: components["schemas"]["OrganisationData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        OrganisationItem: {
+            item: components["schemas"]["OrganisationUUID"];
+            organisations: components["schemas"]["OrganisationModelHash"];
+        };
+        UserModel: {
+            id?: components["schemas"]["UserUUID"];
+            roles?: components["schemas"]["Role"][];
+            password?: string;
+            memberships?: components["schemas"]["UserMembership"][];
+            data: components["schemas"]["UserData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            emailStatus?: components["schemas"]["emailStatus"];
+        };
         TokenRequestBody: components["schemas"]["PasswordRequestBody"] | components["schemas"]["AuthorizationCodeRequestBody"] | components["schemas"]["ClientCredentialsRequestBody"] | components["schemas"]["RefreshTokenRequestBody"] | components["schemas"]["VerifyTokenRequestBody"] | components["schemas"]["PasswordChangeBody"];
         InputData: components["schemas"]["GroupedInputData"] | components["schemas"]["DenormalizedInputData"];
         ProjectCode: string & {
             _type?: "ProjectCode";
         };
-        SensorModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["SensorUUID"];
-            factoryId?: components["schemas"]["FactoryUUID"];
+        OrganisationUUID: string & {
+            _type?: "OrganisationUUID";
+        };
+        UserOrganisationInvitation: {
+            email: string;
+            givenName: string;
+            familyName: string;
+            membership: components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"];
+        };
+        UserItem: {
+            item: components["schemas"]["UserUUID"];
+            users: components["schemas"]["UserModelHash"];
+        };
+        UserUUID: string & {
+            _type?: "UserUUID";
+        };
+        NotificationUUID: string & {
+            _type?: "NotificationUUID";
+        };
+        ProjectModel: {
+            id?: components["schemas"]["ProjectUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
-            assetId?: components["schemas"]["AssetUUID"];
-            data: components["schemas"]["SensorData"];
-            stats?: components["schemas"]["SensorStats"];
-            inferredType?: components["schemas"]["SensorInferredType"];
-            firstEmission?: components["schemas"]["FirstEmission"];
+            author?: components["schemas"]["UserUUID"];
+            data: components["schemas"]["ProjectData"];
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
-            queries?: {
-                [pattern: string]: components["schemas"]["SensorQuery"];
-            };
+        };
+        ProjectItem: {
+            item: components["schemas"]["ProjectUUID"];
+            projects: components["schemas"]["ProjectModelHash"];
+        };
+        NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
+        EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
+        EventUUID: string & {
+            _type?: "EventUUID";
+        };
+        userFeedback: number;
+        FactoryModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["FactoryUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            rootAssetsIds?: components["schemas"]["AssetsUUIDS"];
+            linkedOrganisationsIds?: components["schemas"]["OrganisationsUUIDS"];
+            data: components["schemas"]["FactoryData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        FactoryItem: {
+            item: components["schemas"]["FactoryUUID"];
+            factories: components["schemas"]["FactoryModelHash"];
         };
         AssetModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["AssetUUID"];
@@ -7419,6 +7402,10 @@ declare interface components {
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
         };
+        AssetItem: {
+            item: components["schemas"]["AssetUUID"];
+            assets: components["schemas"]["AssetModelHash"];
+        };
         InterventionModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["InterventionUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
@@ -7434,21 +7421,14 @@ declare interface components {
             taskStatus?: components["schemas"]["TaskStatus"];
             data: components["schemas"]["InterventionData"];
         };
-        UserOrganisationInvitation: {
-            email: string;
-            givenName: string;
-            familyName: string;
-            membership: components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"];
+        InterventionItem: {
+            item: components["schemas"]["InterventionUUID"];
+            interventions: components["schemas"]["InterventionModelHash"];
+            alerts?: components["schemas"]["AlertModelHash"];
+            images?: components["schemas"]["ImageModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+            users?: components["schemas"]["UserModelHash"];
         };
-        NotificationUUID: string & {
-            _type?: "NotificationUUID";
-        };
-        NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
-        EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
-        EventUUID: string & {
-            _type?: "EventUUID";
-        };
-        userFeedback: number;
         PartialPreferencesModel: {
             displayParentName?: boolean;
             sensorDisplayExternalId?: boolean;
@@ -7461,6 +7441,26 @@ declare interface components {
         };
         PreferenceLevel: ("organisation" | "factory" | "user") & {
             _type?: "PreferenceLevel";
+        };
+        SensorModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["SensorUUID"];
+            factoryId?: components["schemas"]["FactoryUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            assetId?: components["schemas"]["AssetUUID"];
+            data: components["schemas"]["SensorData"];
+            stats?: components["schemas"]["SensorStats"];
+            inferredType?: components["schemas"]["SensorInferredType"];
+            firstEmission?: components["schemas"]["FirstEmission"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            queries?: {
+                [pattern: string]: components["schemas"]["SensorQuery"];
+            };
+        };
+        SensorItem: {
+            item: components["schemas"]["SensorUUID"];
+            sensors: components["schemas"]["SensorModelHash"];
+            assets?: components["schemas"]["AssetModelHash"];
         };
         AlertModelHash: {
             [pattern: string]: components["schemas"]["AlertModel"];
@@ -11263,62 +11263,16 @@ export interface components {
         Image: components["schemas"]["BinaryModel"] | components["schemas"]["BinaryModel"];
     };
     schemas: {
+        AlertStatuses: [
+            components["schemas"]["AlertStatus"],
+            ...components["schemas"]["AlertStatus"][]
+        ];
         AlertUUID: string;
-        ApplicationUUID: string;
-        InterventionUUID: string;
-        ProjectUUID: string;
-        UserUUID: string;
-        OrganisationUUID: string;
-        AlertItem: {
-            item: components["schemas"]["AlertUUID"];
-            alerts: components["schemas"]["AlertModelHash"];
-            interventions?: components["schemas"]["InterventionModelHash"];
-            sensors?: components["schemas"]["SensorModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-            images?: components["schemas"]["ImageModelHash"];
-        };
-        AlertModel: components["schemas"]["SynchronizableItem"] & components["schemas"]["BaseAlertModel"];
-        AttachmentUUID: string;
-        BinaryModel: string;
+        AlertsUUIDS: components["schemas"]["AlertUUID"][];
+        SortDirection: Enums.SortDirection;
         ImageUUID: string;
-        ApplicationModel: {
-            id?: components["schemas"]["ApplicationUUID"];
-            authorId?: components["schemas"]["UserUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            data: components["schemas"]["ApplicationData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            secret?: string;
-        };
-        ApplicationItem: {
-            item: components["schemas"]["ApplicationUUID"];
-            applications: components["schemas"]["ApplicationModelHash"];
-        };
-        ProjectModel: {
-            id?: components["schemas"]["ProjectUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            author?: components["schemas"]["UserUUID"];
-            data: components["schemas"]["ProjectData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-        };
-        ProjectItem: {
-            item: components["schemas"]["ProjectUUID"];
-            projects: components["schemas"]["ProjectModelHash"];
-        };
-        SensorUUID: string;
-        ValueName: string;
-        AlertsStats: components["schemas"]["AlertsStat"][];
-        FactoriesUUIDS: components["schemas"]["FactoryUUID"][];
-        UserItem: {
-            item: components["schemas"]["UserUUID"];
-            users: components["schemas"]["UserModelHash"];
-        };
-        FactoryItem: {
-            item: components["schemas"]["FactoryUUID"];
-            factories: components["schemas"]["FactoryModelHash"];
-        };
-        FactoryUUID: string;
+        ImagesUUIDS: components["schemas"]["ImageUUID"][];
+        alertsSortByValue: Enums.AlertsSortByValue;
         AlertsStat: {
             organisationId: components["schemas"]["OrganisationUUID"];
             stats: {
@@ -11329,261 +11283,74 @@ export interface components {
                 total: number;
             };
         };
-        AssetItem: {
-            item: components["schemas"]["AssetUUID"];
-            assets: components["schemas"]["AssetModelHash"];
+        AlertsStats: components["schemas"]["AlertsStat"][];
+        ApplicationData: {
+            name: string;
+            description: string;
+            allowedScopes: [
+                components["schemas"]["Scope"],
+                ...components["schemas"]["Scope"][]
+            ];
+            allowedGrantTypes: [
+                components["schemas"]["GrantType"],
+                ...components["schemas"]["GrantType"][]
+            ];
+            callbackUrl: string;
+            isActive: boolean;
         };
-        AssetUUID: string;
-        AssetsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["AssetsUUIDS"];
-            assets: components["schemas"]["AssetModelHash"];
+        ApplicationItem: {
+            item: components["schemas"]["ApplicationUUID"];
+            applications: components["schemas"]["ApplicationModelHash"];
         };
-        AssetsUUIDS: components["schemas"]["AssetUUID"][];
-        AssetType: Enums.AssetType;
-        assetsSortByValue: Enums.AssetsSortByValue;
-        SortDirection: Enums.SortDirection;
-        Limit: 10 | 50 | 100 | 500 | 1000;
-        Start: number;
-        EventsItems: {
-            total: number;
-            cursors: {
-                before?: components["schemas"]["Cursor"];
-                since?: components["schemas"]["Cursor"];
-            };
-            items: components["schemas"]["EventsUUIDS"];
-            events: components["schemas"]["EventModelHash"];
-        };
-        AssetConfigurations: components["schemas"]["AssetConfiguration"][];
-        ManufacturingPhases: components["schemas"]["ManufacturingPhase"][];
-        ManufacturingCycles: components["schemas"]["ManufacturingCycle"][];
-        EventsUUIDS: components["schemas"]["EventUUID"][];
-        EventTypes: components["schemas"]["EventType"][];
-        NonEmptySensorsUUIDS: [
-            components["schemas"]["SensorUUID"],
-            ...components["schemas"]["SensorUUID"][]
-        ];
-        NonEmptyValuesNames: [
-            components["schemas"]["ValueName"],
-            ...components["schemas"]["ValueName"][]
-        ];
-        Cursor: string;
-        Size: number;
-        Date: string;
-        InterventionItem: {
-            item: components["schemas"]["InterventionUUID"];
-            interventions: components["schemas"]["InterventionModelHash"];
-            alerts?: components["schemas"]["AlertModelHash"];
-            images?: components["schemas"]["ImageModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-            users?: components["schemas"]["UserModelHash"];
-        };
-        InterventionsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["InterventionsUUIDS"];
-            interventions: components["schemas"]["InterventionModelHash"];
-            alerts?: components["schemas"]["AlertModelHash"];
-            images?: components["schemas"]["ImageModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-            users?: components["schemas"]["UserModelHash"];
-        };
-        InterventionsUUIDS: components["schemas"]["InterventionUUID"][];
-        interventionsSortByValue: Enums.InterventionsSortByValue;
-        ReportsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["ReportsUUIDS"];
-            reports: components["schemas"]["ReportModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-        };
-        ReportsUUIDS: components["schemas"]["ReportUUID"][];
-        reportsSortByValue: Enums.ReportsSortByValue;
-        SensorItem: {
-            item: components["schemas"]["SensorUUID"];
-            sensors: components["schemas"]["SensorModelHash"];
-            assets?: components["schemas"]["AssetModelHash"];
-        };
-        SensorsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["SensorsUUIDS"];
-            sensors: components["schemas"]["SensorModelHash"];
-            assets?: components["schemas"]["AssetModelHash"];
-        };
-        AlertTriggerTypes: components["schemas"]["AlertType"][];
-        SensorsUUIDS: components["schemas"]["SensorUUID"][];
-        sensorsSortByValue: Enums.SensorsSortByValue;
-        TrendItems: {
-            total: number;
-            items: components["schemas"]["UUIDS"];
-            trends: components["schemas"]["TrendModelHash"];
-        };
-        ProjectsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["ProjectsUUIDS"];
-            projects: components["schemas"]["ProjectModelHash"];
-        };
-        projectsSortByValue: Enums.ProjectsSortByValue;
-        ProjectsUUIDS: components["schemas"]["ProjectUUID"][];
-        aggregations: components["schemas"]["aggregation"][];
-        AssetConfiguration: string;
-        ManufacturingPhase: string;
-        measures: {
-            date: components["schemas"]["Date"];
-            values: number[];
-            qualities?: number[];
-            labels?: string[][];
-            labelsCount?: number[][];
-        }[];
-        Tags: components["schemas"]["LabelValue"][];
-        ValuedLabelName: string;
-        LabelValue: string;
-        TimeZone: string;
-        EventFields: components["schemas"]["EventField"][];
-        SensorsEventData: {
-            from: components["schemas"]["Date"];
-            to: components["schemas"]["Date"];
-            sensorsIds: components["schemas"]["NonEmptySensorsUUIDS"];
-            eventFields: components["schemas"]["EventFields"];
-            configuration?: components["schemas"]["AssetConfiguration"];
-            phase?: components["schemas"]["ManufacturingPhase"];
-            measures: components["schemas"]["measures"];
-        };
-        RangeMeasures: {
-            startDate: components["schemas"]["Date"];
-            endDate: components["schemas"]["Date"];
-            value: number;
-            quality?: number;
-            labels?: string[];
-        }[][];
-        ReportUUID: string;
-        SearchType: Enums.SearchType;
-        SearchFilterType: Enums.SearchFilterType;
-        UUID: string;
-        ReportModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["ReportUUID"];
-            attachmentId?: components["schemas"]["AttachmentUUID"];
+        ApplicationModel: {
+            id?: components["schemas"]["ApplicationUUID"];
+            authorId?: components["schemas"]["UserUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
-            authorId: components["schemas"]["UserUUID"];
-            factoryId: components["schemas"]["FactoryUUID"];
-            data: components["schemas"]["ReportData"];
-            creation: components["schemas"]["Date"];
-            lastModification: components["schemas"]["Date"];
-        };
-        OrganisationsUUIDS: components["schemas"]["OrganisationUUID"][];
-        UserMembershipStatus: Enums.UserMembershipStatus;
-        UserModel: {
-            id?: components["schemas"]["UserUUID"];
-            roles?: components["schemas"]["Role"][];
-            password?: string;
-            memberships?: components["schemas"]["UserMembership"][];
-            data: components["schemas"]["UserData"];
+            data: components["schemas"]["ApplicationData"];
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
-            emailStatus?: components["schemas"]["emailStatus"];
+            secret?: string;
         };
-        FactoriesItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["FactoriesUUIDS"];
-            factories: components["schemas"]["FactoryModelHash"];
+        ApplicationUUID: string;
+        ApplicationModelHash: {
+            [pattern: string]: components["schemas"]["ApplicationModel"];
         };
-        factoriesSortByValue: Enums.FactoriesSortByValue;
-        NotificationsItems: {
-            total: components["schemas"]["Total"];
-            items: components["schemas"]["NotificationsUUIDS"];
-            notifications: components["schemas"]["NotificationModelHash"];
-        };
-        NotificationTypes: components["schemas"]["NotificationType"][];
-        OrganisationItem: {
-            item: components["schemas"]["OrganisationUUID"];
-            organisations: components["schemas"]["OrganisationModelHash"];
-        };
-        OrganisationModel: {
-            id?: components["schemas"]["OrganisationUUID"];
-            factoriesIds?: components["schemas"]["FactoriesUUIDS"];
-            data: components["schemas"]["OrganisationData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-        };
-        AlertsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["AlertsUUIDS"];
-            alerts: components["schemas"]["AlertModelHash"];
-            interventions?: components["schemas"]["InterventionModelHash"];
-            sensors?: components["schemas"]["SensorModelHash"];
-            attachments?: components["schemas"]["AttachmentModelHash"];
-            images?: components["schemas"]["ImageModelHash"];
-        };
-        AlertsUUIDS: components["schemas"]["AlertUUID"][];
-        AlertStatuses: [
-            components["schemas"]["AlertStatus"],
-            ...components["schemas"]["AlertStatus"][]
-        ];
-        alertsSortByValue: Enums.AlertsSortByValue;
         ApplicationsItems: {
             total?: components["schemas"]["Total"];
             items: components["schemas"]["ApplicationsUUIDS"];
             applications: components["schemas"]["ApplicationModelHash"];
         };
-        applicationsSortByValue: Enums.ApplicationsSortByValue;
         ApplicationsUUIDS: components["schemas"]["ApplicationUUID"][];
-        FactoryModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["FactoryUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            rootAssetsIds?: components["schemas"]["AssetsUUIDS"];
-            linkedOrganisationsIds?: components["schemas"]["OrganisationsUUIDS"];
-            data: components["schemas"]["FactoryData"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
+        GrantType: Enums.GrantType;
+        Scope: Enums.Scope;
+        applicationsSortByValue: Enums.ApplicationsSortByValue;
+        AssetAreaData: {
+            type: "area";
         };
-        AllPreferencesModel: {
-            default: components["schemas"]["DefaultPreferencesModel"];
-            organisation: components["schemas"]["PartialPreferencesModel"];
-            factory?: components["schemas"]["PartialPreferencesModel"];
-            user: components["schemas"]["PartialPreferencesModel"];
+        AssetBaseData: {
+            name: string;
+            tags: components["schemas"]["Tags"];
+            parentId?: components["schemas"]["AssetUUID"];
         };
-        TasksModel: components["schemas"]["TaskModel"][];
-        UsersUUIDS: components["schemas"]["UserUUID"][];
-        TasksTypes: [
-            components["schemas"]["TaskType"],
-            ...components["schemas"]["TaskType"][]
-        ];
-        TasksStatuses: [
-            components["schemas"]["TaskStatus"],
-            ...components["schemas"]["TaskStatus"][]
-        ];
-        Priorities: [
-            components["schemas"]["Priority"],
-            ...components["schemas"]["Priority"][]
-        ];
-        tasksSortByValue: Enums.TasksSortByValue;
-        UsersItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["UsersUUIDS"];
-            users: components["schemas"]["UserModelHash"];
+        AssetConfiguration: string;
+        AssetData: components["schemas"]["AssetBaseData"] & (components["schemas"]["AssetAreaData"] | components["schemas"]["AssetLineData"] | components["schemas"]["AssetMachineData"] | components["schemas"]["AssetPartData"]);
+        AssetItem: {
+            item: components["schemas"]["AssetUUID"];
+            assets: components["schemas"]["AssetModelHash"];
         };
-        usersSortByValue: Enums.UsersSortByValue;
-        OrganisationsItems: {
-            total?: components["schemas"]["Total"];
-            items: components["schemas"]["OrganisationsUUIDS"];
-            organisations: components["schemas"]["OrganisationModelHash"];
-        };
-        organisationsSortByValue: Enums.OrganisationsSortByValue;
-        TokenRequestBody: components["schemas"]["PasswordRequestBody"] | components["schemas"]["AuthorizationCodeRequestBody"] | components["schemas"]["ClientCredentialsRequestBody"] | components["schemas"]["RefreshTokenRequestBody"] | components["schemas"]["VerifyTokenRequestBody"] | components["schemas"]["PasswordChangeBody"];
-        InputData: components["schemas"]["GroupedInputData"] | components["schemas"]["DenormalizedInputData"];
-        ProjectCode: string;
-        SensorModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["SensorUUID"];
-            factoryId?: components["schemas"]["FactoryUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            assetId?: components["schemas"]["AssetUUID"];
-            data: components["schemas"]["SensorData"];
-            stats?: components["schemas"]["SensorStats"];
-            inferredType?: components["schemas"]["SensorInferredType"];
-            firstEmission?: components["schemas"]["FirstEmission"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            queries?: {
-                [pattern: string]: components["schemas"]["SensorQuery"];
+        AssetLineData: {
+            type: "line";
+            configurations: {
+                [pattern: string]: {
+                    machinesTree: components["schemas"]["LineMachineTree"];
+                };
             };
+        };
+        AssetMachineData: {
+            type: "machine";
+        };
+        AssetPartData: {
+            type: "part";
         };
         AssetModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["AssetUUID"];
@@ -11602,89 +11369,17 @@ export interface components {
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
         };
-        InterventionModel: components["schemas"]["SynchronizableItem"] & {
-            id?: components["schemas"]["InterventionUUID"];
-            organisationId?: components["schemas"]["OrganisationUUID"];
-            factoryId?: components["schemas"]["FactoryUUID"];
-            imagesIds?: components["schemas"]["ImagesUUIDS"];
-            attachmentsIds?: components["schemas"]["AttachmentsUUIDS"];
-            authorId?: components["schemas"]["UserUUID"];
-            creation?: components["schemas"]["Date"];
-            lastModification?: components["schemas"]["Date"];
-            qualifiedAt?: components["schemas"]["Date"];
-            reportedAt?: components["schemas"]["Date"];
-            archivedAt?: components["schemas"]["Date"];
-            taskStatus?: components["schemas"]["TaskStatus"];
-            data: components["schemas"]["InterventionData"];
-        };
-        UserOrganisationInvitation: {
-            email: string;
-            givenName: string;
-            familyName: string;
-            membership: components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"];
-        };
-        NotificationUUID: string;
-        NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
-        EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
-        EventUUID: string;
-        userFeedback: number;
-        PartialPreferencesModel: {
-            displayParentName?: boolean;
-            sensorDisplayExternalId?: boolean;
-            sensorDisplaySerie?: components["schemas"]["SensorDisplaySerie"];
-            useFactoryTimeZone?: boolean;
-            showGraphLabels?: boolean;
-            showGraphConfigurations?: boolean;
-            showGraphCycles?: boolean;
-            showGraphPhases?: boolean;
-        };
-        PreferenceLevel: Enums.PreferenceLevel;
-        ImagesUUIDS: components["schemas"]["ImageUUID"][];
-        ApplicationData: {
-            name: string;
-            description: string;
-            allowedScopes: [
-                components["schemas"]["Scope"],
-                ...components["schemas"]["Scope"][]
-            ];
-            allowedGrantTypes: [
-                components["schemas"]["GrantType"],
-                ...components["schemas"]["GrantType"][]
-            ];
-            callbackUrl: string;
-            isActive: boolean;
-        };
-        ApplicationModelHash: {
-            [pattern: string]: components["schemas"]["ApplicationModel"];
-        };
-        GrantType: Enums.GrantType;
-        Scope: Enums.Scope;
-        AssetAreaData: {
-            type: "area";
-        };
-        AssetBaseData: {
-            name: string;
-            tags: components["schemas"]["Tags"];
-            parentId?: components["schemas"]["AssetUUID"];
-        };
-        AssetData: components["schemas"]["AssetBaseData"] & (components["schemas"]["AssetAreaData"] | components["schemas"]["AssetLineData"] | components["schemas"]["AssetMachineData"] | components["schemas"]["AssetPartData"]);
-        AssetLineData: {
-            type: "line";
-            configurations: {
-                [pattern: string]: {
-                    machinesTree: components["schemas"]["LineMachineTree"];
-                };
-            };
-        };
-        AssetMachineData: {
-            type: "machine";
-        };
-        AssetPartData: {
-            type: "part";
-        };
+        AssetType: Enums.AssetType;
+        AssetUUID: string;
         AssetModelHash: {
             [pattern: string]: components["schemas"]["AssetModel"];
         };
+        AssetsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["AssetsUUIDS"];
+            assets: components["schemas"]["AssetModelHash"];
+        };
+        AssetsUUIDS: components["schemas"]["AssetUUID"][];
         LineMachineTree: {
             nodes?: components["schemas"]["AssetUUID"][];
             edges?: {
@@ -11707,6 +11402,9 @@ export interface components {
         };
         LineMetricsStatus: Enums.LineMetricsStatus;
         ManufacturingCycle: string;
+        ManufacturingPhase: string;
+        ManufacturingPhases: components["schemas"]["ManufacturingPhase"][];
+        assetsSortByValue: Enums.AssetsSortByValue;
         UniqueNonEmptyAssetsUUIDS: components["schemas"]["AssetUUID"][];
         AnomalyEventModel: {
             id: components["schemas"]["EventUUID"];
@@ -11721,6 +11419,7 @@ export interface components {
             };
         };
         AnomalyEventType: "anomaly";
+        AssetConfigurations: components["schemas"]["AssetConfiguration"][];
         AssetLabels: {
             values?: components["schemas"]["ValuedLabels"];
             tags?: components["schemas"]["Tags"];
@@ -11733,6 +11432,7 @@ export interface components {
             ancestors?: components["schemas"]["AssetLabels"];
             tags?: components["schemas"]["Tags"];
         };
+        Cursor: string;
         CycleEventModel: {
             id: components["schemas"]["EventUUID"];
             type: components["schemas"]["CycleEventType"];
@@ -11793,10 +11493,23 @@ export interface components {
             };
         };
         DSPADPredictEventType: "dspad_predict";
+        EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
         EventType: Enums.EventType;
+        EventTypes: components["schemas"]["EventType"][];
+        EventUUID: string;
         EventModelHash: {
             [pattern: string]: components["schemas"]["EventModel"];
         };
+        EventsItems: {
+            total: number;
+            cursors: {
+                before?: components["schemas"]["Cursor"];
+                since?: components["schemas"]["Cursor"];
+            };
+            items: components["schemas"]["EventsUUIDS"];
+            events: components["schemas"]["EventModelHash"];
+        };
+        EventsUUIDS: components["schemas"]["EventUUID"][];
         ForecastLearnEventModel: {
             id: components["schemas"]["EventUUID"];
             type: components["schemas"]["ForecastLearnEventType"];
@@ -11815,6 +11528,7 @@ export interface components {
             };
         };
         ForecastPredictEventType: "univariate_forecast_predict";
+        ManufacturingCycles: components["schemas"]["ManufacturingCycle"][];
         NanoId: string;
         PhaseEventModel: {
             id: components["schemas"]["EventUUID"];
@@ -11867,9 +11581,12 @@ export interface components {
             };
         };
         SegmentedAlertDetectionPredictEventType: "segmented_anomaly_detection_predict";
+        Size: number;
+        userFeedback: number;
         usersFeedback: {
             [pattern: string]: components["schemas"]["userFeedback"];
         };
+        ValuedLabelName: string;
         ValuedLabels: {
             [pattern: string]: components["schemas"]["LabelValue"];
         };
@@ -11877,12 +11594,33 @@ export interface components {
         FactoryModelHash: {
             [pattern: string]: components["schemas"]["FactoryModel"];
         };
+        FactoriesItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["FactoriesUUIDS"];
+            factories: components["schemas"]["FactoryModelHash"];
+        };
+        FactoriesUUIDS: components["schemas"]["FactoryUUID"][];
         FactoryData: {
             name: string;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
         };
+        FactoryItem: {
+            item: components["schemas"]["FactoryUUID"];
+            factories: components["schemas"]["FactoryModelHash"];
+        };
+        FactoryModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["FactoryUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            rootAssetsIds?: components["schemas"]["AssetsUUIDS"];
+            linkedOrganisationsIds?: components["schemas"]["OrganisationsUUIDS"];
+            data: components["schemas"]["FactoryData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        FactoryUUID: string;
         NoSyncMode: "none";
+        factoriesSortByValue: Enums.FactoriesSortByValue;
         SyncMode: components["schemas"]["NoSyncMode"] | components["schemas"]["DoSyncMode"];
         SynchronizableItem: {
             syncMode?: components["schemas"]["NoSyncMode"];
@@ -11897,9 +11635,27 @@ export interface components {
             viewedAt?: components["schemas"]["Date"];
         }[];
         AlertCode: components["schemas"]["StandardAlertCode"] | components["schemas"]["CustomAlertCode"];
+        AlertItem: {
+            item: components["schemas"]["AlertUUID"];
+            alerts: components["schemas"]["AlertModelHash"];
+            interventions?: components["schemas"]["InterventionModelHash"];
+            sensors?: components["schemas"]["SensorModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+            images?: components["schemas"]["ImageModelHash"];
+        };
+        AlertModel: components["schemas"]["SynchronizableItem"] & components["schemas"]["BaseAlertModel"];
         AlertStatus: Enums.AlertStatus;
         AlertModelHash: {
             [pattern: string]: components["schemas"]["AlertModel"];
+        };
+        AlertsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["AlertsUUIDS"];
+            alerts: components["schemas"]["AlertModelHash"];
+            interventions?: components["schemas"]["InterventionModelHash"];
+            sensors?: components["schemas"]["SensorModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+            images?: components["schemas"]["ImageModelHash"];
         };
         BaseAlertData: {
             details: components["schemas"]["NoAlertDetailsModel"] | components["schemas"]["RealtimeAlertDetailsModel"] | components["schemas"]["SilentSensorsAlertDetailsModel"];
@@ -11972,6 +11728,14 @@ export interface components {
             qualification?: components["schemas"]["InterventionQualification"];
             report?: components["schemas"]["InterventionReport"];
         };
+        InterventionItem: {
+            item: components["schemas"]["InterventionUUID"];
+            interventions: components["schemas"]["InterventionModelHash"];
+            alerts?: components["schemas"]["AlertModelHash"];
+            images?: components["schemas"]["ImageModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+            users?: components["schemas"]["UserModelHash"];
+        };
         InterventionQualification: {
             usersFeedback: components["schemas"]["usersFeedback"];
             alertsIds: components["schemas"]["NonEmptyAlertsUUIDS"];
@@ -11984,10 +11748,36 @@ export interface components {
         } | {
             comment: string;
         };
+        InterventionModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["InterventionUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            factoryId?: components["schemas"]["FactoryUUID"];
+            imagesIds?: components["schemas"]["ImagesUUIDS"];
+            attachmentsIds?: components["schemas"]["AttachmentsUUIDS"];
+            authorId?: components["schemas"]["UserUUID"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            qualifiedAt?: components["schemas"]["Date"];
+            reportedAt?: components["schemas"]["Date"];
+            archivedAt?: components["schemas"]["Date"];
+            taskStatus?: components["schemas"]["TaskStatus"];
+            data: components["schemas"]["InterventionData"];
+        };
         InterventionType: Enums.InterventionType;
+        InterventionUUID: string;
         InterventionModelHash: {
             [pattern: string]: components["schemas"]["InterventionModel"];
         };
+        InterventionsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["InterventionsUUIDS"];
+            interventions: components["schemas"]["InterventionModelHash"];
+            alerts?: components["schemas"]["AlertModelHash"];
+            images?: components["schemas"]["ImageModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+            users?: components["schemas"]["UserModelHash"];
+        };
+        InterventionsUUIDS: components["schemas"]["InterventionUUID"][];
         NoAlertDetailsModel: object;
         NonEmptyAlertsUUIDS: [
             components["schemas"]["AlertUUID"],
@@ -12007,10 +11797,16 @@ export interface components {
             totalSilence: boolean;
             sensorsIds: components["schemas"]["SensorsUUIDS"];
         };
+        interventionsSortByValue: Enums.InterventionsSortByValue;
         StandardAlertCode: Enums.StandardAlertCode;
         MockName: string;
         TrendModelHash: {
             [pattern: string]: components["schemas"]["TrendModel"];
+        };
+        TrendItems: {
+            total: number;
+            items: components["schemas"]["UUIDS"];
+            trends: components["schemas"]["TrendModelHash"];
         };
         TrendModel: {
             id?: components["schemas"]["UUID"];
@@ -12020,16 +11816,40 @@ export interface components {
             from?: components["schemas"]["Date"];
             to?: components["schemas"]["Date"];
         };
+        NonEmptyValuesNames: [
+            components["schemas"]["ValueName"],
+            ...components["schemas"]["ValueName"][]
+        ];
         OrganisationData: {
             name: string;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
         };
+        OrganisationItem: {
+            item: components["schemas"]["OrganisationUUID"];
+            organisations: components["schemas"]["OrganisationModelHash"];
+        };
+        OrganisationModel: {
+            id?: components["schemas"]["OrganisationUUID"];
+            factoriesIds?: components["schemas"]["FactoriesUUIDS"];
+            data: components["schemas"]["OrganisationData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        OrganisationUUID: string;
         OrganisationModelHash: {
             [pattern: string]: components["schemas"]["OrganisationModel"];
         };
+        OrganisationsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["OrganisationsUUIDS"];
+            organisations: components["schemas"]["OrganisationModelHash"];
+        };
+        OrganisationsUUIDS: components["schemas"]["OrganisationUUID"][];
+        organisationsSortByValue: Enums.OrganisationsSortByValue;
         DataTopic: string;
         MLAlgorithms: ("pipelines" | "custom")[];
+        ProjectCode: string;
         ProjectData: {
             name: string;
             description: string;
@@ -12057,9 +11877,29 @@ export interface components {
             batchSize: number;
             delay: number;
         };
+        ProjectItem: {
+            item: components["schemas"]["ProjectUUID"];
+            projects: components["schemas"]["ProjectModelHash"];
+        };
+        ProjectModel: {
+            id?: components["schemas"]["ProjectUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            author?: components["schemas"]["UserUUID"];
+            data: components["schemas"]["ProjectData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+        };
+        ProjectUUID: string;
         ProjectModelHash: {
             [pattern: string]: components["schemas"]["ProjectModel"];
         };
+        ProjectsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["ProjectsUUIDS"];
+            projects: components["schemas"]["ProjectModelHash"];
+        };
+        ProjectsUUIDS: components["schemas"]["ProjectUUID"][];
+        projectsSortByValue: Enums.ProjectsSortByValue;
         AttachmentModel: components["schemas"]["SynchronizableItem"] & {
             id: components["schemas"]["AttachmentUUID"];
             authorId?: components["schemas"]["UserUUID"];
@@ -12077,6 +11917,7 @@ export interface components {
             lastModification?: components["schemas"]["Date"];
         };
         AttachmentScope: Enums.AttachmentScope;
+        AttachmentUUID: string;
         AttachmentModelHash: {
             [pattern: string]: components["schemas"]["AttachmentModel"];
         };
@@ -12090,9 +11931,28 @@ export interface components {
             reports: components["schemas"]["ReportModelHash"];
             attachments?: components["schemas"]["AttachmentModelHash"];
         };
+        ReportModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["ReportUUID"];
+            attachmentId?: components["schemas"]["AttachmentUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            authorId: components["schemas"]["UserUUID"];
+            factoryId: components["schemas"]["FactoryUUID"];
+            data: components["schemas"]["ReportData"];
+            creation: components["schemas"]["Date"];
+            lastModification: components["schemas"]["Date"];
+        };
+        ReportUUID: string;
         ReportModelHash: {
             [pattern: string]: components["schemas"]["ReportModel"];
         };
+        ReportsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["ReportsUUIDS"];
+            reports: components["schemas"]["ReportModelHash"];
+            attachments?: components["schemas"]["AttachmentModelHash"];
+        };
+        ReportsUUIDS: components["schemas"]["ReportUUID"][];
+        reportsSortByValue: Enums.ReportsSortByValue;
         AlertTrigger: {
             id: components["schemas"]["AlertTriggerUUID"];
             name: string;
@@ -12100,6 +11960,7 @@ export interface components {
         } & (components["schemas"]["SilenceAlertTrigger"] | components["schemas"]["RealtimeAlertTrigger"]);
         AlertTriggerUUID: string;
         AlertType: Enums.AlertType;
+        AlertTriggerTypes: components["schemas"]["AlertType"][];
         AlertsTriggersUUIDS: components["schemas"]["AlertTriggerUUID"][];
         DataSensorSerieSource: {
             sourceType: "data";
@@ -12179,6 +12040,11 @@ export interface components {
             };
         };
         SensorDataType: Enums.SensorType;
+        SensorItem: {
+            item: components["schemas"]["SensorUUID"];
+            sensors: components["schemas"]["SensorModelHash"];
+            assets?: components["schemas"]["AssetModelHash"];
+        };
         SensorQuery: {
             aggregationType: Enums.AggregationType;
             template: string;
@@ -12188,6 +12054,21 @@ export interface components {
                 value: number;
             };
             timeZone?: components["schemas"]["TimeZone"];
+        };
+        SensorModel: components["schemas"]["SynchronizableItem"] & {
+            id?: components["schemas"]["SensorUUID"];
+            factoryId?: components["schemas"]["FactoryUUID"];
+            organisationId?: components["schemas"]["OrganisationUUID"];
+            assetId?: components["schemas"]["AssetUUID"];
+            data: components["schemas"]["SensorData"];
+            stats?: components["schemas"]["SensorStats"];
+            inferredType?: components["schemas"]["SensorInferredType"];
+            firstEmission?: components["schemas"]["FirstEmission"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            queries?: {
+                [pattern: string]: components["schemas"]["SensorQuery"];
+            };
         };
         SensorSerie: {
             name: components["schemas"]["ValueName"];
@@ -12223,6 +12104,7 @@ export interface components {
             maxMin: number;
             minMax: number;
         };
+        SensorUUID: string;
         SensorVariable: string;
         SensorVariables: {
             [pattern: string]: (number | string);
@@ -12230,20 +12112,51 @@ export interface components {
         SensorModelHash: {
             [pattern: string]: components["schemas"]["SensorModel"];
         };
+        SensorsItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["SensorsUUIDS"];
+            sensors: components["schemas"]["SensorModelHash"];
+            assets?: components["schemas"]["AssetModelHash"];
+        };
+        SensorsUUIDS: components["schemas"]["SensorUUID"][];
         SilenceAlertTrigger: {
             type: "silence";
             duration: number;
         };
+        sensorsSortByValue: Enums.SensorsSortByValue;
         aggregation: Enums.Aggregation;
+        aggregations: components["schemas"]["aggregation"][];
         granularity: Enums.Granularity;
+        measures: {
+            date: components["schemas"]["Date"];
+            values: number[];
+            qualities?: number[];
+            labels?: string[][];
+            labelsCount?: number[][];
+        }[];
+        NonEmptySensorsUUIDS: [
+            components["schemas"]["SensorUUID"],
+            ...components["schemas"]["SensorUUID"][]
+        ];
         EventField: Enums.EventField;
+        EventFields: components["schemas"]["EventField"][];
         SensorsMLData: {
             name?: string;
             labels?: string[];
             timestamp?: string[];
             data?: (string | number | string[])[][];
         }[];
+        ValueName: string;
         ValuesNames: components["schemas"]["ValueName"][];
+        SensorsEventData: {
+            from: components["schemas"]["Date"];
+            to: components["schemas"]["Date"];
+            sensorsIds: components["schemas"]["NonEmptySensorsUUIDS"];
+            eventFields: components["schemas"]["EventFields"];
+            configuration?: components["schemas"]["AssetConfiguration"];
+            phase?: components["schemas"]["ManufacturingPhase"];
+            measures: components["schemas"]["measures"];
+        };
         EventRangeData: {
             from: components["schemas"]["Date"];
             to: components["schemas"]["Date"];
@@ -12253,6 +12166,18 @@ export interface components {
             phase?: components["schemas"]["ManufacturingPhase"];
             measures: components["schemas"]["RangeMeasures"];
         };
+        RangeMeasures: {
+            startDate: components["schemas"]["Date"];
+            endDate: components["schemas"]["Date"];
+            value: number;
+            quality?: number;
+            labels?: string[];
+        }[][];
+        Priorities: [
+            components["schemas"]["Priority"],
+            ...components["schemas"]["Priority"][]
+        ];
+        tasksSortByValue: Enums.TasksSortByValue;
         TaskModel: {
             status: components["schemas"]["TaskStatus"];
             priority?: components["schemas"]["Priority"];
@@ -12267,7 +12192,18 @@ export interface components {
             type: "intervention";
         });
         TaskStatus: Enums.TaskStatus;
+        TasksStatuses: [
+            components["schemas"]["TaskStatus"],
+            ...components["schemas"]["TaskStatus"][]
+        ];
         TaskType: Enums.TaskType;
+        TasksTypes: [
+            components["schemas"]["TaskType"],
+            ...components["schemas"]["TaskType"][]
+        ];
+        TasksModel: components["schemas"]["TaskModel"][];
+        SearchFilterType: Enums.SearchFilterType;
+        SearchType: Enums.SearchType;
         MembershipCancelledNotification: components["schemas"]["CommonNotification"] & {
             type: components["schemas"]["MembershipCancelledEventType"];
             eventData: components["schemas"]["MembershipCancelledEventData"];
@@ -12383,8 +12319,14 @@ export interface components {
         };
         NotificationModel: components["schemas"]["UserCreatedNotification"] | components["schemas"]["UserUpdatedNotification"] | components["schemas"]["AlertNotification"] | components["schemas"]["AssetNotification"] | components["schemas"]["ApplicationNotification"] | components["schemas"]["InterventionNotification"] | components["schemas"]["ReportNotification"] | components["schemas"]["SensorNotification"] | components["schemas"]["FactoryNotification"] | components["schemas"]["ProjectNotification"] | components["schemas"]["AlgorithmModelUpdatedNotification"] | components["schemas"]["OrganisationNotification"] | components["schemas"]["OrganisationUserUpdatedNotification"] | components["schemas"]["OrganisationPreferencesUpsertedNotification"] | components["schemas"]["SensorSeriesDeletedNotification"] | components["schemas"]["PasswordChangeRequestedNotification"] | components["schemas"]["EmailStatusUpdatedNotification"] | components["schemas"]["UserFeedbackUpdatedNotification"] | components["schemas"]["UserInvitedInOrganisationNotification"] | components["schemas"]["MembershipCancelledEventSchema"] | components["schemas"]["VirtualSensorComputeRequestedNotification"];
         NotificationType: Enums.NotificationType;
+        NotificationTypes: components["schemas"]["NotificationType"][];
         NotificationModelHash: {
             [pattern: string]: components["schemas"]["NotificationModel"];
+        };
+        NotificationsItems: {
+            total: components["schemas"]["Total"];
+            items: components["schemas"]["NotificationsUUIDS"];
+            notifications: components["schemas"]["NotificationModelHash"];
         };
         OrganisationDeletedEventType: "ORGANISATION_DELETED";
         OrganisationEventData: {
@@ -12530,6 +12472,12 @@ export interface components {
             type: components["schemas"]["VirtualSensorComputeRequestedEventType"];
             eventData: components["schemas"]["VirtualSensorComputeRequestedEventData"];
         };
+        AllPreferencesModel: {
+            default: components["schemas"]["DefaultPreferencesModel"];
+            organisation: components["schemas"]["PartialPreferencesModel"];
+            factory?: components["schemas"]["PartialPreferencesModel"];
+            user: components["schemas"]["PartialPreferencesModel"];
+        };
         DefaultPreferencesModel: {
             displayParentName: boolean;
             sensorDisplayExternalId: boolean;
@@ -12540,7 +12488,18 @@ export interface components {
             showGraphCycles: boolean;
             showGraphPhases: boolean;
         };
+        PartialPreferencesModel: {
+            displayParentName?: boolean;
+            sensorDisplayExternalId?: boolean;
+            sensorDisplaySerie?: components["schemas"]["SensorDisplaySerie"];
+            useFactoryTimeZone?: boolean;
+            showGraphLabels?: boolean;
+            showGraphConfigurations?: boolean;
+            showGraphCycles?: boolean;
+            showGraphPhases?: boolean;
+        };
         SensorDisplaySerie: Enums.SensorDisplaySerie;
+        Date: string;
         emailStatus: Enums.EmailStatus;
         FactoryScopedUserOrganisationMembership: {
             roles: components["schemas"]["UserOrganisationRoles"];
@@ -12555,7 +12514,11 @@ export interface components {
             roles: components["schemas"]["UserFactoryRoles"];
         };
         Locale: string;
+        Limit: 10 | 50 | 100 | 500 | 1000;
+        Start: number;
         Role: Enums.Role;
+        usersSortByValue: Enums.UsersSortByValue;
+        TimeZone: string;
         Total: number;
         UserData: {
             email: string;
@@ -12571,19 +12534,42 @@ export interface components {
             "manager" | "technician",
             ...("manager" | "technician")[]
         ];
+        UserItem: {
+            item: components["schemas"]["UserUUID"];
+            users: components["schemas"]["UserModelHash"];
+        };
         UserMembership: (components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"]) & {
             id: components["schemas"]["OrganisationUUID"];
             status: components["schemas"]["UserMembershipStatus"];
             lastInvitationDate: components["schemas"]["Date"];
             canReinvite?: boolean;
         };
+        UserMembershipStatus: Enums.UserMembershipStatus;
         UserOrganisationRoles: [
             "member",
             ..."member"[]
         ];
+        UserModel: {
+            id?: components["schemas"]["UserUUID"];
+            roles?: components["schemas"]["Role"][];
+            password?: string;
+            memberships?: components["schemas"]["UserMembership"][];
+            data: components["schemas"]["UserData"];
+            creation?: components["schemas"]["Date"];
+            lastModification?: components["schemas"]["Date"];
+            emailStatus?: components["schemas"]["emailStatus"];
+        };
+        UserUUID: string;
         UserModelHash: {
             [pattern: string]: components["schemas"]["UserModel"];
         };
+        UsersItems: {
+            total?: components["schemas"]["Total"];
+            items: components["schemas"]["UsersUUIDS"];
+            users: components["schemas"]["UserModelHash"];
+        };
+        UsersUUIDS: components["schemas"]["UserUUID"][];
+        UUID: string;
         UUIDS: components["schemas"]["UUID"][];
         AlgorithmRun: {
             projectCode: components["schemas"]["ProjectCode"];
@@ -12657,6 +12643,7 @@ export interface components {
             refresh_token: string;
             scope?: string;
         };
+        TokenRequestBody: components["schemas"]["PasswordRequestBody"] | components["schemas"]["AuthorizationCodeRequestBody"] | components["schemas"]["ClientCredentialsRequestBody"] | components["schemas"]["RefreshTokenRequestBody"] | components["schemas"]["VerifyTokenRequestBody"] | components["schemas"]["PasswordChangeBody"];
         VerifyTokenRequestBody: {
             grant_type: "verify_token";
             verify_token: components["schemas"]["VerifyToken"];
@@ -12680,8 +12667,18 @@ export interface components {
                 labels?: components["schemas"]["Tags"];
             }[];
         };
+        InputData: components["schemas"]["GroupedInputData"] | components["schemas"]["DenormalizedInputData"];
+        LabelValue: string;
+        Tags: components["schemas"]["LabelValue"][];
         ValuePrecision: number;
         SendGridEventType: Enums.SendGridEventType;
+        UserOrganisationInvitation: {
+            email: string;
+            givenName: string;
+            familyName: string;
+            membership: components["schemas"]["FactoryScopedUserOrganisationMembership"] | components["schemas"]["GlobalUserOrganisationMembership"];
+        };
+        BinaryModel: string;
         AnomalyType: Enums.AnomalyType;
         MLContext: {
             [pattern: string]: unknown;
@@ -12818,6 +12815,8 @@ export interface components {
             timestamp: components["schemas"]["Timestamp"];
             data: components["schemas"]["MembershipCancelledEventData"];
         };
+        NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
+        NotificationUUID: string;
         NotificationsUUIDS: components["schemas"]["NotificationUUID"][];
         OrganisationDeletedEvent: {
             id: components["schemas"]["NotificationUUID"];
@@ -12921,6 +12920,7 @@ export interface components {
             timestamp: components["schemas"]["Timestamp"];
             data: components["schemas"]["VirtualSensorComputeRequestedEventData"];
         };
+        PreferenceLevel: Enums.PreferenceLevel;
     };
 }
 export namespace Enums {
@@ -12936,67 +12936,9 @@ export namespace Enums {
         UnsupportedGrantType = "unsupported_grant_type",
         InvalidScope = "invalid_scope"
     }
-    export enum AssetType {
-        Area = "area",
-        Line = "line",
-        Machine = "machine",
-        Part = "part"
-    }
-    export enum AssetsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
-    }
     export enum SortDirection {
         Asc = "asc",
         Desc = "desc"
-    }
-    export enum InterventionsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Priority = "priority"
-    }
-    export enum ReportsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
-    }
-    export enum SensorsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
-    }
-    export enum ProjectsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
-    }
-    export enum SearchType {
-        User = "user",
-        Factory = "factory",
-        Project = "project",
-        Asset = "asset",
-        Application = "application",
-        Intervention = "intervention",
-        Alert = "alert",
-        Report = "report",
-        Sensor = "sensor",
-        Organisation = "organisation"
-    }
-    export enum SearchFilterType {
-        Factory = "factory",
-        Asset = "asset"
-    }
-    export enum UserMembershipStatus {
-        Member = "member",
-        Pending = "pending",
-        Declined = "declined",
-        Cancelled = "cancelled"
-    }
-    export enum FactoriesSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
     }
     export enum AlertsSortByValue {
         Severity = "severity",
@@ -13005,46 +12947,6 @@ export namespace Enums {
         StartAt = "startAt",
         Creation = "creation",
         LastModification = "lastModification"
-    }
-    export enum ApplicationsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
-    }
-    export enum TasksSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification"
-    }
-    export enum UsersSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification",
-        Name = "name"
-    }
-    export enum OrganisationsSortByValue {
-        Creation = "creation",
-        LastModification = "lastModification"
-    }
-    export enum PowerState {
-        Unknown = "unknown",
-        On = "on",
-        Off = "off"
-    }
-    export enum OperatingState {
-        Unknown = "unknown",
-        Normal = "normal",
-        Stopped = "stopped",
-        Idle = "idle"
-    }
-    export enum HealthState {
-        Unknown = "unknown",
-        Good = "good",
-        Faulty = "faulty",
-        Erroring = "erroring"
-    }
-    export enum PreferenceLevel {
-        Organisation = "organisation",
-        Factory = "factory",
-        User = "user"
     }
     export enum GrantType {
         Code = "code",
@@ -13063,10 +12965,43 @@ export namespace Enums {
         Oauth2 = "oauth2",
         Ml = "ml"
     }
+    export enum ApplicationsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
+    }
+    export enum PowerState {
+        Unknown = "unknown",
+        On = "on",
+        Off = "off"
+    }
+    export enum OperatingState {
+        Unknown = "unknown",
+        Normal = "normal",
+        Stopped = "stopped",
+        Idle = "idle"
+    }
+    export enum HealthState {
+        Unknown = "unknown",
+        Good = "good",
+        Faulty = "faulty",
+        Erroring = "erroring"
+    }
+    export enum AssetType {
+        Area = "area",
+        Line = "line",
+        Machine = "machine",
+        Part = "part"
+    }
     export enum LineMetricsStatus {
         Good = "good",
         Faulty = "faulty",
         Error = "error"
+    }
+    export enum AssetsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
     }
     export enum EventType {
         SegmentedAnomalyDetectionPredict = "segmented_anomaly_detection_predict",
@@ -13085,6 +13020,11 @@ export namespace Enums {
         OneWayIn = "one-way-in",
         OneWayOut = "one-way-out",
         TwoWays = "two-ways"
+    }
+    export enum FactoriesSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
     }
     export enum AlertStatus {
         Open = "open",
@@ -13115,6 +13055,11 @@ export namespace Enums {
         Important = "important",
         Secondary = "secondary"
     }
+    export enum InterventionsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Priority = "priority"
+    }
     export enum StandardAlertCode {
         MissingData = "missing_data",
         BadData = "bad_data",
@@ -13126,9 +13071,23 @@ export namespace Enums {
         SilenceAlert = "silence_alert",
         RealtimeAlert = "realtime_alert"
     }
+    export enum OrganisationsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification"
+    }
+    export enum ProjectsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
+    }
     export enum AttachmentScope {
         DataScience = "data-science",
         Customer = "customer"
+    }
+    export enum ReportsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
     }
     export enum AlertType {
         Realtime = "realtime",
@@ -13174,6 +13133,11 @@ export namespace Enums {
         Days = "days",
         Hours = "hours"
     }
+    export enum SensorsSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
+    }
     export enum Aggregation {
         Min = "min",
         Max = "max",
@@ -13205,6 +13169,10 @@ export namespace Enums {
         AggregatableValue2 = "aggregatableValue2",
         AggregatableValue3 = "aggregatableValue3"
     }
+    export enum TasksSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification"
+    }
     export enum TaskStatus {
         ToAssign = "to_assign",
         ToDo = "to_do",
@@ -13214,6 +13182,22 @@ export namespace Enums {
     export enum TaskType {
         Alert = "alert",
         Intervention = "intervention"
+    }
+    export enum SearchFilterType {
+        Factory = "factory",
+        Asset = "asset"
+    }
+    export enum SearchType {
+        User = "user",
+        Factory = "factory",
+        Project = "project",
+        Asset = "asset",
+        Application = "application",
+        Intervention = "intervention",
+        Alert = "alert",
+        Report = "report",
+        Sensor = "sensor",
+        Organisation = "organisation"
     }
     export enum NotificationType {
         USERCREATED = "USER_CREATED",
@@ -13262,6 +13246,17 @@ export namespace Enums {
         Candidate = "candidate",
         Third = "third"
     }
+    export enum UsersSortByValue {
+        Creation = "creation",
+        LastModification = "lastModification",
+        Name = "name"
+    }
+    export enum UserMembershipStatus {
+        Member = "member",
+        Pending = "pending",
+        Declined = "declined",
+        Cancelled = "cancelled"
+    }
     export enum IngestionStage {
         Raw = "raw",
         Enriched = "enriched"
@@ -13293,6 +13288,11 @@ export namespace Enums {
         Succeeded = "succeeded",
         Errored = "errored",
         Discarded = "discarded"
+    }
+    export enum PreferenceLevel {
+        Organisation = "organisation",
+        Factory = "factory",
+        User = "user"
     }
 }"
 `;
@@ -14264,27 +14264,6 @@ export interface components {
         UserArray: components["schemas"]["User"][];
     };
     schemas: {
-        Pet: {
-            id?: number;
-            category?: components["schemas"]["Category"];
-            name: string;
-            photoUrls: string[];
-            tags?: components["schemas"]["Tag"][];
-            status?: Enums.PetStatusInTheStore;
-        };
-        body: {
-            name?: string;
-            status?: string;
-        };
-        body_1: {
-            additionalMetadata?: string;
-            file?: string;
-        };
-        ApiResponse: {
-            code?: number;
-            type?: string;
-            message?: string;
-        };
         Order: {
             id?: number;
             petId?: number;
@@ -14292,6 +14271,10 @@ export interface components {
             shipDate?: string;
             status?: Enums.OrderStatus;
             complete?: boolean;
+        };
+        Category: {
+            id?: number;
+            name?: string;
         };
         User: {
             id?: number;
@@ -14303,26 +14286,43 @@ export interface components {
             phone?: string;
             userStatus?: number;
         };
-        Category: {
-            id?: number;
-            name?: string;
-        };
         Tag: {
             id?: number;
             name?: string;
         };
+        Pet: {
+            id?: number;
+            category?: components["schemas"]["Category"];
+            name: string;
+            photoUrls: string[];
+            tags?: components["schemas"]["Tag"][];
+            status?: Enums.PetStatusInTheStore;
+        };
+        ApiResponse: {
+            code?: number;
+            type?: string;
+            message?: string;
+        };
+        body: {
+            name?: string;
+            status?: string;
+        };
+        body_1: {
+            additionalMetadata?: string;
+            file?: string;
+        };
     };
 }
 export namespace Enums {
-    export enum PetStatusInTheStore {
-        Available = "available",
-        Pending = "pending",
-        Sold = "sold"
-    }
     export enum OrderStatus {
         Placed = "placed",
         Approved = "approved",
         Delivered = "delivered"
+    }
+    export enum PetStatusInTheStore {
+        Available = "available",
+        Pending = "pending",
+        Sold = "sold"
     }
 }"
 `;
@@ -15170,13 +15170,13 @@ export interface components {
         EchoBody: components["schemas"]["Echo"];
     };
     schemas: {
-        strings: string[];
         TimeSchema: {
             currentDate?: string;
         };
         Echo: {
             echo: string;
         };
+        strings: string[];
     };
 }"
 `;
