@@ -1,3 +1,20 @@
+# [8.0.0](https://github.com/nfroidure/schema2dts/compare/v7.0.2...v8.0.0) (2025-02-12)
+
+
+### Features
+
+* **exports:** add a few useful exports ([7bb7e83](https://github.com/nfroidure/schema2dts/commit/7bb7e8366596290be90ec4141929eaabae63cf33))
+* **types:** add support for openapi webhooks ([6eb1222](https://github.com/nfroidure/schema2dts/commit/6eb12229d482cce606af6ebf46cada16d955f3e7)), closes [#38](https://github.com/nfroidure/schema2dts/issues/38)
+* **types:** create better types ([92720d1](https://github.com/nfroidure/schema2dts/commit/92720d1bfe0c31dccfc5c37b1f75a957fa2535f9))
+* **types:** generate types for callbacks ([78a27af](https://github.com/nfroidure/schema2dts/commit/78a27af5a5ac4cc7751ab2e2ec7c7394442a9b0a)), closes [#39](https://github.com/nfroidure/schema2dts/issues/39)
+
+
+### BREAKING CHANGES
+
+* **types:** May change some types names
+
+
+
 ## [7.0.2](https://github.com/nfroidure/schema2dts/compare/v7.0.1...v7.0.2) (2024-10-02)
 
 
