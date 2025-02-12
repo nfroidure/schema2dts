@@ -55,6 +55,13 @@ import {
   type Fragment,
 } from './utils/fragments.js';
 
+export {
+  DEFAULT_JSON_SCHEMA_OPTIONS,
+  DEFAULT_OPEN_API_OPTIONS,
+  type OpenAPITypesGenerationOptions,
+  type JSONSchemaOptions,
+};
+
 /**
  * Create the TypeScript types declarations from an Open API document
  * @param {JSONSchema.Document} schema

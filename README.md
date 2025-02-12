@@ -15,8 +15,8 @@ It is intended to support JSONSchema7/OpenAPI3 but may work for some if not most
 JSONSchema versions.
 
 This module assumes your JSONSchema / OpenAPI3 documents are valid. It also
-doesn't support external references at the moment and expect a single object
-whose definitions are all relative to the root object.
+doesn't support external references at the moment (and probably for ever) and
+expect a single object whose definitions are all relative to the root object.
 
 It is also meant to be a building block for higher level generators.
 
