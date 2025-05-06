@@ -113,7 +113,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-A-Header": number;
                 "X-API-Version"?: string;
             };
@@ -391,6 +391,7 @@ declare namespace Enums {
                 in: 'query',
                 schema: {
                   type: 'string',
+                  format: 'date',
                 },
               },
             ],
@@ -403,6 +404,7 @@ declare namespace Enums {
     expect(
       toSource(
         await generateOpenAPITypes(schema, {
+          brandedFormats: ['date'],
           camelizeInputs: false,
           generateRealEnums: false,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -419,7 +421,9 @@ declare interface operations {
     PathsTest: {
         parameters: {
             query: {
-                foo_bar?: string;
+                foo_bar?: string & {
+                    _format?: "date";
+                };
             };
         };
     };
@@ -450,6 +454,15 @@ declare interface operations {
                 in: 'query',
                 schema: {
                   type: 'string',
+                  format: 'date',
+                },
+              },
+              {
+                name: 'another_foo_bar',
+                in: 'query',
+                schema: {
+                  type: 'string',
+                  format: 'date',
                 },
               },
             ],
@@ -460,15 +473,20 @@ declare interface operations {
     };
 
     expect(
-      toSource(
-        await generateOpenAPITypes(schema, {
-          camelizeInputs: false,
-          generateRealEnums: false,
-          tuplesFromFixedArraysLengthLimit: 5,
-          exportNamespaces: false,
-        }),
-      ),
-    ).toMatchInlineSnapshot(`
+  toSource(
+    await generateOpenAPITypes(schema, {
+      camelizeInputs: false,
+      generateRealEnums: false,
+      typedFormats: {
+        date: {
+          namespace: ['Date']
+        }
+      },
+      tuplesFromFixedArraysLengthLimit: 5,
+      exportNamespaces: false
+    })
+  )
+).toMatchInlineSnapshot(`
 "declare interface paths {
     "/test": {
         "get": operations["Test"];
@@ -478,7 +496,8 @@ declare interface operations {
     Test: {
         parameters: {
             query: {
-                foo_bar?: string;
+                foo_bar?: Date;
+                another_foo_bar?: Date;
             };
         };
     };
@@ -730,6 +749,8 @@ export namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           exportNamespaces: false,
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -755,6 +776,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -787,6 +810,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -806,6 +831,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -826,6 +853,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -855,6 +884,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -897,6 +928,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -936,6 +969,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -984,6 +1019,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1032,6 +1069,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1170,6 +1209,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1215,6 +1256,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1248,6 +1291,8 @@ declare namespace Enums {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1272,6 +1317,8 @@ export interface definitions {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1301,6 +1348,8 @@ export interface definitions {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
@@ -1345,6 +1394,8 @@ export interface $defs {
       toSource(
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
+          brandedFormats: [],
+          typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,

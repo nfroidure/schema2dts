@@ -1,4 +1,5 @@
 import {
+  ALL_FORMATS,
   ALL_TYPES,
   schemaToTypeNode,
   type JSONSchemaContext,
@@ -30,6 +31,8 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   basePath: 'openapi.d.ts',
   filterStatuses: [],
   brandedTypes: [],
+  brandedFormats: [],
+  typedFormats: {},
   generateUnusedSchemas: false,
   generateUnusedComponents: false,
   camelizeInputs: true,
@@ -47,6 +50,13 @@ export type OpenAPITypesGenerationOptions = {
   generateUnusedComponents?: boolean;
   camelizeInputs?: boolean;
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
+  brandedFormats: string[] | typeof ALL_FORMATS;
+  typedFormats: Record<
+    string,
+    {
+      namespace: string[];
+    }
+  >;
   generateRealEnums: boolean;
   tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
@@ -393,7 +403,11 @@ export async function operationToFragments(
       const subNamespace = [
         ...namespace,
         'parameters',
-        resolvedParameter.in,
+        resolvedParameter.in === 'cookie'
+          ? 'cookies'
+          : resolvedParameter.in === 'header'
+            ? 'headers'
+            : resolvedParameter.in,
         resolvedParameter.name,
       ];
 

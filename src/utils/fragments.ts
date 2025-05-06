@@ -83,7 +83,9 @@ export function combineFragments(
 ) {
   for (const fragment of addedFragments) {
     if (fragment.type !== 'assumed') {
-      fragments = fragments.filter((aFragment) => aFragment.ref !== fragment.ref);
+      fragments = fragments.filter(
+        (aFragment) => aFragment.ref !== fragment.ref,
+      );
       fragments = fragments.concat([fragment]);
     } else if (!assumeRef(fragments, fragment.ref)) {
       fragments = fragments.concat([fragment]);

@@ -485,7 +485,7 @@ declare interface operations {
             path: {
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -500,7 +500,7 @@ declare interface operations {
             path: {
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -515,7 +515,7 @@ declare interface operations {
             path: {
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -530,7 +530,7 @@ declare interface operations {
             path: {
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -547,7 +547,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -564,7 +564,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -582,7 +582,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -600,7 +600,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 attachmentId: components["parameters"]["attachmentId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -619,7 +619,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 attachmentId: components["parameters"]["attachmentId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["AttachmentFileType"];
@@ -640,7 +640,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -659,7 +659,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -679,7 +679,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -699,7 +699,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -716,7 +716,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -734,7 +734,7 @@ declare interface operations {
                 interventionId: components["parameters"]["interventionId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -753,7 +753,7 @@ declare interface operations {
                 interventionId: components["parameters"]["interventionId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -773,7 +773,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 collaboratorId: string;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -790,7 +790,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -810,7 +810,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -828,7 +828,7 @@ declare interface operations {
                 sensorId: components["parameters"]["sensorId"];
                 valueName: components["parameters"]["valueName"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -845,7 +845,7 @@ declare interface operations {
             query: {
                 withFactoriesIds?: components["parameters"]["OptionalWithFactoriesIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -859,7 +859,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 cookie?: components["parameters"]["cookie"];
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
@@ -872,7 +872,7 @@ declare interface operations {
             302: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -889,7 +889,7 @@ declare interface operations {
             query: {
                 mutedTags?: string[];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -907,7 +907,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -925,7 +925,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -947,7 +947,7 @@ declare interface operations {
             query: {
                 includeChildrenIds: components["parameters"]["IncludeChildrenIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -976,7 +976,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -997,7 +997,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1032,7 +1032,7 @@ declare interface operations {
                 beforeDate?: components["parameters"]["beforeDate"];
                 afterDate?: components["parameters"]["afterDate"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1051,7 +1051,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1082,7 +1082,7 @@ declare interface operations {
                 "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1109,7 +1109,7 @@ declare interface operations {
                 sortBy: components["parameters"]["reportsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1128,7 +1128,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1158,7 +1158,7 @@ declare interface operations {
                 sortBy: components["parameters"]["sensorsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1179,7 +1179,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1197,7 +1197,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1221,7 +1221,7 @@ declare interface operations {
                 direction: components["parameters"]["direction"];
                 withProjectsIds?: components["parameters"]["OptionalWithProjectsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1262,7 +1262,7 @@ declare interface operations {
                 withTimeZone?: components["parameters"]["WithTimeZone"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1303,7 +1303,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 withTimeZone?: components["parameters"]["WithTimeZone"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1344,7 +1344,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 withTimeZone?: components["parameters"]["WithTimeZone"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1380,7 +1380,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1409,7 +1409,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1447,7 +1447,7 @@ declare interface operations {
                 withManufacturingPhases?: components["parameters"]["OptionalWithManufacturingPhases"];
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1481,7 +1481,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1497,7 +1497,7 @@ declare interface operations {
             path: {
                 reportId: components["parameters"]["reportId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1529,7 +1529,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1549,7 +1549,7 @@ declare interface operations {
             query: {
                 withMembershipsStatuses?: components["parameters"]["withMembershipsStatuses"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1567,7 +1567,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1591,7 +1591,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1614,7 +1614,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1632,7 +1632,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1651,7 +1651,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1684,7 +1684,7 @@ declare interface operations {
                 sortBy: components["parameters"]["alertsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1709,7 +1709,7 @@ declare interface operations {
                 direction: components["parameters"]["direction"];
                 withApplicationsIds?: components["parameters"]["OptionalWithApplicationsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1728,7 +1728,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1753,7 +1753,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1772,7 +1772,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1789,7 +1789,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1820,7 +1820,7 @@ declare interface operations {
                 sortBy: components["parameters"]["tasksSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1846,7 +1846,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1869,7 +1869,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1887,7 +1887,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1905,7 +1905,7 @@ declare interface operations {
             query: {
                 invitationToken?: string;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1930,7 +1930,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1942,7 +1942,7 @@ declare interface operations {
             204: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1966,7 +1966,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -1989,7 +1989,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 cookie?: components["parameters"]["cookie"];
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
@@ -2015,7 +2015,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2042,7 +2042,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2059,7 +2059,7 @@ declare interface operations {
                 projectCode: components["parameters"]["projectCode"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2074,7 +2074,7 @@ declare interface operations {
             200: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2093,7 +2093,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2113,7 +2113,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 assetId: components["parameters"]["assetId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2133,7 +2133,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2153,7 +2153,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2173,7 +2173,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2195,7 +2195,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2214,7 +2214,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2235,7 +2235,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 notificationId: components["parameters"]["notificationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2254,7 +2254,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2275,7 +2275,7 @@ declare interface operations {
                 withReportId?: components["parameters"]["withReportId"];
                 withInterventionId?: components["parameters"]["withInterventionId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["AttachmentFileType"];
@@ -2298,7 +2298,7 @@ declare interface operations {
             path: {
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -2317,7 +2317,7 @@ declare interface operations {
             path: {
                 notificationId: components["parameters"]["notificationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2339,7 +2339,7 @@ declare interface operations {
                 hasAttachments?: boolean;
                 hasImages?: boolean;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2359,7 +2359,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2380,7 +2380,7 @@ declare interface operations {
                 assetId: components["parameters"]["assetId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2400,7 +2400,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2421,7 +2421,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 assetId: components["parameters"]["assetId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2442,7 +2442,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2461,7 +2461,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 level: components["parameters"]["PreferenceLevel"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2482,7 +2482,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2501,7 +2501,7 @@ declare interface operations {
                 scope?: components["parameters"]["scope"];
                 state: components["parameters"]["state"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -2517,7 +2517,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4843,7 +4843,7 @@ declare interface operations {
             path: {
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4855,7 +4855,7 @@ declare interface operations {
             path: {
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4867,7 +4867,7 @@ declare interface operations {
             path: {
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4879,7 +4879,7 @@ declare interface operations {
             path: {
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4893,7 +4893,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4910,7 +4910,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4928,7 +4928,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4943,7 +4943,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 attachmentId: components["parameters"]["attachmentId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4962,7 +4962,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 attachmentId: components["parameters"]["attachmentId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["AttachmentFileType"];
@@ -4980,7 +4980,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -4999,7 +4999,7 @@ declare interface operations {
                 alertId: components["parameters"]["alertId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -5016,7 +5016,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5036,7 +5036,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5050,7 +5050,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5065,7 +5065,7 @@ declare interface operations {
                 interventionId: components["parameters"]["interventionId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5084,7 +5084,7 @@ declare interface operations {
                 interventionId: components["parameters"]["interventionId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -5101,7 +5101,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 collaboratorId: string;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5115,7 +5115,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5135,7 +5135,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5150,7 +5150,7 @@ declare interface operations {
                 sensorId: components["parameters"]["sensorId"];
                 valueName: components["parameters"]["valueName"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5167,7 +5167,7 @@ declare interface operations {
             query: {
                 withFactoriesIds?: components["parameters"]["OptionalWithFactoriesIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5181,7 +5181,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 cookie?: components["parameters"]["cookie"];
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
@@ -5191,7 +5191,7 @@ declare interface operations {
     };
     getMySelf: {
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5208,7 +5208,7 @@ declare interface operations {
             query: {
                 mutedTags?: string[];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5226,7 +5226,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5244,7 +5244,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5266,7 +5266,7 @@ declare interface operations {
             query: {
                 includeChildrenIds: components["parameters"]["IncludeChildrenIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5295,7 +5295,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5316,7 +5316,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5351,7 +5351,7 @@ declare interface operations {
                 beforeDate?: components["parameters"]["beforeDate"];
                 afterDate?: components["parameters"]["afterDate"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5370,7 +5370,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5401,7 +5401,7 @@ declare interface operations {
                 "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5428,7 +5428,7 @@ declare interface operations {
                 sortBy: components["parameters"]["reportsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5447,7 +5447,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5477,7 +5477,7 @@ declare interface operations {
                 sortBy: components["parameters"]["sensorsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5498,7 +5498,7 @@ declare interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5516,7 +5516,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5540,7 +5540,7 @@ declare interface operations {
                 direction: components["parameters"]["direction"];
                 withProjectsIds?: components["parameters"]["OptionalWithProjectsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5581,7 +5581,7 @@ declare interface operations {
                 withTimeZone?: components["parameters"]["WithTimeZone"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5622,7 +5622,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 withTimeZone?: components["parameters"]["WithTimeZone"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5663,7 +5663,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 withTimeZone?: components["parameters"]["WithTimeZone"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5699,7 +5699,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5728,7 +5728,7 @@ declare interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5766,7 +5766,7 @@ declare interface operations {
                 withManufacturingPhases?: components["parameters"]["OptionalWithManufacturingPhases"];
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5800,7 +5800,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5816,7 +5816,7 @@ declare interface operations {
             path: {
                 reportId: components["parameters"]["reportId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5848,7 +5848,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5868,7 +5868,7 @@ declare interface operations {
             query: {
                 withMembershipsStatuses?: components["parameters"]["withMembershipsStatuses"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5886,7 +5886,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5910,7 +5910,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5933,7 +5933,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5951,7 +5951,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -5970,7 +5970,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6003,7 +6003,7 @@ declare interface operations {
                 sortBy: components["parameters"]["alertsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6028,7 +6028,7 @@ declare interface operations {
                 direction: components["parameters"]["direction"];
                 withApplicationsIds?: components["parameters"]["OptionalWithApplicationsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6047,7 +6047,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6072,7 +6072,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6091,7 +6091,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6108,7 +6108,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6139,7 +6139,7 @@ declare interface operations {
                 sortBy: components["parameters"]["tasksSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6165,7 +6165,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6188,7 +6188,7 @@ declare interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6206,7 +6206,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6224,7 +6224,7 @@ declare interface operations {
             query: {
                 invitationToken?: string;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6249,7 +6249,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6258,7 +6258,7 @@ declare interface operations {
     };
     postAuthLogout: {
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6282,7 +6282,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6305,7 +6305,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 cookie?: components["parameters"]["cookie"];
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
@@ -6331,7 +6331,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6351,7 +6351,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6368,7 +6368,7 @@ declare interface operations {
                 projectCode: components["parameters"]["projectCode"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6383,7 +6383,7 @@ declare interface operations {
             200: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6402,7 +6402,7 @@ declare interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6422,7 +6422,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 assetId: components["parameters"]["assetId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6442,7 +6442,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6462,7 +6462,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6482,7 +6482,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6504,7 +6504,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6523,7 +6523,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6544,7 +6544,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 notificationId: components["parameters"]["notificationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6563,7 +6563,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6584,7 +6584,7 @@ declare interface operations {
                 withReportId?: components["parameters"]["withReportId"];
                 withInterventionId?: components["parameters"]["withInterventionId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["AttachmentFileType"];
@@ -6607,7 +6607,7 @@ declare interface operations {
             path: {
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -6623,7 +6623,7 @@ declare interface operations {
             path: {
                 notificationId: components["parameters"]["notificationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6642,7 +6642,7 @@ declare interface operations {
                 hasAttachments?: boolean;
                 hasImages?: boolean;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6662,7 +6662,7 @@ declare interface operations {
                 userId: components["parameters"]["userId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6683,7 +6683,7 @@ declare interface operations {
                 assetId: components["parameters"]["assetId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6703,7 +6703,7 @@ declare interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6724,7 +6724,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 assetId: components["parameters"]["assetId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6745,7 +6745,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6764,7 +6764,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 level: components["parameters"]["PreferenceLevel"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6785,7 +6785,7 @@ declare interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6801,7 +6801,7 @@ declare interface operations {
                 scope?: components["parameters"]["scope"];
                 state: components["parameters"]["state"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -6817,7 +6817,7 @@ declare interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9030,7 +9030,7 @@ export interface operations {
             path: {
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9045,7 +9045,7 @@ export interface operations {
             path: {
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9060,7 +9060,7 @@ export interface operations {
             path: {
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9075,7 +9075,7 @@ export interface operations {
             path: {
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9092,7 +9092,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9109,7 +9109,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9127,7 +9127,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9145,7 +9145,7 @@ export interface operations {
                 alertId: components["parameters"]["alertId"];
                 attachmentId: components["parameters"]["attachmentId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9164,7 +9164,7 @@ export interface operations {
                 alertId: components["parameters"]["alertId"];
                 attachmentId: components["parameters"]["attachmentId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["AttachmentFileType"];
@@ -9185,7 +9185,7 @@ export interface operations {
                 alertId: components["parameters"]["alertId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9204,7 +9204,7 @@ export interface operations {
                 alertId: components["parameters"]["alertId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -9224,7 +9224,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9244,7 +9244,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 applicationId: components["parameters"]["applicationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9261,7 +9261,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9279,7 +9279,7 @@ export interface operations {
                 interventionId: components["parameters"]["interventionId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9298,7 +9298,7 @@ export interface operations {
                 interventionId: components["parameters"]["interventionId"];
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -9318,7 +9318,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 collaboratorId: string;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9335,7 +9335,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9355,7 +9355,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9373,7 +9373,7 @@ export interface operations {
                 sensorId: components["parameters"]["sensorId"];
                 valueName: components["parameters"]["valueName"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9390,7 +9390,7 @@ export interface operations {
             query: {
                 withFactoriesIds?: components["parameters"]["OptionalWithFactoriesIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9404,7 +9404,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 cookie?: components["parameters"]["cookie"];
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
@@ -9417,7 +9417,7 @@ export interface operations {
             302: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9434,7 +9434,7 @@ export interface operations {
             query: {
                 mutedTags?: string[];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9452,7 +9452,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9470,7 +9470,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9492,7 +9492,7 @@ export interface operations {
             query: {
                 includeChildrenIds: components["parameters"]["IncludeChildrenIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9521,7 +9521,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9542,7 +9542,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9577,7 +9577,7 @@ export interface operations {
                 beforeDate?: components["parameters"]["beforeDate"];
                 afterDate?: components["parameters"]["afterDate"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9596,7 +9596,7 @@ export interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9627,7 +9627,7 @@ export interface operations {
                 "from"?: components["parameters"]["fromFilter"];
                 to?: components["parameters"]["toFilter"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9654,7 +9654,7 @@ export interface operations {
                 sortBy: components["parameters"]["reportsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9673,7 +9673,7 @@ export interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9703,7 +9703,7 @@ export interface operations {
                 sortBy: components["parameters"]["sensorsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9724,7 +9724,7 @@ export interface operations {
             query: {
                 sensorsIds: components["parameters"]["sensorsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9742,7 +9742,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 projectId: components["parameters"]["projectId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9766,7 +9766,7 @@ export interface operations {
                 direction: components["parameters"]["direction"];
                 withProjectsIds?: components["parameters"]["OptionalWithProjectsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9807,7 +9807,7 @@ export interface operations {
                 withTimeZone?: components["parameters"]["WithTimeZone"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9848,7 +9848,7 @@ export interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 withTimeZone?: components["parameters"]["WithTimeZone"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9889,7 +9889,7 @@ export interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 withTimeZone?: components["parameters"]["WithTimeZone"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9925,7 +9925,7 @@ export interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9954,7 +9954,7 @@ export interface operations {
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
                 includeLabels?: components["parameters"]["includeLabels"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -9992,7 +9992,7 @@ export interface operations {
                 withManufacturingPhases?: components["parameters"]["OptionalWithManufacturingPhases"];
                 withManufacturingCycles?: components["parameters"]["OptionalWithManufacturingCycles"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10026,7 +10026,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10042,7 +10042,7 @@ export interface operations {
             path: {
                 reportId: components["parameters"]["reportId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10074,7 +10074,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10094,7 +10094,7 @@ export interface operations {
             query: {
                 withMembershipsStatuses?: components["parameters"]["withMembershipsStatuses"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10112,7 +10112,7 @@ export interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10136,7 +10136,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10159,7 +10159,7 @@ export interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10177,7 +10177,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10196,7 +10196,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10229,7 +10229,7 @@ export interface operations {
                 sortBy: components["parameters"]["alertsSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10254,7 +10254,7 @@ export interface operations {
                 direction: components["parameters"]["direction"];
                 withApplicationsIds?: components["parameters"]["OptionalWithApplicationsIds"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10273,7 +10273,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10298,7 +10298,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10317,7 +10317,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10334,7 +10334,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10365,7 +10365,7 @@ export interface operations {
                 sortBy: components["parameters"]["tasksSortBy"];
                 direction: components["parameters"]["direction"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10391,7 +10391,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10414,7 +10414,7 @@ export interface operations {
                 limit: components["parameters"]["limit"];
                 start: components["parameters"]["start"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10432,7 +10432,7 @@ export interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10450,7 +10450,7 @@ export interface operations {
             query: {
                 invitationToken?: string;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10475,7 +10475,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10487,7 +10487,7 @@ export interface operations {
             204: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10511,7 +10511,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10534,7 +10534,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 cookie?: components["parameters"]["cookie"];
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
@@ -10560,7 +10560,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10587,7 +10587,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10604,7 +10604,7 @@ export interface operations {
                 projectCode: components["parameters"]["projectCode"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10619,7 +10619,7 @@ export interface operations {
             200: object;
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10638,7 +10638,7 @@ export interface operations {
             path: {
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10658,7 +10658,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 assetId: components["parameters"]["assetId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10678,7 +10678,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10698,7 +10698,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10718,7 +10718,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10740,7 +10740,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10759,7 +10759,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 organisationId: components["parameters"]["organisationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10780,7 +10780,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 notificationId: components["parameters"]["notificationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10799,7 +10799,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 userId: components["parameters"]["userId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10820,7 +10820,7 @@ export interface operations {
                 withReportId?: components["parameters"]["withReportId"];
                 withInterventionId?: components["parameters"]["withInterventionId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["AttachmentFileType"];
@@ -10843,7 +10843,7 @@ export interface operations {
             path: {
                 imageId: components["parameters"]["imageId"];
             };
-            header: {
+            headers: {
                 "x-file-name": components["parameters"]["FileName"];
                 "x-file-size": components["parameters"]["FileSize"];
                 "x-file-type": components["parameters"]["ImageFileType"];
@@ -10862,7 +10862,7 @@ export interface operations {
             path: {
                 notificationId: components["parameters"]["notificationId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10884,7 +10884,7 @@ export interface operations {
                 hasAttachments?: boolean;
                 hasImages?: boolean;
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10904,7 +10904,7 @@ export interface operations {
                 userId: components["parameters"]["userId"];
                 alertId: components["parameters"]["alertId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10925,7 +10925,7 @@ export interface operations {
                 assetId: components["parameters"]["assetId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10945,7 +10945,7 @@ export interface operations {
                 organisationId: components["parameters"]["organisationId"];
                 factoryId: components["parameters"]["factoryId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10966,7 +10966,7 @@ export interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 assetId: components["parameters"]["assetId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -10987,7 +10987,7 @@ export interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 interventionId: components["parameters"]["interventionId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -11006,7 +11006,7 @@ export interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 level: components["parameters"]["PreferenceLevel"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -11027,7 +11027,7 @@ export interface operations {
                 factoryId: components["parameters"]["factoryId"];
                 sensorId: components["parameters"]["sensorId"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -11046,7 +11046,7 @@ export interface operations {
                 scope?: components["parameters"]["scope"];
                 state: components["parameters"]["state"];
             };
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -11062,7 +11062,7 @@ export interface operations {
             };
         };
         parameters: {
-            header: {
+            headers: {
                 "X-SDK-Version"?: components["parameters"]["xSdkVersion"];
                 "X-Application-Version"?: components["parameters"]["xApplicationVersion"];
                 "X-API-Version"?: components["parameters"]["xApiVersion"];
@@ -13509,7 +13509,7 @@ declare interface operations {
             400: object;
         };
         parameters: {
-            header: {
+            headers: {
                 api_key?: string;
             };
             path: {
@@ -13825,7 +13825,7 @@ declare interface operations {
     };
     deletePet: {
         parameters: {
-            header: {
+            headers: {
                 api_key?: string;
             };
             path: {
@@ -14115,7 +14115,7 @@ export interface operations {
             400: object;
         };
         parameters: {
-            header: {
+            headers: {
                 api_key?: string;
             };
             path: {
@@ -14471,7 +14471,7 @@ declare interface operations {
             query: {
                 queryParam: components["parameters"]["queryParam"];
             };
-            header: {
+            headers: {
                 aHeader?: boolean;
                 aMultiHeader?: number[];
             };
@@ -14601,7 +14601,7 @@ declare interface operations {
             query: {
                 queryParam: components["parameters"]["queryParam"];
             };
-            header: {
+            headers: {
                 aHeader?: boolean;
                 aMultiHeader?: number[];
             };
@@ -14733,7 +14733,7 @@ export interface operations {
             query: {
                 queryParam: components["parameters"]["queryParam"];
             };
-            header: {
+            headers: {
                 aHeader?: boolean;
                 aMultiHeader?: number[];
             };
@@ -14850,7 +14850,7 @@ declare interface operations {
                 pathParam1: components["parameters"]["pathParam1"];
                 pathParam2: components["parameters"]["pathParam2"];
             };
-            header: {
+            headers: {
                 aHeader?: boolean;
             };
         };
@@ -14979,7 +14979,7 @@ declare interface operations {
                 pathParam1: components["parameters"]["pathParam1"];
                 pathParam2: components["parameters"]["pathParam2"];
             };
-            header: {
+            headers: {
                 aHeader?: boolean;
             };
         };
@@ -15100,7 +15100,7 @@ export interface operations {
                 pathParam1: components["parameters"]["pathParam1"];
                 pathParam2: components["parameters"]["pathParam2"];
             };
-            header: {
+            headers: {
                 aHeader?: boolean;
             };
         };

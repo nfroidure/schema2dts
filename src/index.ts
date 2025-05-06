@@ -71,7 +71,13 @@ export {
  * @param {boolean} options.generateUnusedSchemas
  * @param {boolean} options.camelizeInputs
  * @param {Array<string>} options.brandedTypes
+ * Brand types by names
+ * @param {Array<string>} options.brandedFormats
+ * Brand formats by names
+ * @param {Object} options.typedFormats
+ * Substitute string format by a type
  * @param {boolean} options.generateRealEnums
+ * @param {number} options.tuplesFromFixedArraysLengthLimit
  * @param {boolean} options.exportNamespaces
  * @param {boolean} options.requireCleanAPI
  * @returns {TypeScript.NodeArray}
@@ -85,18 +91,24 @@ export async function generateOpenAPITypes(
     generateUnusedSchemas = DEFAULT_OPEN_API_OPTIONS.generateUnusedSchemas,
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
+    brandedFormats = DEFAULT_OPEN_API_OPTIONS.brandedFormats,
+    typedFormats = DEFAULT_OPEN_API_OPTIONS.typedFormats,
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
     tuplesFromFixedArraysLengthLimit = DEFAULT_OPEN_API_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
   }: Omit<
     OpenAPITypesGenerationOptions,
-    'baseName' | 'basePath' | 'brandedTypes'
+    'baseName' | 'basePath' | 'brandedTypes' | 'brandedFormats' | 'typedFormats'
   > &
     Partial<
       Pick<
         OpenAPITypesGenerationOptions,
-        'baseName' | 'basePath' | 'brandedTypes'
+        | 'baseName'
+        | 'basePath'
+        | 'brandedTypes'
+        | 'brandedFormats'
+        | 'typedFormats'
       >
     > = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<NodeArray<Statement>> {
@@ -107,6 +119,8 @@ export async function generateOpenAPITypes(
         brandedTypes !== 'schemas'
           ? brandedTypes
           : Object.keys(rootOpenAPI?.components?.schemas || {}),
+      brandedFormats,
+      typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
@@ -118,6 +132,8 @@ export async function generateOpenAPITypes(
       generateUnusedSchemas,
       camelizeInputs,
       brandedTypes,
+      brandedFormats,
+      typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
@@ -135,8 +151,16 @@ export async function generateOpenAPITypes(
  * Create the TypeScript types declarations from a JSONSchema document
  * @param {JSONSchema.Document} schema
  * @param {Object} options
- * @param {string} options.name
+ * @param {string} options.baseName
  * @param {Array<string>} options.brandedTypes
+ * Brand types by names
+ * @param {Array<string>} options.brandedFormats
+ * Brand formats by names
+ * @param {Object} options.typedFormats
+ * Substitute string format by a type
+ * @param {boolean} options.generateRealEnums
+ * @param {number} options.tuplesFromFixedArraysLengthLimit
+ * @param {boolean} options.exportNamespaces
  * @returns {TypeScript.NodeArray}
  */
 export async function generateJSONSchemaTypes(
@@ -144,6 +168,8 @@ export async function generateJSONSchemaTypes(
   {
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
+    brandedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.brandedFormats,
+    typedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.typedFormats,
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
     tuplesFromFixedArraysLengthLimit = DEFAULT_JSON_SCHEMA_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_JSON_SCHEMA_OPTIONS.exportNamespaces,
@@ -153,6 +179,8 @@ export async function generateJSONSchemaTypes(
     jsonSchemaOptions: {
       baseName,
       brandedTypes,
+      brandedFormats,
+      typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
@@ -173,8 +201,33 @@ export async function gatherFragments(
   let assumedFragmentsToBuild = findFragments('assumed', allFragments);
 
   while (assumedFragmentsToBuild.length) {
-    // allFragments = cleanAssumedFragments(allFragments);
     for (const assumedFragmentToBuild of assumedFragmentsToBuild) {
+      if (assumedFragmentToBuild.ref.startsWith('virtual://formats/')) {
+        allFragments = combineFragments(allFragments, [
+          {
+            ref: assumedFragmentToBuild.ref,
+            type: 'statement',
+            statement: factory.createImportDeclaration(
+              undefined,
+              factory.createImportClause(
+                false,
+                undefined,
+                factory.createNamedImports([
+                  factory.createImportSpecifier(
+                    false,
+                    undefined,
+                    factory.createIdentifier('DateTime'),
+                  ),
+                ]),
+              ),
+              factory.createStringLiteral('luxxon'),
+              undefined,
+            ),
+          },
+        ]);
+        continue;
+      }
+
       const namespace = relativeReferenceToNamespace(
         assumedFragmentToBuild.ref,
       );
@@ -182,12 +235,6 @@ export async function gatherFragments(
         document as JSONSchema,
         namespace,
       );
-
-      // process.stdout.write(
-      //   JSON.stringify(
-      //     assumedFragmentsToBuild.map(({ ref, type }) => [ref, type]),
-      //   ) + '\n\n',
-      // );
 
       if (
         typeof subSchema === 'object' &&

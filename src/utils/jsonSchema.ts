@@ -21,11 +21,14 @@ import {
 } from 'ya-json-schema-types';
 import { relativeReferenceToNamespace } from 'ya-open-api-types';
 
+export const ALL_FORMATS = 'all' as const;
 export const ALL_TYPES = 'all' as const;
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   baseName: 'Main',
   basePath: 'schema.d.ts',
   brandedTypes: [],
+  brandedFormats: [],
+  typedFormats: {},
   generateRealEnums: false,
   tuplesFromFixedArraysLengthLimit: 5,
   exportNamespaces: false,
@@ -35,6 +38,13 @@ export type JSONSchemaOptions = {
   baseName?: string;
   basePath?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
+  brandedFormats: string[] | typeof ALL_FORMATS;
+  typedFormats: Record<
+    string,
+    {
+      namespace: string[];
+    }
+  >;
   generateRealEnums: boolean;
   tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
@@ -227,6 +237,42 @@ export async function handleTypedSchema(
             type: factory.createKeywordTypeNode(SyntaxKind.NumberKeyword),
           };
         case 'string':
+          if (typeof schema.format === 'string') {
+            const isTypedFormat =
+              context.jsonSchemaOptions.typedFormats?.[schema.format];
+
+            if (isTypedFormat) {
+              return {
+                type: buildTypeReference(
+                  context.jsonSchemaOptions.typedFormats[schema.format]
+                    .namespace,
+                ),
+              };
+            }
+
+            const isBrandedFormat =
+              context.jsonSchemaOptions.brandedFormats === ALL_FORMATS ||
+              context.jsonSchemaOptions.brandedFormats.includes(schema.format);
+
+            if (isBrandedFormat) {
+              return {
+                type: factory.createIntersectionTypeNode([
+                  factory.createKeywordTypeNode(SyntaxKind.StringKeyword),
+                  factory.createTypeLiteralNode([
+                    factory.createPropertySignature(
+                      undefined,
+                      factory.createIdentifier('_format'),
+                      factory.createToken(SyntaxKind.QuestionToken),
+                      factory.createLiteralTypeNode(
+                        factory.createStringLiteral(schema.format),
+                      ),
+                    ),
+                  ]),
+                ]),
+              };
+            }
+          }
+
           return {
             type: factory.createKeywordTypeNode(SyntaxKind.StringKeyword),
           };
