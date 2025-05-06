@@ -1,3 +1,12 @@
+# [8.1.0](https://github.com/nfroidure/schema2dts/compare/v8.0.0...v8.1.0) (2025-05-06)
+
+
+### Features
+
+* **types:** allow to brand/type string with formats ([7c80ef4](https://github.com/nfroidure/schema2dts/commit/7c80ef4dc8bc33ef10b5996a5752507e57680fe0))
+
+
+
 # [8.0.0](https://github.com/nfroidure/schema2dts/compare/v7.0.2...v8.0.0) (2025-02-12)
 
 
