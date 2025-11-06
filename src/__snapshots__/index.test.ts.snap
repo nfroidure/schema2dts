@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`generateJSONSchemaTypes() with JSONSchema samples should work with array_of_things.json 1`] = `
 "declare type Main = {
