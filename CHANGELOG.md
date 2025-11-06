@@ -1,3 +1,7 @@
+## [8.1.1](https://github.com/nfroidure/schema2dts/compare/v8.1.0...v8.1.1) (2025-11-06)
+
+
+
 # [8.1.0](https://github.com/nfroidure/schema2dts/compare/v8.0.0...v8.1.0) (2025-05-06)
 
 
