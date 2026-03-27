@@ -10,7 +10,7 @@ import {
 import { type JSONSchemaValue } from 'ya-json-schema-types';
 
 const RESERVED_KEYWORDS = Object.keys(SyntaxKind).map((t) =>
-  tokenToString(SyntaxKind[t]),
+  tokenToString(SyntaxKind[t as unknown as number] as unknown as SyntaxKind),
 );
 
 // It forbids more than really forbidden (for example "get")

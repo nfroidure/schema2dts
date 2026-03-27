@@ -34,7 +34,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   exportNamespaces: false,
   strictMode: false,
 };
-export type JSONSchemaOptions = {
+export interface JSONSchemaOptions {
   baseName?: string;
   basePath?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
@@ -49,14 +49,16 @@ export type JSONSchemaOptions = {
   tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
   strictMode?: boolean;
-};
-export type JSONSchemaContext = {
+}
+export interface JSONSchemaContext {
   jsonSchemaOptions: JSONSchemaOptions;
-};
-export type Reference = { $ref: string };
-export type BaseResult = {
+}
+export interface Reference {
+  $ref: string;
+}
+export interface BaseResult {
   fragments?: Fragment[];
-};
+}
 export type TypeNodeResult = { type: TypeNode } & BaseResult;
 export type TypeNodesResult = { types: TypeNode[] } & BaseResult;
 
@@ -210,7 +212,7 @@ export async function schemaToTypes(
     return { types: [factory.createKeywordTypeNode(SyntaxKind.AnyKeyword)] };
   }
 
-  throw new YError('E_UNSUPPORTED_SCHEMA', schema);
+  throw new YError('E_UNSUPPORTED_SCHEMA', [schema]);
 }
 
 // Handle schema where type is defined
@@ -347,7 +349,7 @@ async function handleComposedSchemas(
       types: [factory.createIntersectionTypeNode(types)],
     };
   } else {
-    throw new YError('E_COMPOSED_SCHEMA_UNSUPPORTED', schema);
+    throw new YError('E_COMPOSED_SCHEMA_UNSUPPORTED', [schema]);
   }
 }
 

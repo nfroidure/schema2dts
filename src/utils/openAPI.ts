@@ -42,7 +42,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   requireCleanAPI: false,
 };
 
-export type OpenAPITypesGenerationOptions = {
+export interface OpenAPITypesGenerationOptions {
   baseName: string;
   basePath: string;
   filterStatuses?: (number | 'default')[];
@@ -61,7 +61,7 @@ export type OpenAPITypesGenerationOptions = {
   tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
   requireCleanAPI?: boolean;
-};
+}
 
 export type OpenAPIContext = JSONSchemaContext & {
   oasOptions: OpenAPITypesGenerationOptions;
@@ -282,7 +282,10 @@ export async function pathItemToFragments(
   }
 
   for (const method of Object.keys(pathItem)) {
-    const maybeOperationObject = pickOperationObject(method, pathItem[method]);
+    const maybeOperationObject = pickOperationObject(
+      method,
+      pathItem[method as 'get'] as OpenAPIExtension,
+    );
 
     if (!maybeOperationObject) {
       continue;
@@ -299,7 +302,7 @@ export async function pathItemToFragments(
     const subNamespace = [...namespace, method];
 
     if (!operationId) {
-      throw new YError('E_OPERATION_ID_REQUIRED', ...namespace);
+      throw new YError('E_OPERATION_ID_REQUIRED', namespace);
     }
 
     fragments.push({
@@ -310,10 +313,12 @@ export async function pathItemToFragments(
     });
 
     fragments.push(
-      ...(await operationToFragments(context, document, maybeOperationObject, [
-        'operations',
-        operationId,
-      ])),
+      ...(await operationToFragments(
+        context,
+        document,
+        maybeOperationObject as OpenAPIOperation<JSONSchema, OpenAPIExtension>,
+        ['operations', operationId],
+      )),
     );
   }
   return fragments;
@@ -510,7 +515,7 @@ export async function headerToFragments(
       },
     ];
   } else if ('content' in header) {
-    throw new YError('E_UNSUPPORTED_HEADER', header);
+    throw new YError('E_UNSUPPORTED_HEADER', [header]);
   } else {
     const { type, fragments: schemaFragments } = await schemaToTypeNode(
       context,

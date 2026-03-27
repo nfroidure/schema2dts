@@ -340,7 +340,7 @@ export async function gatherFragments(
       );
 
       if (!linkedFragment) {
-        throw new YError('E_BAD_DESTINATION', fragment.destination, fragment);
+        throw new YError('E_BAD_DESTINATION', [fragment.destination, fragment]);
       }
 
       if (linkedFragment.type === 'interfaceMember') {
@@ -395,7 +395,7 @@ export async function gatherFragments(
       return statements;
     }
 
-    throw new YError('E_BAD_FRAGMENT', fragment);
+    throw new YError('E_BAD_FRAGMENT', [fragment]);
   }, [] as InterfaceDeclaration[]);
 
   const typeStatements = findFragments(
@@ -463,13 +463,13 @@ export async function gatherFragments(
       );
 
       if (!linkedFragment) {
-        throw new YError('E_BAD_DESTINATION', fragment.destination, fragment);
+        throw new YError('E_BAD_DESTINATION', [fragment.destination, fragment]);
       }
       if (
         linkedFragment.type !== 'interfaceMember' &&
         linkedFragment.type !== 'declarationMember'
       ) {
-        throw new YError('E_BAD_FRAGMENT', fragment);
+        throw new YError('E_BAD_FRAGMENT', [fragment]);
       }
 
       curTypeModuleDeclarations.push(
@@ -487,7 +487,7 @@ export async function gatherFragments(
     } else if ('typeNode' in fragment) {
       curTypeModuleDeclarations.push(fragment.typeNode);
     } else {
-      throw new YError('E_BAD_FRAGMENT', fragment);
+      throw new YError('E_BAD_FRAGMENT', [fragment]);
     }
 
     return statements;

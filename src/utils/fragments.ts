@@ -13,9 +13,9 @@ export type FragmentRef = string & {
 export type NamespacePart = string & {
   _ref?: '_nsPart';
 };
-export type BaseFragment = {
+export interface BaseFragment {
   ref: FragmentRef;
-};
+}
 export type StatementFragment = BaseFragment & {
   type: 'statement';
   statement: Statement;

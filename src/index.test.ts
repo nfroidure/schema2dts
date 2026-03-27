@@ -4,8 +4,8 @@ import {
   generateOpenAPITypes,
   toSource,
 } from './index.js';
-import { readFileSync, readdirSync } from 'fs';
-import path from 'path';
+import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
 
 import {
   type JSONSchema,
@@ -473,20 +473,20 @@ declare interface operations {
     };
 
     expect(
-  toSource(
-    await generateOpenAPITypes(schema, {
-      camelizeInputs: false,
-      generateRealEnums: false,
-      typedFormats: {
-        date: {
-          namespace: ['Date']
-        }
-      },
-      tuplesFromFixedArraysLengthLimit: 5,
-      exportNamespaces: false
-    })
-  )
-).toMatchInlineSnapshot(`
+      toSource(
+        await generateOpenAPITypes(schema, {
+          camelizeInputs: false,
+          generateRealEnums: false,
+          typedFormats: {
+            date: {
+              namespace: ['Date'],
+            },
+          },
+          tuplesFromFixedArraysLengthLimit: 5,
+          exportNamespaces: false,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
 "declare interface paths {
     "/test": {
         "get": operations["Test"];
@@ -668,7 +668,10 @@ declare interface $defs {
 
     expect(
       toSource(
-        await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
+        await generateJSONSchemaTypes(
+          schema as JSONSchema,
+          DEFAULT_JSON_SCHEMA_OPTIONS,
+        ),
       ),
     ).toMatchInlineSnapshot(`
 "declare type Main = {
