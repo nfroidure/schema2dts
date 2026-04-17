@@ -1,3 +1,5 @@
+## [9.0.2](https://github.com/nfroidure/schema2dts/compare/v9.0.1...v9.0.2) (2026-04-17)
+
 ## [9.0.1](https://github.com/nfroidure/schema2dts/compare/v9.0.0...v9.0.1) (2026-04-07)
 
 # [9.0.0](https://github.com/nfroidure/schema2dts/compare/v8.1.1...v9.0.0) (2026-03-27)
