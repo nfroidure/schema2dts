@@ -73,7 +73,7 @@ describe('generateTypeFromPattern', () => {
         ),
       ),
     ).toMatchInlineSnapshot(
-      `"\`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`"`,
+      `"\`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`"`,
     );
   });
 
@@ -81,10 +81,15 @@ describe('generateTypeFromPattern', () => {
     expect(
       toSource(
         generateTypeFromPattern(
-          '^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$',
+          '^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$',
+          {
+            expandChars: true,
+          },
         ),
       ),
-    ).toMatchInlineSnapshot(`"\`\${string}.\${string}.\${string}\`"`);
+    ).toMatchInlineSnapshot(
+      `"\`v\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`"`,
+    );
   });
 
   test('should work with a simple prefixed pattern', () => {
@@ -108,30 +113,48 @@ describe('generateTypeFromPattern', () => {
   test('should properly interleave variables and multiple sequential characters without skipping', () => {
     expect(
       toSource(generateTypeFromPattern('^a[0-9]b[0-9]c$')),
-    ).toMatchInlineSnapshot(`"\`a\${string}b\${string}c\`"`);
+    ).toMatchInlineSnapshot(`"\`a\${number}b\${number}c\`"`);
   });
 
-  test.skip('should extract a type template variable for non-capturing groups', () => {
+  test('should extract a type template variable for non-capturing groups', () => {
     expect(
       toSource(generateTypeFromPattern('^(?:abc)$')),
     ).toMatchInlineSnapshot(`""abc""`);
+  });
+  test('should consider infinite quantifier as string', () => {
+    expect(
+      toSource(generateTypeFromPattern('^(?:abc)*$')),
+    ).toMatchInlineSnapshot(`"string"`);
+  });
+  test('should extract a type template variable from optional quantifier', () => {
+    expect(
+      toSource(generateTypeFromPattern('^(?:abc)?$')),
+    ).toMatchInlineSnapshot(`""abc" | """`);
   });
 
   test('should work with escaped numeric character set', () => {
     expect(
       toSource(generateTypeFromPattern('^\\d\\.\\d$')),
-    ).toMatchInlineSnapshot(`"\`\${string}.\${string}\`"`);
+    ).toMatchInlineSnapshot(`"\`\${number}.\${number}\`"`);
   });
 
-  test('should work with escaped numeric character set', () => {
+  test('should work with escaped numeric character set (quantifier)', () => {
     expect(toSource(generateTypeFromPattern('^\\d+$'))).toMatchInlineSnapshot(
-      `"string"`,
+      `"\`\${number}\`"`,
+    );
+  });
+
+  test('should work with several imbricated alternatives', () => {
+    expect(
+      toSource(generateTypeFromPattern('aaa|.|(bbb|ccc|)')),
+    ).toMatchInlineSnapshot(
+      `"\`\${string}aaa\${string}\` | string | \`\${string}\${"bbb" | "ccc" | ""}\${string}\`"`,
     );
   });
 
   test('should work with a character set', () => {
-    expect(toSource(generateTypeFromPattern('[0-9]+'))).toMatchInlineSnapshot(
-      `"string"`,
+    expect(toSource(generateTypeFromPattern('^[0-9]+$'))).toMatchInlineSnapshot(
+      `"\`\${number}\`"`,
     );
   });
 
@@ -150,6 +173,16 @@ describe('generateTypeFromPattern', () => {
   test('should handle variables at the very beginning when strictly anchored at the start', () => {
     expect(
       toSource(generateTypeFromPattern('^[0-9]+-suffix$')),
-    ).toMatchInlineSnapshot(`"\`\${string}-suffix\`"`);
+    ).toMatchInlineSnapshot(`"\`\${number}-suffix\`"`);
+  });
+
+  test('should work with single char quantifier', () => {
+    expect(
+      toSource(
+        generateTypeFromPattern('^https?://', {
+          expandChars: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`"\`http\${"s" | ""}://\${string}\`"`);
   });
 });

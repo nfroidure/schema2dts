@@ -68,7 +68,7 @@ export {
  * @param {Object} options
  * @param {string} options.baseName
  * @param {string} options.basePath
- * @param {Array<number> | "default"} options.filterStatuses
+ * @param {Array<number | "default">} options.filterStatuses
  * Filter generated types per HTTP status
  * @param {boolean} options.generateUnusedSchemas
  * Generate schemas even if the API doesn't use it
@@ -80,6 +80,8 @@ export {
  * Brand formats by names
  * @param {Array<string> | "all"} options.patternTypes
  * Try to generate types from patterns
+ * @param {boolean} options.expandPatternChars
+ * Expand some character classes into literal unions when generating pattern-based types
  * @param {Object} options.typedFormats
  * Substitute string format by a type
  * @param {boolean} options.generateRealEnums
@@ -102,6 +104,7 @@ export async function generateOpenAPITypes(
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
     patternTypes = DEFAULT_OPEN_API_OPTIONS.patternTypes,
+    expandPatternChars = DEFAULT_OPEN_API_OPTIONS.expandPatternChars,
     brandedFormats = DEFAULT_OPEN_API_OPTIONS.brandedFormats,
     typedFormats = DEFAULT_OPEN_API_OPTIONS.typedFormats,
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
@@ -110,12 +113,7 @@ export async function generateOpenAPITypes(
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
   }: Omit<
     OpenAPITypesGenerationOptions,
-    | 'baseName'
-    | 'basePath'
-    | 'brandedTypes'
-    | 'brandedFormats'
-    | 'patternTypes'
-    | 'typedFormats'
+    'baseName' | 'basePath' | 'brandedTypes' | 'brandedFormats' | 'typedFormats'
   > &
     Partial<
       Pick<
@@ -138,6 +136,7 @@ export async function generateOpenAPITypes(
           : Object.keys(rootOpenAPI?.components?.schemas || {}),
       brandedFormats,
       patternTypes,
+      expandPatternChars,
       typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
@@ -152,6 +151,7 @@ export async function generateOpenAPITypes(
       brandedTypes,
       brandedFormats,
       patternTypes,
+      expandPatternChars,
       typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
@@ -177,6 +177,8 @@ export async function generateOpenAPITypes(
  * Brand formats by names
  * @param {Array<string> | "all"} options.patternTypes
  * Try to generate types from patterns
+ * @param {boolean} options.expandPatternChars
+ * Expand some character classes into literal unions when generating pattern-based types
  * @param {Object} options.typedFormats
  * Substitute string format by a type
  * @param {boolean} options.generateRealEnums
@@ -194,6 +196,7 @@ export async function generateJSONSchemaTypes(
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
     brandedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.brandedFormats,
     patternTypes = DEFAULT_JSON_SCHEMA_OPTIONS.patternTypes,
+    expandPatternChars = DEFAULT_JSON_SCHEMA_OPTIONS.expandPatternChars,
     typedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.typedFormats,
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
     tuplesFromFixedArraysLengthLimit = DEFAULT_JSON_SCHEMA_OPTIONS.tuplesFromFixedArraysLengthLimit,
@@ -206,6 +209,7 @@ export async function generateJSONSchemaTypes(
       brandedTypes,
       brandedFormats,
       patternTypes,
+      expandPatternChars,
       typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,

@@ -2705,12 +2705,12 @@ declare interface components {
         sensorId: components["schemas"]["SensorUUID"];
         responseType: "code" | "token";
         clientId: string;
-        redirectURI: \`http\${string}://\${string}\`;
+        redirectURI: \`http\${"s" | ""}://\${string}\`;
         scope: string;
         state: string;
-        xSdkVersion: \`\${string}.\${string}.\${string}\`;
-        xApplicationVersion: \`\${string}.\${string}.\${string}\`;
-        xApiVersion: \`\${string}.\${string}.\${string}\`;
+        xSdkVersion: \`\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`;
+        xApplicationVersion: \`\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`;
+        xApiVersion: \`\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`;
     };
     requestBodies: {
         Report: components["schemas"]["ReportModel"];
@@ -3214,7 +3214,7 @@ declare interface components {
             name: string;
             givenName?: string;
             familyName?: string;
-            phone?: \`+\${string}\`;
+            phone?: \`+\${number}\`;
             birthDay?: \`\${string}-\${string}-\${string}\`;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
@@ -3275,7 +3275,7 @@ declare interface components {
             grant_type: "authorization_code";
             code?: string;
             client_id?: string;
-            redirect_uri?: \`http\${string}://\${string}\`;
+            redirect_uri?: \`http\${"s" | ""}://\${string}\`;
         };
         ClientCredentialsRequestBody: {
             grant_type: "client_credentials";
@@ -3296,7 +3296,7 @@ declare interface components {
             new_password: string;
         };
         GroupedInputData: {
-            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             values: {
                 sensorId: string;
                 valueName?: components["schemas"]["ValueName"];
@@ -3306,7 +3306,7 @@ declare interface components {
             }[];
         };
         DenormalizedInputData: {
-            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             sensorId: string;
             valueName?: components["schemas"]["ValueName"];
             value: number;
@@ -3789,7 +3789,7 @@ declare interface components {
         VerifyToken: string;
         ValuePrecision: number;
         SensorVariables: {
-            [pattern: string]: (number | \`%\${string}\`);
+            [pattern: string]: (number | \`%\${"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "_"}\${string}\`);
         };
         SensorDataType: Enums.SensorType;
         SensorSerie: {
@@ -4243,7 +4243,7 @@ declare interface components {
         };
         RealtimeAlertLabelsOperator: Enums.WetherAllLabelsShouldMatchOrAny;
         RealtimeAlertLabelTarget: Enums.TheTargetForLabelTestsLinkedAssetsOrAlsoItsAncestors;
-        SensorVariable: string;
+        SensorVariable: \`\${"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"}\${string}\`;
     };
 }
 declare namespace Enums {
@@ -7008,9 +7008,9 @@ declare interface components {
         redirectURI: \`http\${string}://\${string}\`;
         scope: string;
         state: string;
-        xSdkVersion: \`\${string}.\${string}.\${string}\`;
-        xApplicationVersion: \`\${string}.\${string}.\${string}\`;
-        xApiVersion: \`\${string}.\${string}.\${string}\`;
+        xSdkVersion: string;
+        xApplicationVersion: string;
+        xApiVersion: string;
     };
     requestBodies: {
         Report: components["schemas"]["ReportModel"];
@@ -7592,7 +7592,7 @@ declare interface components {
             name: string;
             givenName?: string;
             familyName?: string;
-            phone?: \`+\${string}\`;
+            phone?: \`+\${number}\`;
             birthDay?: \`\${string}-\${string}-\${string}\`;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
@@ -7663,7 +7663,7 @@ declare interface components {
             grant_type: "authorization_code";
             code?: string;
             client_id?: string;
-            redirect_uri?: \`http\${string}://\${string}\`;
+            redirect_uri?: string;
         };
         ClientCredentialsRequestBody: {
             grant_type: "client_credentials";
@@ -7684,7 +7684,7 @@ declare interface components {
             new_password: string;
         };
         GroupedInputData: {
-            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             values: {
                 sensorId: string;
                 valueName?: components["schemas"]["ValueName"];
@@ -7694,7 +7694,7 @@ declare interface components {
             }[];
         };
         DenormalizedInputData: {
-            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             sensorId: string;
             valueName?: components["schemas"]["ValueName"];
             value: number;
@@ -8662,7 +8662,7 @@ declare interface components {
             eventType: components["schemas"]["EventType"];
             eventHasARange?: boolean;
         };
-        AlertTriggerUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
+        AlertTriggerUUID: string & {
             _type?: "AlertTriggerUUID";
         };
         SilenceAlertTrigger: {
@@ -11253,9 +11253,9 @@ export interface components {
         redirectURI: \`http\${string}://\${string}\`;
         scope: string;
         state: string;
-        xSdkVersion: \`\${string}.\${string}.\${string}\`;
-        xApplicationVersion: \`\${string}.\${string}.\${string}\`;
-        xApiVersion: \`\${string}.\${string}.\${string}\`;
+        xSdkVersion: string;
+        xApplicationVersion: string;
+        xApiVersion: string;
     };
     requestBodies: {
         Report: components["schemas"]["ReportModel"];
@@ -11958,7 +11958,7 @@ export interface components {
             name: string;
             i18nMessage: components["schemas"]["I18NString"];
         } & (components["schemas"]["SilenceAlertTrigger"] | components["schemas"]["RealtimeAlertTrigger"]);
-        AlertTriggerUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        AlertTriggerUUID: string;
         AlertType: Enums.AlertType;
         AlertTriggerTypes: components["schemas"]["AlertType"][];
         AlertsTriggersUUIDS: components["schemas"]["AlertTriggerUUID"][];
@@ -12525,7 +12525,7 @@ export interface components {
             name: string;
             givenName?: string;
             familyName?: string;
-            phone?: \`+\${string}\`;
+            phone?: \`+\${number}\`;
             birthDay?: \`\${string}-\${string}-\${string}\`;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
@@ -12626,7 +12626,7 @@ export interface components {
             grant_type: "authorization_code";
             code?: string;
             client_id?: string;
-            redirect_uri?: \`http\${string}://\${string}\`;
+            redirect_uri?: string;
         };
         ClientCredentialsRequestBody: {
             grant_type: "client_credentials";
@@ -12650,7 +12650,7 @@ export interface components {
         };
         VerifyToken: string;
         DenormalizedInputData: {
-            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             sensorId: string;
             valueName?: components["schemas"]["ValueName"];
             value: number;
@@ -12658,7 +12658,7 @@ export interface components {
             labels?: components["schemas"]["Tags"];
         }[];
         GroupedInputData: {
-            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}Z\`;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             values: {
                 sensorId: string;
                 valueName?: components["schemas"]["ValueName"];

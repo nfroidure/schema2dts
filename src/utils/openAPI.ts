@@ -33,6 +33,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   filterStatuses: [],
   brandedTypes: [],
   patternTypes: [],
+  expandPatternChars: false,
   brandedFormats: [],
   typedFormats: {},
   generateUnusedSchemas: false,
@@ -54,6 +55,7 @@ export interface OpenAPITypesGenerationOptions {
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
   brandedFormats: string[] | typeof ALL_FORMATS;
   patternTypes: string[] | typeof ALL_PATTERNS;
+  expandPatternChars?: boolean;
   typedFormats: Record<
     string,
     {

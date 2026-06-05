@@ -31,6 +31,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   brandedTypes: [],
   brandedFormats: [],
   patternTypes: [],
+  expandPatternChars: false,
   typedFormats: {},
   generateRealEnums: false,
   tuplesFromFixedArraysLengthLimit: 5,
@@ -43,6 +44,7 @@ export interface JSONSchemaOptions {
   brandedTypes: string[] | typeof ALL_TYPES;
   brandedFormats: string[] | typeof ALL_FORMATS;
   patternTypes: string[] | typeof ALL_PATTERNS;
+  expandPatternChars?: boolean;
   typedFormats: Record<
     string,
     {
@@ -283,12 +285,17 @@ export async function handleTypedSchema(
             const isPatternType =
               context.jsonSchemaOptions.patternTypes === ALL_PATTERNS ||
               context.jsonSchemaOptions.patternTypes.includes(
-                schema.title as string,
+                schema.title || 'Unknown',
               );
+
             // TODO: We may combine pattern and format types but
             // let's stay simple atm
             if (isPatternType) {
-              return { type: generateTypeFromPattern(schema.pattern) };
+              return {
+                type: generateTypeFromPattern(schema.pattern, {
+                  expandChars: !!context.jsonSchemaOptions.expandPatternChars,
+                }),
+              };
             }
           }
 
