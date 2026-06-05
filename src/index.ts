@@ -64,22 +64,32 @@ export {
 
 /**
  * Create the TypeScript types declarations from an Open API document
- * @param {JSONSchema.Document} schema
+ * @param {OpenAPI} schema
  * @param {Object} options
  * @param {string} options.baseName
- * @param {Array<number>} options.filterStatuses
+ * @param {string} options.basePath
+ * @param {Array<number> | "default"} options.filterStatuses
+ * Filter generated types per HTTP status
  * @param {boolean} options.generateUnusedSchemas
+ * Generate schemas even if the API doesn't use it
  * @param {boolean} options.camelizeInputs
+ * Use camel case for API inputs
  * @param {Array<string>} options.brandedTypes
  * Brand types by names
  * @param {Array<string>} options.brandedFormats
  * Brand formats by names
+ * @param {Array<string> | "all"} options.patternTypes
+ * Try to generate types from patterns
  * @param {Object} options.typedFormats
  * Substitute string format by a type
  * @param {boolean} options.generateRealEnums
+ * Generate TypeScript enums
  * @param {number} options.tuplesFromFixedArraysLengthLimit
+ * Fix the maximum tuple size
  * @param {boolean} options.exportNamespaces
+ * Decide if the export must be made through namespaces
  * @param {boolean} options.requireCleanAPI
+ * Stricter API required (enable if you can improve the API)
  * @returns {TypeScript.NodeArray}
  */
 export async function generateOpenAPITypes(
@@ -91,6 +101,7 @@ export async function generateOpenAPITypes(
     generateUnusedSchemas = DEFAULT_OPEN_API_OPTIONS.generateUnusedSchemas,
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
+    patternTypes = DEFAULT_OPEN_API_OPTIONS.patternTypes,
     brandedFormats = DEFAULT_OPEN_API_OPTIONS.brandedFormats,
     typedFormats = DEFAULT_OPEN_API_OPTIONS.typedFormats,
     generateRealEnums = DEFAULT_OPEN_API_OPTIONS.generateRealEnums,
@@ -99,7 +110,12 @@ export async function generateOpenAPITypes(
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
   }: Omit<
     OpenAPITypesGenerationOptions,
-    'baseName' | 'basePath' | 'brandedTypes' | 'brandedFormats' | 'typedFormats'
+    | 'baseName'
+    | 'basePath'
+    | 'brandedTypes'
+    | 'brandedFormats'
+    | 'patternTypes'
+    | 'typedFormats'
   > &
     Partial<
       Pick<
@@ -108,6 +124,7 @@ export async function generateOpenAPITypes(
         | 'basePath'
         | 'brandedTypes'
         | 'brandedFormats'
+        | 'patternTypes'
         | 'typedFormats'
       >
     > = DEFAULT_OPEN_API_OPTIONS,
@@ -120,6 +137,7 @@ export async function generateOpenAPITypes(
           ? brandedTypes
           : Object.keys(rootOpenAPI?.components?.schemas || {}),
       brandedFormats,
+      patternTypes,
       typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
@@ -133,6 +151,7 @@ export async function generateOpenAPITypes(
       camelizeInputs,
       brandedTypes,
       brandedFormats,
+      patternTypes,
       typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
@@ -156,11 +175,16 @@ export async function generateOpenAPITypes(
  * Brand types by names
  * @param {Array<string>} options.brandedFormats
  * Brand formats by names
+ * @param {Array<string> | "all"} options.patternTypes
+ * Try to generate types from patterns
  * @param {Object} options.typedFormats
  * Substitute string format by a type
  * @param {boolean} options.generateRealEnums
+ * Generate TypeScript enums
  * @param {number} options.tuplesFromFixedArraysLengthLimit
+ * Fix the maximum tuple size
  * @param {boolean} options.exportNamespaces
+ * Decide if the export must be made through namespaces
  * @returns {TypeScript.NodeArray}
  */
 export async function generateJSONSchemaTypes(
@@ -169,6 +193,7 @@ export async function generateJSONSchemaTypes(
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
     brandedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.brandedFormats,
+    patternTypes = DEFAULT_JSON_SCHEMA_OPTIONS.patternTypes,
     typedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.typedFormats,
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
     tuplesFromFixedArraysLengthLimit = DEFAULT_JSON_SCHEMA_OPTIONS.tuplesFromFixedArraysLengthLimit,
@@ -180,6 +205,7 @@ export async function generateJSONSchemaTypes(
       baseName,
       brandedTypes,
       brandedFormats,
+      patternTypes,
       typedFormats,
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,

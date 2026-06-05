@@ -1,5 +1,6 @@
 import {
   ALL_FORMATS,
+  ALL_PATTERNS,
   ALL_TYPES,
   schemaToTypeNode,
   type JSONSchemaContext,
@@ -31,6 +32,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   basePath: 'openapi.d.ts',
   filterStatuses: [],
   brandedTypes: [],
+  patternTypes: [],
   brandedFormats: [],
   typedFormats: {},
   generateUnusedSchemas: false,
@@ -51,6 +53,7 @@ export interface OpenAPITypesGenerationOptions {
   camelizeInputs?: boolean;
   brandedTypes: string[] | typeof ALL_TYPES | 'schemas';
   brandedFormats: string[] | typeof ALL_FORMATS;
+  patternTypes: string[] | typeof ALL_PATTERNS;
   typedFormats: Record<
     string,
     {

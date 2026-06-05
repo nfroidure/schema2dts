@@ -125,19 +125,21 @@ Create the TypeScript types declarations from an Open API document
 
 | Param | Type | Description |
 | --- | --- | --- |
-| schema | <code>JSONSchema.Document</code> |  |
+| schema | <code>OpenAPI</code> |  |
 | options | <code>Object</code> |  |
 | options.baseName | <code>string</code> |  |
-| options.filterStatuses | <code>Array.&lt;number&gt;</code> |  |
-| options.generateUnusedSchemas | <code>boolean</code> |  |
-| options.camelizeInputs | <code>boolean</code> |  |
+| options.basePath | <code>string</code> |  |
+| options.filterStatuses | <code>Array.&lt;number&gt;</code> \| <code>&quot;default&quot;</code> | Filter generated types per HTTP status |
+| options.generateUnusedSchemas | <code>boolean</code> | Generate schemas even if the API doesn't use it |
+| options.camelizeInputs | <code>boolean</code> | Use camel case for API inputs |
 | options.brandedTypes | <code>Array.&lt;string&gt;</code> | Brand types by names |
 | options.brandedFormats | <code>Array.&lt;string&gt;</code> | Brand formats by names |
+| options.patternTypes | <code>Array.&lt;string&gt;</code> \| <code>&quot;all&quot;</code> | Try to generate types from patterns |
 | options.typedFormats | <code>Object</code> | Substitute string format by a type |
-| options.generateRealEnums | <code>boolean</code> |  |
-| options.tuplesFromFixedArraysLengthLimit | <code>number</code> |  |
-| options.exportNamespaces | <code>boolean</code> |  |
-| options.requireCleanAPI | <code>boolean</code> |  |
+| options.generateRealEnums | <code>boolean</code> | Generate TypeScript enums |
+| options.tuplesFromFixedArraysLengthLimit | <code>number</code> | Fix the maximum tuple size |
+| options.exportNamespaces | <code>boolean</code> | Decide if the export must be made through namespaces |
+| options.requireCleanAPI | <code>boolean</code> | Stricter API required (enable if you can improve the API) |
 
 <a name="generateJSONSchemaTypes"></a>
 
@@ -153,10 +155,11 @@ Create the TypeScript types declarations from a JSONSchema document
 | options.baseName | <code>string</code> |  |
 | options.brandedTypes | <code>Array.&lt;string&gt;</code> | Brand types by names |
 | options.brandedFormats | <code>Array.&lt;string&gt;</code> | Brand formats by names |
+| options.patternTypes | <code>Array.&lt;string&gt;</code> \| <code>&quot;all&quot;</code> | Try to generate types from patterns |
 | options.typedFormats | <code>Object</code> | Substitute string format by a type |
-| options.generateRealEnums | <code>boolean</code> |  |
-| options.tuplesFromFixedArraysLengthLimit | <code>number</code> |  |
-| options.exportNamespaces | <code>boolean</code> |  |
+| options.generateRealEnums | <code>boolean</code> | Generate TypeScript enums |
+| options.tuplesFromFixedArraysLengthLimit | <code>number</code> | Fix the maximum tuple size |
+| options.exportNamespaces | <code>boolean</code> | Decide if the export must be made through namespaces |
 
 <a name="toSource"></a>
 
