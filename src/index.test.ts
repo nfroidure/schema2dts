@@ -1687,6 +1687,71 @@ declare interface definitions {
 `);
   });
 
+  test.only('should work with reused enums in schemas', async () => {
+    const schema: JSONSchema = {
+      title: 'ReusedEnumTest',
+      type: 'object',
+      allOf: [
+        {
+          type: 'object',
+          required: ['type'],
+          properties: {
+            type: { enum: ['type1', 'type2'] },
+          },
+        },
+        {
+          oneOf: [
+            {
+              type: 'object',
+              required: ['type'],
+              properties: {
+                type: { const: 'type1' },
+                type1SpecificProp: { type: 'string' },
+              },
+            },
+            {
+              type: 'object',
+              required: ['type'],
+              properties: {
+                type: { const: 'type2' },
+                type2SpecificProp: { type: 'string' },
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          baseName: 'ReusedEnumTest',
+          generateRealEnums: true,
+          brandedTypes: [],
+          tuplesFromFixedArraysLengthLimit: 3,
+          exportNamespaces: false,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+"declare type ReusedEnumTest = {} & ({
+    type: Enums.Type;
+} & ({
+    type: Enums.Type.Type1;
+    type1SpecificProp?: string;
+} | {
+    type: Enums.Type.Type2;
+    type2SpecificProp?: string;
+}));
+declare namespace Enums {
+    export enum Type {
+        Type1 = "type1",
+        Type2 = "type2"
+    }
+}"
+`);
+  });
+
   test('should work with tuples and rest test case schemas', async () => {
     const schema: JSONSchema = {
       title: 'TupleTest',
