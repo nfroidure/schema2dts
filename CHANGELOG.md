@@ -1,3 +1,11 @@
+# [10.0.0](https://github.com/nfroidure/schema2dts/compare/v9.0.2...v10.0.0) (2026-06-08)
+
+
+### Features
+
+* **types:** add basic pattern types ([ff94a5f](https://github.com/nfroidure/schema2dts/commit/ff94a5fa04ba168a4e2e2f2e5b18ba1a4bb62022))
+* **types:** take in count more patterns ([969919a](https://github.com/nfroidure/schema2dts/commit/969919a9d9e9a47689d6b8f82f20853d959554e8))
+
 ## [9.0.2](https://github.com/nfroidure/schema2dts/compare/v9.0.1...v9.0.2) (2026-04-17)
 
 ## [9.0.1](https://github.com/nfroidure/schema2dts/compare/v9.0.0...v9.0.1) (2026-04-07)

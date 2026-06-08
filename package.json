@@ -23,7 +23,7 @@
     }
   },
   "name": "schema2dts",
-  "version": "9.0.2",
+  "version": "10.0.0",
   "description": "A very simple JSONSchema7/OpenAPI3 to TypeScript types definitions generator",
   "type": "module",
   "main": "dist/index.js",
