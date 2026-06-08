@@ -2705,12 +2705,12 @@ declare interface components {
         sensorId: components["schemas"]["SensorUUID"];
         responseType: "code" | "token";
         clientId: string;
-        redirectURI: string;
+        redirectURI: \`http\${"s" | ""}://\${string}\`;
         scope: string;
         state: string;
-        xSdkVersion: string;
-        xApplicationVersion: string;
-        xApiVersion: string;
+        xSdkVersion: \`\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`;
+        xApplicationVersion: \`\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`;
+        xApiVersion: \`\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}.\${"0" | \`\${"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"}\${number | ""}\`}\`;
     };
     requestBodies: {
         Report: components["schemas"]["ReportModel"];
@@ -2727,9 +2727,9 @@ declare interface components {
             images?: components["schemas"]["ImageModelHash"];
         };
         AlertModel: components["schemas"]["SynchronizableItem"] & components["schemas"]["BaseAlertModel"];
-        AttachmentUUID: string;
+        AttachmentUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         BinaryModel: string;
-        ImageUUID: string;
+        ImageUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ValueName: string;
         AlertsStats: components["schemas"]["AlertsStat"][];
         FactoriesUUIDS: components["schemas"]["FactoryUUID"][];
@@ -2851,7 +2851,7 @@ declare interface components {
             labels?: string[];
         }[][];
         SearchFilterType: Enums.SearchFilterType;
-        UUID: string;
+        UUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ReportModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["ReportUUID"];
             attachmentId?: components["schemas"]["AttachmentUUID"];
@@ -2862,14 +2862,14 @@ declare interface components {
             creation: components["schemas"]["Date"];
             lastModification: components["schemas"]["Date"];
         };
-        FactoryUUID: string;
-        ProjectUUID: string;
-        AssetUUID: string;
-        ApplicationUUID: string;
-        InterventionUUID: string;
-        AlertUUID: string;
-        ReportUUID: string;
-        SensorUUID: string;
+        FactoryUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        ProjectUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        AssetUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        ApplicationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        InterventionUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        AlertUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        ReportUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        SensorUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         SearchType: Enums.SearchType;
         OrganisationsUUIDS: components["schemas"]["OrganisationUUID"][];
         UserMembershipStatus: Enums.UserMembershipStatus;
@@ -2977,7 +2977,7 @@ declare interface components {
         TokenRequestBody: components["schemas"]["PasswordRequestBody"] | components["schemas"]["AuthorizationCodeRequestBody"] | components["schemas"]["ClientCredentialsRequestBody"] | components["schemas"]["RefreshTokenRequestBody"] | components["schemas"]["VerifyTokenRequestBody"] | components["schemas"]["PasswordChangeBody"];
         InputData: components["schemas"]["GroupedInputData"] | components["schemas"]["DenormalizedInputData"];
         ProjectCode: string;
-        OrganisationUUID: string;
+        OrganisationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         UserOrganisationInvitation: {
             email: string;
             givenName: string;
@@ -2988,8 +2988,8 @@ declare interface components {
             item: components["schemas"]["UserUUID"];
             users: components["schemas"]["UserModelHash"];
         };
-        UserUUID: string;
-        NotificationUUID: string;
+        UserUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
+        NotificationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ProjectModel: {
             id?: components["schemas"]["ProjectUUID"];
             organisationId?: components["schemas"]["OrganisationUUID"];
@@ -3004,7 +3004,7 @@ declare interface components {
         };
         NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
         EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
-        EventUUID: string;
+        EventUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         userFeedback: number;
         FactoryModel: components["schemas"]["SynchronizableItem"] & {
             id?: components["schemas"]["FactoryUUID"];
@@ -3214,8 +3214,8 @@ declare interface components {
             name: string;
             givenName?: string;
             familyName?: string;
-            phone?: string;
-            birthDay?: string;
+            phone?: \`+\${number}\`;
+            birthDay?: \`\${string}-\${string}-\${string}\`;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
         };
@@ -3275,7 +3275,7 @@ declare interface components {
             grant_type: "authorization_code";
             code?: string;
             client_id?: string;
-            redirect_uri?: string;
+            redirect_uri?: \`http\${"s" | ""}://\${string}\`;
         };
         ClientCredentialsRequestBody: {
             grant_type: "client_credentials";
@@ -3296,7 +3296,7 @@ declare interface components {
             new_password: string;
         };
         GroupedInputData: {
-            date: string;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             values: {
                 sensorId: string;
                 valueName?: components["schemas"]["ValueName"];
@@ -3306,7 +3306,7 @@ declare interface components {
             }[];
         };
         DenormalizedInputData: {
-            date: string;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             sensorId: string;
             valueName?: components["schemas"]["ValueName"];
             value: number;
@@ -3784,12 +3784,12 @@ declare interface components {
             from?: components["schemas"]["Date"];
             to?: components["schemas"]["Date"];
         };
-        Locale: string;
+        Locale: \`\${string}-\${string}\`;
         NotificationModel: components["schemas"]["UserCreatedNotification"] | components["schemas"]["UserUpdatedNotification"] | components["schemas"]["AlertNotification"] | components["schemas"]["AssetNotification"] | components["schemas"]["ApplicationNotification"] | components["schemas"]["InterventionNotification"] | components["schemas"]["ReportNotification"] | components["schemas"]["SensorNotification"] | components["schemas"]["FactoryNotification"] | components["schemas"]["ProjectNotification"] | components["schemas"]["AlgorithmModelUpdatedNotification"] | components["schemas"]["OrganisationNotification"] | components["schemas"]["OrganisationUserUpdatedNotification"] | components["schemas"]["OrganisationPreferencesUpsertedNotification"] | components["schemas"]["SensorSeriesDeletedNotification"] | components["schemas"]["PasswordChangeRequestedNotification"] | components["schemas"]["EmailStatusUpdatedNotification"] | components["schemas"]["UserFeedbackUpdatedNotification"] | components["schemas"]["UserInvitedInOrganisationNotification"] | components["schemas"]["MembershipCancelledEventSchema"] | components["schemas"]["VirtualSensorComputeRequestedNotification"];
         VerifyToken: string;
         ValuePrecision: number;
         SensorVariables: {
-            [pattern: string]: (number | string);
+            [pattern: string]: (number | \`%\${"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "_"}\${string}\`);
         };
         SensorDataType: Enums.SensorType;
         SensorSerie: {
@@ -4160,7 +4160,7 @@ declare interface components {
             eventType: components["schemas"]["EventType"];
             eventHasARange?: boolean;
         };
-        AlertTriggerUUID: string;
+        AlertTriggerUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         SilenceAlertTrigger: {
             type: "silence";
             duration: number;
@@ -4188,9 +4188,9 @@ declare interface components {
             ancestors?: components["schemas"]["AssetLabels"];
             tags?: components["schemas"]["Tags"];
         };
-        RunUUID: string;
+        RunUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         StandardAlertCode: Enums.StandardAlertCode;
-        CustomAlertCode: string;
+        CustomAlertCode: \`custom:\${string}\`;
         CommonNotification: {
             id: components["schemas"]["NotificationUUID"];
             date: components["schemas"]["Date"];
@@ -4243,7 +4243,7 @@ declare interface components {
         };
         RealtimeAlertLabelsOperator: Enums.WetherAllLabelsShouldMatchOrAny;
         RealtimeAlertLabelTarget: Enums.TheTargetForLabelTestsLinkedAssetsOrAlsoItsAncestors;
-        SensorVariable: string;
+        SensorVariable: \`\${"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"}\${string}\`;
     };
 }
 declare namespace Enums {
@@ -7005,7 +7005,7 @@ declare interface components {
         sensorId: components["schemas"]["SensorUUID"];
         responseType: "code" | "token";
         clientId: string;
-        redirectURI: string;
+        redirectURI: \`http\${string}://\${string}\`;
         scope: string;
         state: string;
         xSdkVersion: string;
@@ -7027,13 +7027,13 @@ declare interface components {
             images?: components["schemas"]["ImageModelHash"];
         };
         AlertModel: components["schemas"]["SynchronizableItem"] & components["schemas"]["BaseAlertModel"];
-        AttachmentUUID: string & {
+        AttachmentUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "AttachmentUUID";
         };
         BinaryModel: string & {
             _type?: "BinaryModel";
         };
-        ImageUUID: string & {
+        ImageUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "ImageUUID";
         };
         ValueName: string & {
@@ -7185,7 +7185,7 @@ declare interface components {
         SearchFilterType: ("factory" | "asset") & {
             _type?: "SearchFilterType";
         };
-        UUID: string & {
+        UUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "UUID";
         };
         ReportModel: components["schemas"]["SynchronizableItem"] & {
@@ -7198,28 +7198,28 @@ declare interface components {
             creation: components["schemas"]["Date"];
             lastModification: components["schemas"]["Date"];
         };
-        FactoryUUID: string & {
+        FactoryUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "FactoryUUID";
         };
-        ProjectUUID: string & {
+        ProjectUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "ProjectUUID";
         };
-        AssetUUID: string & {
+        AssetUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "AssetUUID";
         };
-        ApplicationUUID: string & {
+        ApplicationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "ApplicationUUID";
         };
-        InterventionUUID: string & {
+        InterventionUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "InterventionUUID";
         };
-        AlertUUID: string & {
+        AlertUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "AlertUUID";
         };
-        ReportUUID: string & {
+        ReportUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "ReportUUID";
         };
-        SensorUUID: string & {
+        SensorUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "SensorUUID";
         };
         SearchType: ("user" | "factory" | "project" | "asset" | "application" | "intervention" | "alert" | "report" | "sensor" | "organisation") & {
@@ -7335,7 +7335,7 @@ declare interface components {
         ProjectCode: string & {
             _type?: "ProjectCode";
         };
-        OrganisationUUID: string & {
+        OrganisationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "OrganisationUUID";
         };
         UserOrganisationInvitation: {
@@ -7348,10 +7348,10 @@ declare interface components {
             item: components["schemas"]["UserUUID"];
             users: components["schemas"]["UserModelHash"];
         };
-        UserUUID: string & {
+        UserUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "UserUUID";
         };
-        NotificationUUID: string & {
+        NotificationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "NotificationUUID";
         };
         ProjectModel: {
@@ -7368,7 +7368,7 @@ declare interface components {
         };
         NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
         EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
-        EventUUID: string & {
+        EventUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "EventUUID";
         };
         userFeedback: number;
@@ -7592,8 +7592,8 @@ declare interface components {
             name: string;
             givenName?: string;
             familyName?: string;
-            phone?: string;
-            birthDay?: string;
+            phone?: \`+\${number}\`;
+            birthDay?: \`\${string}-\${string}-\${string}\`;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
         };
@@ -7684,7 +7684,7 @@ declare interface components {
             new_password: string;
         };
         GroupedInputData: {
-            date: string;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             values: {
                 sensorId: string;
                 valueName?: components["schemas"]["ValueName"];
@@ -7694,7 +7694,7 @@ declare interface components {
             }[];
         };
         DenormalizedInputData: {
-            date: string;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             sensorId: string;
             valueName?: components["schemas"]["ValueName"];
             value: number;
@@ -8182,7 +8182,7 @@ declare interface components {
             from?: components["schemas"]["Date"];
             to?: components["schemas"]["Date"];
         };
-        Locale: string & {
+        Locale: \`\${string}-\${string}\` & {
             _type?: "Locale";
         };
         NotificationModel: components["schemas"]["UserCreatedNotification"] | components["schemas"]["UserUpdatedNotification"] | components["schemas"]["AlertNotification"] | components["schemas"]["AssetNotification"] | components["schemas"]["ApplicationNotification"] | components["schemas"]["InterventionNotification"] | components["schemas"]["ReportNotification"] | components["schemas"]["SensorNotification"] | components["schemas"]["FactoryNotification"] | components["schemas"]["ProjectNotification"] | components["schemas"]["AlgorithmModelUpdatedNotification"] | components["schemas"]["OrganisationNotification"] | components["schemas"]["OrganisationUserUpdatedNotification"] | components["schemas"]["OrganisationPreferencesUpsertedNotification"] | components["schemas"]["SensorSeriesDeletedNotification"] | components["schemas"]["PasswordChangeRequestedNotification"] | components["schemas"]["EmailStatusUpdatedNotification"] | components["schemas"]["UserFeedbackUpdatedNotification"] | components["schemas"]["UserInvitedInOrganisationNotification"] | components["schemas"]["MembershipCancelledEventSchema"] | components["schemas"]["VirtualSensorComputeRequestedNotification"];
@@ -8193,7 +8193,7 @@ declare interface components {
             _type?: "ValuePrecision";
         };
         SensorVariables: {
-            [pattern: string]: (number | string);
+            [pattern: string]: (number | \`%\${string}\`);
         };
         SensorDataType: "qualitative" | "quantitative";
         SensorSerie: {
@@ -8692,13 +8692,13 @@ declare interface components {
             ancestors?: components["schemas"]["AssetLabels"];
             tags?: components["schemas"]["Tags"];
         };
-        RunUUID: string & {
+        RunUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\` & {
             _type?: "RunUUID";
         };
         StandardAlertCode: ("missing_data" | "bad_data" | "wrong_delta" | "production_drop" | "out_of_bounds" | "abnormal_data" | "data_drift" | "silence_alert" | "realtime_alert") & {
             _type?: "StandardAlertCode";
         };
-        CustomAlertCode: string & {
+        CustomAlertCode: \`custom:\${string}\` & {
             _type?: "CustomAlertCode";
         };
         CommonNotification: {
@@ -11250,7 +11250,7 @@ export interface components {
         sensorId: components["schemas"]["SensorUUID"];
         responseType: "code" | "token";
         clientId: string;
-        redirectURI: string;
+        redirectURI: \`http\${string}://\${string}\`;
         scope: string;
         state: string;
         xSdkVersion: string;
@@ -11267,10 +11267,10 @@ export interface components {
             components["schemas"]["AlertStatus"],
             ...components["schemas"]["AlertStatus"][]
         ];
-        AlertUUID: string;
+        AlertUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         AlertsUUIDS: components["schemas"]["AlertUUID"][];
         SortDirection: Enums.SortDirection;
-        ImageUUID: string;
+        ImageUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ImagesUUIDS: components["schemas"]["ImageUUID"][];
         alertsSortByValue: Enums.AlertsSortByValue;
         AlertsStat: {
@@ -11311,7 +11311,7 @@ export interface components {
             lastModification?: components["schemas"]["Date"];
             secret?: string;
         };
-        ApplicationUUID: string;
+        ApplicationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ApplicationModelHash: {
             [pattern: string]: components["schemas"]["ApplicationModel"];
         };
@@ -11370,7 +11370,7 @@ export interface components {
             lastModification?: components["schemas"]["Date"];
         };
         AssetType: Enums.AssetType;
-        AssetUUID: string;
+        AssetUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         AssetModelHash: {
             [pattern: string]: components["schemas"]["AssetModel"];
         };
@@ -11496,7 +11496,7 @@ export interface components {
         EventModel: components["schemas"]["SegmentedAlertDetectionPredictEventModel"] | components["schemas"]["ForecastLearnEventModel"] | components["schemas"]["RealtimeAlertEventSchemaModel"] | components["schemas"]["DriftDetectionEventModel"] | components["schemas"]["ForecastPredictEventModel"] | components["schemas"]["DSPADPredictEventModel"] | components["schemas"]["ProcessEventSchemaModel"] | components["schemas"]["AnomalyEventModel"] | components["schemas"]["DSPADDataAnalysisEventModel"] | components["schemas"]["CycleEventModel"] | components["schemas"]["PhaseEventModel"];
         EventType: Enums.EventType;
         EventTypes: components["schemas"]["EventType"][];
-        EventUUID: string;
+        EventUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         EventModelHash: {
             [pattern: string]: components["schemas"]["EventModel"];
         };
@@ -11569,7 +11569,7 @@ export interface components {
             };
         };
         RealtimeAlertEventType: "realtime_alert";
-        RunUUID: string;
+        RunUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         SegmentedAlertDetectionPredictEventModel: {
             id: components["schemas"]["EventUUID"];
             type: components["schemas"]["SegmentedAlertDetectionPredictEventType"];
@@ -11618,7 +11618,7 @@ export interface components {
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
         };
-        FactoryUUID: string;
+        FactoryUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         NoSyncMode: "none";
         factoriesSortByValue: Enums.FactoriesSortByValue;
         SyncMode: components["schemas"]["NoSyncMode"] | components["schemas"]["DoSyncMode"];
@@ -11689,7 +11689,7 @@ export interface components {
             lastModification?: components["schemas"]["Date"];
             data?: components["schemas"]["BaseAlertData"];
         };
-        CustomAlertCode: string;
+        CustomAlertCode: \`custom:\${string}\`;
         I18NString: {
             [pattern: string]: string;
         };
@@ -11764,7 +11764,7 @@ export interface components {
             data: components["schemas"]["InterventionData"];
         };
         InterventionType: Enums.InterventionType;
-        InterventionUUID: string;
+        InterventionUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         InterventionModelHash: {
             [pattern: string]: components["schemas"]["InterventionModel"];
         };
@@ -11836,7 +11836,7 @@ export interface components {
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
         };
-        OrganisationUUID: string;
+        OrganisationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         OrganisationModelHash: {
             [pattern: string]: components["schemas"]["OrganisationModel"];
         };
@@ -11889,7 +11889,7 @@ export interface components {
             creation?: components["schemas"]["Date"];
             lastModification?: components["schemas"]["Date"];
         };
-        ProjectUUID: string;
+        ProjectUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ProjectModelHash: {
             [pattern: string]: components["schemas"]["ProjectModel"];
         };
@@ -11917,7 +11917,7 @@ export interface components {
             lastModification?: components["schemas"]["Date"];
         };
         AttachmentScope: Enums.AttachmentScope;
-        AttachmentUUID: string;
+        AttachmentUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         AttachmentModelHash: {
             [pattern: string]: components["schemas"]["AttachmentModel"];
         };
@@ -11941,7 +11941,7 @@ export interface components {
             creation: components["schemas"]["Date"];
             lastModification: components["schemas"]["Date"];
         };
-        ReportUUID: string;
+        ReportUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         ReportModelHash: {
             [pattern: string]: components["schemas"]["ReportModel"];
         };
@@ -12104,10 +12104,10 @@ export interface components {
             maxMin: number;
             minMax: number;
         };
-        SensorUUID: string;
+        SensorUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         SensorVariable: string;
         SensorVariables: {
-            [pattern: string]: (number | string);
+            [pattern: string]: (number | \`%\${string}\`);
         };
         SensorModelHash: {
             [pattern: string]: components["schemas"]["SensorModel"];
@@ -12513,7 +12513,7 @@ export interface components {
         GlobalUserOrganisationMembership: {
             roles: components["schemas"]["UserFactoryRoles"];
         };
-        Locale: string;
+        Locale: \`\${string}-\${string}\`;
         Limit: 10 | 50 | 100 | 500 | 1000;
         Start: number;
         Role: Enums.Role;
@@ -12525,8 +12525,8 @@ export interface components {
             name: string;
             givenName?: string;
             familyName?: string;
-            phone?: string;
-            birthDay?: string;
+            phone?: \`+\${number}\`;
+            birthDay?: \`\${string}-\${string}-\${string}\`;
             locale: components["schemas"]["Locale"];
             timeZone: components["schemas"]["TimeZone"];
         };
@@ -12559,7 +12559,7 @@ export interface components {
             lastModification?: components["schemas"]["Date"];
             emailStatus?: components["schemas"]["emailStatus"];
         };
-        UserUUID: string;
+        UserUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         UserModelHash: {
             [pattern: string]: components["schemas"]["UserModel"];
         };
@@ -12569,7 +12569,7 @@ export interface components {
             users: components["schemas"]["UserModelHash"];
         };
         UsersUUIDS: components["schemas"]["UserUUID"][];
-        UUID: string;
+        UUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         UUIDS: components["schemas"]["UUID"][];
         AlgorithmRun: {
             projectCode: components["schemas"]["ProjectCode"];
@@ -12650,7 +12650,7 @@ export interface components {
         };
         VerifyToken: string;
         DenormalizedInputData: {
-            date: string;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             sensorId: string;
             valueName?: components["schemas"]["ValueName"];
             value: number;
@@ -12658,7 +12658,7 @@ export interface components {
             labels?: components["schemas"]["Tags"];
         }[];
         GroupedInputData: {
-            date: string;
+            date: \`\${string}-\${string}-\${string}T\${string}:\${string}:\${string}\${\`.\${string}\` | ""}Z\`;
             values: {
                 sensorId: string;
                 valueName?: components["schemas"]["ValueName"];
@@ -12816,7 +12816,7 @@ export interface components {
             data: components["schemas"]["MembershipCancelledEventData"];
         };
         NotificationEvent: components["schemas"]["AlertDeletedEvent"] | components["schemas"]["AlertUpsertedEvent"] | components["schemas"]["AlgorithmModelUpdatedEvent"] | components["schemas"]["ApplicationDeletedEvent"] | components["schemas"]["ApplicationUpsertedEvent"] | components["schemas"]["AssetDeletedEvent"] | components["schemas"]["AssetUpsertedEvent"] | components["schemas"]["EmailStatusUpdatedEvent"] | components["schemas"]["FactoryDeletedEvent"] | components["schemas"]["FactoryUpsertedEvent"] | components["schemas"]["InterventionDeletedEvent"] | components["schemas"]["InterventionUpsertedEvent"] | components["schemas"]["MembershipCancelledEvent"] | components["schemas"]["OrganisationDeletedEvent"] | components["schemas"]["OrganisationPreferencesUpsertedEvent"] | components["schemas"]["OrganisationUpsertedEvent"] | components["schemas"]["OrganisationUserUpdatedEvent"] | components["schemas"]["PasswordChangeRequestedEvent"] | components["schemas"]["ProjectDeletedEvent"] | components["schemas"]["ProjectUpsertedEvent"] | components["schemas"]["ReportDeletedEvent"] | components["schemas"]["ReportUpsertedEvent"] | components["schemas"]["SensorDeletedEvent"] | components["schemas"]["SensorSeriesDeletedEvent"] | components["schemas"]["SensorUpsertedEvent"] | components["schemas"]["UserCreatedEvent"] | components["schemas"]["UserFeedbackUpdatedEvent"] | components["schemas"]["UserInvitedInOrganisationEvent"] | components["schemas"]["UserUpdatedEvent"] | components["schemas"]["VirtualSensorComputeRequestedEvent"];
-        NotificationUUID: string;
+        NotificationUUID: \`\${string}-\${string}-\${string}-\${string}-\${string}\`;
         NotificationsUUIDS: components["schemas"]["NotificationUUID"][];
         OrganisationDeletedEvent: {
             id: components["schemas"]["NotificationUUID"];

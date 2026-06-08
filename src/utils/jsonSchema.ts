@@ -20,14 +20,18 @@ import {
   type ObjectJSONSchema,
 } from 'ya-json-schema-types';
 import { relativeReferenceToNamespace } from 'ya-open-api-types';
+import { generateTypeFromPattern } from './patterns.js';
 
 export const ALL_FORMATS = 'all' as const;
 export const ALL_TYPES = 'all' as const;
+export const ALL_PATTERNS = 'all' as const;
 export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   baseName: 'Main',
   basePath: 'schema.d.ts',
   brandedTypes: [],
   brandedFormats: [],
+  patternTypes: [],
+  expandPatternChars: false,
   typedFormats: {},
   generateRealEnums: false,
   tuplesFromFixedArraysLengthLimit: 5,
@@ -39,6 +43,8 @@ export interface JSONSchemaOptions {
   basePath?: string;
   brandedTypes: string[] | typeof ALL_TYPES;
   brandedFormats: string[] | typeof ALL_FORMATS;
+  patternTypes: string[] | typeof ALL_PATTERNS;
+  expandPatternChars?: boolean;
   typedFormats: Record<
     string,
     {
@@ -271,6 +277,24 @@ export async function handleTypedSchema(
                     ),
                   ]),
                 ]),
+              };
+            }
+          }
+
+          if ('pattern' in schema && typeof schema.pattern === 'string') {
+            const isPatternType =
+              context.jsonSchemaOptions.patternTypes === ALL_PATTERNS ||
+              context.jsonSchemaOptions.patternTypes.includes(
+                schema.title || 'Unknown',
+              );
+
+            // TODO: We may combine pattern and format types but
+            // let's stay simple atm
+            if (isPatternType) {
+              return {
+                type: generateTypeFromPattern(schema.pattern, {
+                  expandChars: !!context.jsonSchemaOptions.expandPatternChars,
+                }),
               };
             }
           }

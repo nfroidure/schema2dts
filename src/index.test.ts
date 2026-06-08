@@ -89,38 +89,39 @@ describe('generateOpenAPITypes()', () => {
     expect(
       toSource(
         await generateOpenAPITypes(schema, {
+          patternTypes: [],
           generateRealEnums: true,
           exportNamespaces: true,
           tuplesFromFixedArraysLengthLimit: 5,
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export interface paths {
-    "/test": {
-        "get": operations["GetPing"];
-    };
-}
-export interface operations {
-    GetPing: {
-        requestBody: string;
-        responses: {
-            200: {
-                body: string;
-                headers: {
-                    "X-A-Header": number;
-                    "X-SDK-Version"?: string;
-                };
-            };
-        };
-        parameters: {
-            headers: {
-                "X-A-Header": number;
-                "X-API-Version"?: string;
-            };
-        };
-    };
-}"
-`);
+     "export interface paths {
+         "/test": {
+             "get": operations["GetPing"];
+         };
+     }
+     export interface operations {
+         GetPing: {
+             requestBody: string;
+             responses: {
+                 200: {
+                     body: string;
+                     headers: {
+                         "X-A-Header": number;
+                         "X-SDK-Version"?: string;
+                     };
+                 };
+             };
+             parameters: {
+                 headers: {
+                     "X-A-Header": number;
+                     "X-API-Version"?: string;
+                 };
+             };
+         };
+     }"
+    `);
   });
 
   test('with a normalized simple sample', async () => {
@@ -235,68 +236,69 @@ export interface operations {
       toSource(
         await generateOpenAPITypes(schema, {
           brandedTypes: ['TheSchema', 'TheSchemaClone'],
+          patternTypes: 'all',
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: false,
         }),
       ),
     ).toMatchInlineSnapshot(`
-"declare interface paths {
-    "/test": {
-        "get": operations["GetTest"];
-    };
-}
-declare interface operations {
-    GetTest: {
-        requestBody?: components["requestBodies"]["TheBody"];
-        responses: {
-            200: components["responses"]["TheResponse"];
-        };
-        parameters: {
-            query: {
-                TestParam?: components["parameters"]["TheTestParam"];
-            };
-        };
-    };
-}
-declare interface components {
-    requestBodies: {
-        TheBody: components["schemas"]["TheSchemaClone"];
-    };
-    responses: {
-        TheResponse: {
-            body: components["schemas"]["TheSchema"];
-            headers: {
-                "X-A-Header"?: components["headers"]["TheXAHeaderClone"];
-            };
-        };
-    };
-    headers: {
-        TheXAHeader: number;
-        TheXAHeaderClone: components["headers"]["TheXAHeader"];
-    };
-    parameters: {
-        TheTestParam: components["schemas"]["TheSchema"];
-    };
-    schemas: {
-        TheSchemaClone: components["schemas"]["TheSchema"];
-        TheSchema: {
-            previousStatus?: components["schemas"]["TaskStatus"];
-            currentStatus?: components["schemas"]["TaskStatus"];
-            nextStatus?: components["schemas"]["TaskStatus"];
-        };
-        TaskStatus: Enums.TaskStatus;
-    };
-}
-declare namespace Enums {
-    export enum TaskStatus {
-        ToAssign = "to_assign",
-        ToDo = "to_do",
-        InProgress = "in_progress",
-        Done = "done"
-    }
-}"
-`);
+     "declare interface paths {
+         "/test": {
+             "get": operations["GetTest"];
+         };
+     }
+     declare interface operations {
+         GetTest: {
+             requestBody?: components["requestBodies"]["TheBody"];
+             responses: {
+                 200: components["responses"]["TheResponse"];
+             };
+             parameters: {
+                 query: {
+                     TestParam?: components["parameters"]["TheTestParam"];
+                 };
+             };
+         };
+     }
+     declare interface components {
+         requestBodies: {
+             TheBody: components["schemas"]["TheSchemaClone"];
+         };
+         responses: {
+             TheResponse: {
+                 body: components["schemas"]["TheSchema"];
+                 headers: {
+                     "X-A-Header"?: components["headers"]["TheXAHeaderClone"];
+                 };
+             };
+         };
+         headers: {
+             TheXAHeader: number;
+             TheXAHeaderClone: components["headers"]["TheXAHeader"];
+         };
+         parameters: {
+             TheTestParam: components["schemas"]["TheSchema"];
+         };
+         schemas: {
+             TheSchemaClone: components["schemas"]["TheSchema"];
+             TheSchema: {
+                 previousStatus?: components["schemas"]["TaskStatus"];
+                 currentStatus?: components["schemas"]["TaskStatus"];
+                 nextStatus?: components["schemas"]["TaskStatus"];
+             };
+             TaskStatus: Enums.TaskStatus;
+         };
+     }
+     declare namespace Enums {
+         export enum TaskStatus {
+             ToAssign = "to_assign",
+             ToDo = "to_do",
+             InProgress = "in_progress",
+             Done = "done"
+         }
+     }"
+    `);
   });
 
   describe('with OpenAPI samples', () => {
@@ -325,6 +327,8 @@ declare namespace Enums {
               await generateOpenAPITypes(schema, {
                 generateRealEnums: true,
                 tuplesFromFixedArraysLengthLimit: 5,
+                patternTypes: 'all',
+                expandPatternChars: true,
                 exportNamespaces: false,
               }),
             ),
@@ -341,6 +345,33 @@ declare namespace Enums {
               await generateOpenAPITypes(schema, {
                 filterStatuses: [200, 201, 202, 300],
                 brandedTypes: 'schemas',
+                patternTypes: [
+                  'VariableReference',
+                  'Phone',
+                  'Birthday',
+                  'Date',
+                  'URI',
+                  'Locale',
+                  'EventUUID',
+                  'RunUUID',
+                  'FactoryUUID',
+                  'CustomAlertCode',
+                  'ProjectUUID',
+                  'AssetUUID',
+                  'ApplicationUUID',
+                  'InterventionUUID',
+                  'AlertUUID',
+                  'ReportUUID',
+                  'SensorUUID',
+                  'UserUUID',
+                  'OrganisationUUID',
+                  'AttachmentUUID',
+                  'ImageUUID',
+                  'ValueName',
+                  'AssetConfiguration',
+                  'UUID',
+                  'NotificationUUID',
+                ],
                 generateRealEnums: false,
                 tuplesFromFixedArraysLengthLimit: 5,
                 exportNamespaces: false,
@@ -358,6 +389,34 @@ declare namespace Enums {
             toSource(
               await generateOpenAPITypes(schema, {
                 baseName: 'AnotherAPI',
+                patternTypes: [
+                  'Variable',
+                  'VariableReference',
+                  'Phone',
+                  'Birthday',
+                  'Date',
+                  'URI',
+                  'Locale',
+                  'EventUUID',
+                  'RunUUID',
+                  'FactoryUUID',
+                  'CustomAlertCode',
+                  'ProjectUUID',
+                  'AssetUUID',
+                  'ApplicationUUID',
+                  'InterventionUUID',
+                  'AlertUUID',
+                  'ReportUUID',
+                  'SensorUUID',
+                  'UserUUID',
+                  'OrganisationUUID',
+                  'AttachmentUUID',
+                  'ImageUUID',
+                  'ValueName',
+                  'AssetConfiguration',
+                  'UUID',
+                  'NotificationUUID',
+                ],
                 generateUnusedSchemas: true,
                 generateRealEnums: true,
                 tuplesFromFixedArraysLengthLimit: 5,
@@ -405,6 +464,7 @@ declare namespace Enums {
       toSource(
         await generateOpenAPITypes(schema, {
           brandedFormats: ['date'],
+          patternTypes: [],
           camelizeInputs: false,
           generateRealEnums: false,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -412,23 +472,23 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"declare interface paths {
-    "/test": {
-        "get": operations["PathsTest"];
-    };
-}
-declare interface operations {
-    PathsTest: {
-        parameters: {
-            query: {
-                foo_bar?: string & {
-                    _format?: "date";
-                };
-            };
-        };
-    };
-}"
-`);
+     "declare interface paths {
+         "/test": {
+             "get": operations["PathsTest"];
+         };
+     }
+     declare interface operations {
+         PathsTest: {
+             parameters: {
+                 query: {
+                     foo_bar?: string & {
+                         _format?: "date";
+                     };
+                 };
+             };
+         };
+     }"
+    `);
   });
 
   test('should work with snake case parameter in query', async () => {
@@ -477,6 +537,7 @@ declare interface operations {
         await generateOpenAPITypes(schema, {
           camelizeInputs: false,
           generateRealEnums: false,
+          patternTypes: [],
           typedFormats: {
             date: {
               namespace: ['Date'],
@@ -487,22 +548,22 @@ declare interface operations {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"declare interface paths {
-    "/test": {
-        "get": operations["Test"];
-    };
-}
-declare interface operations {
-    Test: {
-        parameters: {
-            query: {
-                foo_bar?: Date;
-                another_foo_bar?: Date;
-            };
-        };
-    };
-}"
-`);
+     "declare interface paths {
+         "/test": {
+             "get": operations["Test"];
+         };
+     }
+     declare interface operations {
+         Test: {
+             parameters: {
+                 query: {
+                     foo_bar?: Date;
+                     another_foo_bar?: Date;
+                 };
+             };
+         };
+     }"
+    `);
   });
 });
 
@@ -539,15 +600,15 @@ describe('generateJSONSchemaTypes()', () => {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = Enums.Limit;
-export namespace Enums {
-    export enum Limit {
-        User1Name = "user1name",
-        User2Name = "user_2_name",
-        User3Name = "user3_name"
-    }
-}"
-`);
+     "export type Main = Enums.Limit;
+     export namespace Enums {
+         export enum Limit {
+             User1Name = "user1name",
+             User2Name = "user_2_name",
+             User3Name = "user3_name"
+         }
+     }"
+    `);
   });
 
   test('should work with empty schema', async () => {
@@ -617,19 +678,19 @@ export namespace Enums {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = [
-    $defs["point"],
-    $defs["point"],
-    $defs["point"],
-    ...$defs["point"][]
-];
-declare interface $defs {
-    point: {
-        x: number;
-        y: number;
-    };
-}"
-`);
+     "declare type Main = [
+         $defs["point"],
+         $defs["point"],
+         $defs["point"],
+         ...$defs["point"][]
+     ];
+     declare interface $defs {
+         point: {
+             x: number;
+             y: number;
+         };
+     }"
+    `);
   });
 
   test('should work with sample schema 2', async () => {
@@ -674,17 +735,17 @@ declare interface $defs {
         ),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    foo?: $defs["foo"];
-    date?: $defs["date"];
-} & ($defs["base"] & $defs["common"]);
-declare interface $defs {
-    foo: "foo";
-    date: "date";
-    base: "base";
-    common: "common";
-}"
-`);
+     "declare type Main = {
+         foo?: $defs["foo"];
+         date?: $defs["date"];
+     } & ($defs["base"] & $defs["common"]);
+     declare interface $defs {
+         foo: "foo";
+         date: "date";
+         base: "base";
+         common: "common";
+     }"
+    `);
   });
 
   test('should work with enums having values starting with a number', async () => {
@@ -703,15 +764,15 @@ declare interface $defs {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = Enums.Limit;
-export namespace Enums {
-    export enum Limit {
-        _1M = "1m",
-        _1D = "1d",
-        _1W = "1w"
-    }
-}"
-`);
+     "export type Main = Enums.Limit;
+     export namespace Enums {
+         export enum Limit {
+             _1M = "1m",
+             _1D = "1d",
+             _1W = "1w"
+         }
+     }"
+    `);
   });
 
   test('should camelize number separated identifiers', async () => {
@@ -730,15 +791,15 @@ export namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Main = Enums.Limit;
-export namespace Enums {
-    export enum Limit {
-        User1Name = "user1name",
-        User2Name = "user_2_name",
-        User3Name = "user3_name"
-    }
-}"
-`);
+     "export type Main = Enums.Limit;
+     export namespace Enums {
+         export enum Limit {
+             User1Name = "user1name",
+             User2Name = "user_2_name",
+             User3Name = "user3_name"
+         }
+     }"
+    `);
   });
 
   test('should work with string literal enums', async () => {
@@ -753,6 +814,7 @@ export namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           exportNamespaces: false,
           generateRealEnums: true,
@@ -760,14 +822,14 @@ export namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = Enums.Limit;
-declare namespace Enums {
-    export enum Limit {
-        Str1 = "str1",
-        Str2 = "str2"
-    }
-}"
-`);
+     "declare type Main = Enums.Limit;
+     declare namespace Enums {
+         export enum Limit {
+             Str1 = "str1",
+             Str2 = "str2"
+         }
+     }"
+    `);
   });
 
   test('should work with simple literal type schema', async () => {
@@ -780,6 +842,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -814,6 +877,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -835,6 +899,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -857,6 +922,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -888,6 +954,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -896,14 +963,14 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = {
-    min: number;
-    max: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    pace?: number;
-};"
-`);
+     "export type Limit = {
+         min: number;
+         max: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         pace?: number;
+     };"
+    `);
   });
 
   test('should work with nullable object schema', async () => {
@@ -932,6 +999,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -940,18 +1008,18 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = {
-    min?: number;
-    max?: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    pace?: number;
-    nothing?: never;
-    anything?: unknown;
-    aConst?: "test";
-    [pattern: string]: string | unknown;
-} | null;"
-`);
+     "export type Limit = {
+         min?: number;
+         max?: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         pace?: number;
+         nothing?: never;
+         anything?: unknown;
+         aConst?: "test";
+         [pattern: string]: string | unknown;
+     } | null;"
+    `);
   });
 
   test('should work with nested schemas', async () => {
@@ -973,6 +1041,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -981,17 +1050,17 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = {
-    min?: number;
-    max?: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    readonly pace?: number;
-} | null | number | [
-    number,
-    string
-];"
-`);
+     "export type Limit = {
+         min?: number;
+         max?: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         readonly pace?: number;
+     } | null | number | [
+         number,
+         string
+     ];"
+    `);
   });
 
   test('should work with anyOf schemas', async () => {
@@ -1023,6 +1092,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1031,17 +1101,17 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = (null | number) | {
-    min?: number;
-    max?: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    readonly pace?: number;
-} | [
-    number,
-    string
-];"
-`);
+     "export type Limit = (null | number) | {
+         min?: number;
+         max?: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         readonly pace?: number;
+     } | [
+         number,
+         string
+     ];"
+    `);
   });
 
   test('should work with oneOf schemas', async () => {
@@ -1073,6 +1143,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1081,17 +1152,17 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = (null | number) | {
-    min?: number;
-    max?: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    readonly pace?: number;
-} | [
-    number,
-    string
-];"
-`);
+     "export type Limit = (null | number) | {
+         min?: number;
+         max?: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         readonly pace?: number;
+     } | [
+         number,
+         string
+     ];"
+    `);
   });
 
   test('should work with base schema and nested oneof schemas', async () => {
@@ -1130,14 +1201,14 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    name?: string;
-} & ({
-    email: string;
-} | {
-    cellphone: string;
-});"
-`);
+     "declare type Main = {
+         name?: string;
+     } & ({
+         email: string;
+     } | {
+         cellphone: string;
+     });"
+    `);
   });
 
   test('should work with base schema and nested oneof schemas and inherited types', async () => {
@@ -1174,14 +1245,14 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    name?: string;
-} & ({
-    email: string;
-} | {
-    cellphone: string;
-});"
-`);
+     "declare type Main = {
+         name?: string;
+     } & ({
+         email: string;
+     } | {
+         cellphone: string;
+     });"
+    `);
   });
 
   test('should work with allOf schemas', async () => {
@@ -1213,6 +1284,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1221,17 +1293,17 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = (null | number) & {
-    min?: number;
-    max?: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    readonly pace?: number;
-} & [
-    number,
-    string
-];"
-`);
+     "export type Limit = (null | number) & {
+         min?: number;
+         max?: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         readonly pace?: number;
+     } & [
+         number,
+         string
+     ];"
+    `);
   });
 
   test('should work with allOf schemas and required properties added', async () => {
@@ -1260,6 +1332,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1268,17 +1341,17 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = {
-    min?: number;
-    max?: number;
-    minIncluded?: boolean;
-    maxIncluded?: boolean;
-    readonly pace?: number;
-} & {
-    min: unknown;
-    max: unknown;
-};"
-`);
+     "export type Limit = {
+         min?: number;
+         max?: number;
+         minIncluded?: boolean;
+         maxIncluded?: boolean;
+         readonly pace?: number;
+     } & {
+         min: unknown;
+         max: unknown;
+     };"
+    `);
   });
 
   test('should work with simple literal type schema', async () => {
@@ -1295,6 +1368,7 @@ declare namespace Enums {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1303,11 +1377,11 @@ declare namespace Enums {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Limit = definitions["User"];
-export interface definitions {
-    User: string;
-}"
-`);
+     "export type Limit = definitions["User"];
+     export interface definitions {
+         User: string;
+     }"
+    `);
   });
 
   test('should work with empty objects schemas', async () => {
@@ -1321,6 +1395,7 @@ export interface definitions {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1352,6 +1427,7 @@ export interface definitions {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1360,13 +1436,13 @@ export interface definitions {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Tree = $defs["Node"];
-export interface $defs {
-    Node: {
-        child?: $defs["Node"];
-    };
-}"
-`);
+     "export type Tree = $defs["Node"];
+     export interface $defs {
+         Node: {
+             child?: $defs["Node"];
+         };
+     }"
+    `);
   });
 
   test('should work with indirect recursive schemas', async () => {
@@ -1398,6 +1474,7 @@ export interface $defs {
         await generateJSONSchemaTypes(schema, {
           brandedTypes: [],
           brandedFormats: [],
+          patternTypes: [],
           typedFormats: {},
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
@@ -1406,16 +1483,16 @@ export interface $defs {
         }),
       ),
     ).toMatchInlineSnapshot(`
-"export type Tree = $defs["Node"];
-export interface $defs {
-    Node: {
-        content?: $defs["NodeContent"];
-    };
-    NodeContent: {
-        child?: $defs["Node"];
-    };
-}"
-`);
+     "export type Tree = $defs["Node"];
+     export interface $defs {
+         Node: {
+             content?: $defs["NodeContent"];
+         };
+         NodeContent: {
+             child?: $defs["Node"];
+         };
+     }"
+    `);
   });
 
   test('should work with a nested oneOf in allOf schemas', async () => {
@@ -1460,14 +1537,14 @@ export interface $defs {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    name: string;
-} & ({
-    email: string;
-} | {
-    phone: string;
-});"
-`);
+     "declare type Main = {
+         name: string;
+     } & ({
+         email: string;
+     } | {
+         phone: string;
+     });"
+    `);
   });
 
   test('should work with not defined items array schemas', async () => {
@@ -1566,22 +1643,22 @@ export interface $defs {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    name: string;
-    duration: number;
-    start: definitions["Date"];
-    end: definitions["Date"];
-    labels: ("value" | "peaks" | "startTime" | "endTime" | "peakTime")[];
-    timestamp: ("startTime" | "endTime" | "peakTime")[];
-    data: (definitions["Date"] | number | ("first" | "bosse" | "last") | string)[][];
-    context: definitions["Data"];
-    [pattern: string]: unknown;
-};
-declare interface definitions {
-    Date: string;
-    Data: string;
-}"
-`);
+     "declare type Main = {
+         name: string;
+         duration: number;
+         start: definitions["Date"];
+         end: definitions["Date"];
+         labels: ("value" | "peaks" | "startTime" | "endTime" | "peakTime")[];
+         timestamp: ("startTime" | "endTime" | "peakTime")[];
+         data: (definitions["Date"] | number | ("first" | "bosse" | "last") | string)[][];
+         context: definitions["Data"];
+         [pattern: string]: unknown;
+     };
+     declare interface definitions {
+         Date: string;
+         Data: string;
+     }"
+    `);
   });
 
   test('should work with tuple test case schemas', async () => {
@@ -1614,15 +1691,15 @@ declare interface definitions {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    data: [
-        string,
-        number,
-        number,
-        string[]
-    ][];
-};"
-`);
+     "declare type Main = {
+         data: [
+             string,
+             number,
+             number,
+             string[]
+         ][];
+     };"
+    `);
   });
 
   test('should create tuples from fixed length arrays', async () => {
@@ -1646,15 +1723,15 @@ declare interface definitions {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    data: [
-        string,
-        string,
-        string,
-        string
-    ];
-};"
-`);
+     "declare type Main = {
+         data: [
+             string,
+             string,
+             string,
+             string
+         ];
+     };"
+    `);
   });
 
   test('should create tuples from min length arrays', async () => {
@@ -1677,14 +1754,14 @@ declare interface definitions {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    data: [
-        string,
-        string,
-        ...string[]
-    ];
-};"
-`);
+     "declare type Main = {
+         data: [
+             string,
+             string,
+             ...string[]
+         ];
+     };"
+    `);
   });
 
   test('should work with tuples and rest test case schemas', async () => {
@@ -1718,16 +1795,16 @@ declare interface definitions {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    data: [
-        string,
-        number,
-        number,
-        string[],
-        ...boolean[]
-    ][];
-};"
-`);
+     "declare type Main = {
+         data: [
+             string,
+             number,
+             number,
+             string[],
+             ...boolean[]
+         ][];
+     };"
+    `);
   });
 
   test('should work with tuple test case schemas', async () => {
@@ -1744,11 +1821,11 @@ declare interface definitions {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = [
-    boolean | string,
-    ...(boolean | string)[]
-];"
-`);
+     "declare type Main = [
+         boolean | string,
+         ...(boolean | string)[]
+     ];"
+    `);
   });
 
   test('should work with numbers as props schemas', async () => {
@@ -1791,15 +1868,15 @@ declare interface definitions {
         await generateJSONSchemaTypes(schema, DEFAULT_JSON_SCHEMA_OPTIONS),
       ),
     ).toMatchInlineSnapshot(`
-"declare type Main = {
-    "1.0"?: number;
-    "5.0"?: number;
-    "25.0"?: number;
-    "50.0"?: number;
-    "75.0"?: number;
-    "95.0"?: number;
-    "99.0"?: number;
-};"
-`);
+     "declare type Main = {
+         "1.0"?: number;
+         "5.0"?: number;
+         "25.0"?: number;
+         "50.0"?: number;
+         "75.0"?: number;
+         "95.0"?: number;
+         "99.0"?: number;
+     };"
+    `);
   });
 });

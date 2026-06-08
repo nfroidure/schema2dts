@@ -71,6 +71,7 @@
     "common-services": "^20.0.0",
     "debug": "^4.4.3",
     "knifecycle": "^21.1.0",
+    "regexpp": "^3.2.0",
     "type-fest": "^5.6.0",
     "typescript": "^6.0.2",
     "ya-json-schema-types": "^2.0.2",
