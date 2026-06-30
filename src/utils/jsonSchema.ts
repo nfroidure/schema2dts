@@ -434,6 +434,24 @@ export async function buildObjectTypeNode(
   // We have to manage pattern and additional properties together
   // since TypeScript disallow several string index signatures
   if (schema.patternProperties || schema.additionalProperties) {
+    const { type: additionalType, fragments: additionalFragments } =
+      typeof schema.additionalProperties === 'boolean' ||
+      typeof schema.additionalProperties === 'undefined'
+        ? { type: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword) }
+        : await schemaToTypeNode(context, schema.additionalProperties);
+
+    if (additionalFragments) {
+      resultsRests.push({ fragments: additionalFragments });
+    }
+    const { type: propertyType, fragments: propertyFragments } =
+      typeof schema.propertyNames === 'undefined'
+        ? { type: factory.createTypeReferenceNode('string', []) }
+        : await schemaToTypeNode(context, schema.propertyNames as JSONSchema);
+
+    if (propertyFragments) {
+      resultsRests.push({ fragments: propertyFragments });
+    }
+
     const { readOnly, required, types, ...resultRest } = (
       await Promise.all(
         Object.keys(schema.patternProperties || {}).map(
@@ -466,7 +484,7 @@ export async function buildObjectTypeNode(
         schema.additionalProperties
           ? [
               {
-                type: factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
+                type: additionalType,
                 required: false,
                 readOnly: false,
               },
@@ -503,7 +521,7 @@ export async function buildObjectTypeNode(
             required
               ? factory.createToken(SyntaxKind.QuestionToken)
               : undefined,
-            factory.createTypeReferenceNode('string', []),
+            propertyType,
             undefined,
           ),
         ],

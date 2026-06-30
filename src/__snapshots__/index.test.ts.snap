@@ -3101,7 +3101,7 @@ declare interface components {
             [pattern: string]: components["schemas"]["InterventionModel"];
         };
         SensorModelHash: {
-            [pattern: string]: components["schemas"]["SensorModel"];
+            [pattern: components["schemas"]["SensorUUID"]]: components["schemas"]["SensorModel"];
         };
         AttachmentModelHash: {
             [pattern: string]: components["schemas"]["AttachmentModel"];
@@ -7469,7 +7469,7 @@ declare interface components {
             [pattern: string]: components["schemas"]["InterventionModel"];
         };
         SensorModelHash: {
-            [pattern: string]: components["schemas"]["SensorModel"];
+            [pattern: components["schemas"]["SensorUUID"]]: components["schemas"]["SensorModel"];
         };
         AttachmentModelHash: {
             [pattern: string]: components["schemas"]["AttachmentModel"];
@@ -12110,7 +12110,7 @@ export interface components {
             [pattern: string]: (number | \`%\${string}\`);
         };
         SensorModelHash: {
-            [pattern: string]: components["schemas"]["SensorModel"];
+            [pattern: components["schemas"]["SensorUUID"]]: components["schemas"]["SensorModel"];
         };
         SensorsItems: {
             total?: components["schemas"]["Total"];
@@ -13534,7 +13534,7 @@ declare interface operations {
         responses: {
             200: {
                 body: {
-                    [pattern: string]: unknown;
+                    [pattern: string]: number;
                 };
             };
         };
@@ -13850,7 +13850,7 @@ declare interface operations {
         responses: {
             200: {
                 body: {
-                    [pattern: string]: unknown;
+                    [pattern: string]: number;
                 };
             };
         };
@@ -14140,7 +14140,7 @@ export interface operations {
         responses: {
             200: {
                 body: {
-                    [pattern: string]: unknown;
+                    [pattern: string]: number;
                 };
             };
         };

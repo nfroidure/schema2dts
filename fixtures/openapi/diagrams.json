@@ -7404,10 +7404,11 @@
       },
       "SensorModelHash": {
         "type": "object",
-        "patternProperties": {
-          "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$": {
-            "$ref": "#/components/schemas/SensorModel"
-          }
+        "propertyNames": {
+          "$ref": "#/components/schemas/SensorUUID"
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/SensorModel"
         }
       },
       "SensorsItems": {
