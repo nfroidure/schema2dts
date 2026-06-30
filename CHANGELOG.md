@@ -1,3 +1,10 @@
+# [10.1.0](https://github.com/nfroidure/schema2dts/compare/v10.0.0...v10.1.0) (2026-06-30)
+
+
+### Features
+
+* **types:** better additional properties typing ([e3f837a](https://github.com/nfroidure/schema2dts/commit/e3f837ac3db98039c5f08708feaa601b8f4f0da3))
+
 # [10.0.0](https://github.com/nfroidure/schema2dts/compare/v9.0.2...v10.0.0) (2026-06-08)
 
 
