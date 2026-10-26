@@ -91,17 +91,36 @@ export function buildInterfaceReference(namespaceParts: string[]) {
 }
 
 export function buildIdentifier(part: string): string {
-  const identifier = part
-    .replace(/[^a-z0-9-_ ]/gi, '')
-    .replace(/(?:^|[^a-z0-9]+)([a-z])/gi, (_: unknown, $1: string) =>
-      $1.toUpperCase(),
-    )
-    .replace(
-      /([^a-z]+)([a-z])/gi,
-      (_: unknown, $1: string, $2: string) => $1 + $2.toUpperCase(),
-    )
-    .replace(/[^a-z0-9]/gi, '')
-    .replace(/^([0-9])/, (_: unknown, $1: string) => '_' + $1);
+  const safePart = part.replace(/[^a-z0-9-_ ]/gi, '');
+  let identifier = '';
+  let shouldUpperCase = true;
 
-  return identifier || 'Unknown';
+  for (const char of safePart) {
+    const charCode = char.charCodeAt(0);
+    const isDigit = charCode >= 48 && charCode <= 57;
+    const loweredCharCode = charCode | 32;
+    const isLetter = loweredCharCode >= 97 && loweredCharCode <= 122;
+
+    if (!(isLetter || isDigit)) {
+      shouldUpperCase = true;
+      continue;
+    }
+
+    if (isLetter) {
+      identifier += shouldUpperCase ? char.toUpperCase() : char;
+      shouldUpperCase = false;
+      continue;
+    }
+
+    identifier += char;
+    shouldUpperCase = true;
+  }
+
+  if (!identifier.length) {
+    return 'Unknown';
+  }
+
+  return identifier[0] >= '0' && identifier[0] <= '9'
+    ? '_' + identifier
+    : identifier;
 }
