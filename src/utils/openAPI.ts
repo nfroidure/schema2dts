@@ -31,6 +31,7 @@ export const DEFAULT_OPEN_API_OPTIONS: OpenAPITypesGenerationOptions = {
   baseName: 'API',
   basePath: 'openapi.d.ts',
   filterStatuses: [],
+  filterOperations: [],
   brandedTypes: [],
   patternTypes: [],
   expandPatternChars: false,
@@ -49,6 +50,7 @@ export interface OpenAPITypesGenerationOptions {
   baseName: string;
   basePath: string;
   filterStatuses?: (number | 'default')[];
+  filterOperations?: string[];
   generateUnusedSchemas?: boolean;
   generateUnusedComponents?: boolean;
   camelizeInputs?: boolean;
@@ -259,6 +261,59 @@ export async function pathItemToFragments(
     ];
   }
 
+  const filteredOperations = Object.keys(pathItem).reduce<
+    {
+      method: string;
+      operation: OpenAPIOperation<JSONSchema, OpenAPIExtension>;
+      operationId: string;
+    }[]
+  >((aggregatedOperations, method) => {
+    const maybeOperationObject = pickOperationObject(
+      method,
+      pathItem[method as 'get'] as OpenAPIExtension,
+    );
+
+    if (!maybeOperationObject) {
+      return aggregatedOperations;
+    }
+
+    const operationId =
+      (maybeOperationObject.operationId as string) ||
+      (context.oasOptions.requireCleanAPI
+        ? ''
+        : namespace
+            .filter((id) => id)
+            .map(buildIdentifier)
+            .join(''));
+
+    if (
+      context.oasOptions.filterOperations?.length &&
+      !context.oasOptions.filterOperations.includes(operationId)
+    ) {
+      return aggregatedOperations;
+    }
+
+    if (!operationId) {
+      throw new YError('E_OPERATION_ID_REQUIRED', namespace);
+    }
+
+    return [
+      ...aggregatedOperations,
+      {
+        method,
+        operation: maybeOperationObject as OpenAPIOperation<
+          JSONSchema,
+          OpenAPIExtension
+        >,
+        operationId,
+      },
+    ];
+  }, []);
+
+  if (context.oasOptions.filterOperations?.length && !filteredOperations.length) {
+    return [];
+  }
+
   const fragments: Fragment[] = [];
 
   if (pathItem.parameters && pathItem.parameters.length) {
@@ -286,29 +341,8 @@ export async function pathItemToFragments(
     }
   }
 
-  for (const method of Object.keys(pathItem)) {
-    const maybeOperationObject = pickOperationObject(
-      method,
-      pathItem[method as 'get'] as OpenAPIExtension,
-    );
-
-    if (!maybeOperationObject) {
-      continue;
-    }
-
-    const operationId =
-      (maybeOperationObject.operationId as string) ||
-      (context.oasOptions.requireCleanAPI
-        ? ''
-        : namespace
-            .filter((id) => id)
-            .map(buildIdentifier)
-            .join(''));
+  for (const { operation, operationId, method } of filteredOperations) {
     const subNamespace = [...namespace, method];
-
-    if (!operationId) {
-      throw new YError('E_OPERATION_ID_REQUIRED', namespace);
-    }
 
     fragments.push({
       type: 'interfaceMember',
@@ -321,7 +355,7 @@ export async function pathItemToFragments(
       ...(await operationToFragments(
         context,
         document,
-        maybeOperationObject as OpenAPIOperation<JSONSchema, OpenAPIExtension>,
+        operation,
         ['operations', operationId],
       )),
     );

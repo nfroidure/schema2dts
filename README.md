@@ -64,6 +64,20 @@ The third argument is for options:
 - you can also filter the statuses you wish to generate by setting
   `filterStatuses` to `[200, 201, 202, 300]` for example so that the 500 errors
   responses ain't taken in count.
+- you can generate partial OpenAPI declarations for specific operations by
+  setting `filterOperations` to a list of operation ids.
+
+You can also use `createTypeGeneratorService` to run a first full generation,
+then regenerate only selected operation/schema files:
+
+```ts
+const typeGenerator = createTypeGeneratorService({
+  resolveSchemaPath: (name) => `src/handlers/${name}.d.ts`,
+});
+
+await typeGenerator.generateOpenAPISchema(openAPIContent);
+await typeGenerator.generateSchemas(['putEcho']);
+```
 
 ## Known issues
 

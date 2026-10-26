@@ -62,6 +62,22 @@ export {
   type JSONSchemaOptions,
 };
 
+type OpenAPITypesOptions = Omit<
+  OpenAPITypesGenerationOptions,
+  'baseName' | 'basePath' | 'brandedTypes' | 'brandedFormats' | 'typedFormats'
+> &
+  Partial<
+    Pick<
+      OpenAPITypesGenerationOptions,
+      | 'baseName'
+      | 'basePath'
+      | 'brandedTypes'
+      | 'brandedFormats'
+      | 'patternTypes'
+      | 'typedFormats'
+    >
+  >;
+
 /**
  * Create the TypeScript types declarations from an Open API document
  * @param {OpenAPI} schema
@@ -70,6 +86,8 @@ export {
  * @param {string} options.basePath
  * @param {Array<number | "default">} options.filterStatuses
  * Filter generated types per HTTP status
+ * @param {Array<string>} options.filterOperations
+ * Filter generated types per operation id
  * @param {boolean} options.generateUnusedSchemas
  * Generate schemas even if the API doesn't use it
  * @param {boolean} options.camelizeInputs
@@ -100,7 +118,9 @@ export async function generateOpenAPITypes(
     baseName = DEFAULT_OPEN_API_OPTIONS.baseName,
     basePath = DEFAULT_OPEN_API_OPTIONS.basePath,
     filterStatuses = DEFAULT_OPEN_API_OPTIONS.filterStatuses,
+    filterOperations = DEFAULT_OPEN_API_OPTIONS.filterOperations,
     generateUnusedSchemas = DEFAULT_OPEN_API_OPTIONS.generateUnusedSchemas,
+    generateUnusedComponents = DEFAULT_OPEN_API_OPTIONS.generateUnusedComponents,
     camelizeInputs = DEFAULT_OPEN_API_OPTIONS.camelizeInputs,
     brandedTypes = DEFAULT_OPEN_API_OPTIONS.brandedTypes,
     patternTypes = DEFAULT_OPEN_API_OPTIONS.patternTypes,
@@ -111,54 +131,27 @@ export async function generateOpenAPITypes(
     tuplesFromFixedArraysLengthLimit = DEFAULT_OPEN_API_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_OPEN_API_OPTIONS.exportNamespaces,
     requireCleanAPI = DEFAULT_OPEN_API_OPTIONS.requireCleanAPI,
-  }: Omit<
-    OpenAPITypesGenerationOptions,
-    'baseName' | 'basePath' | 'brandedTypes' | 'brandedFormats' | 'typedFormats'
-  > &
-    Partial<
-      Pick<
-        OpenAPITypesGenerationOptions,
-        | 'baseName'
-        | 'basePath'
-        | 'brandedTypes'
-        | 'brandedFormats'
-        | 'patternTypes'
-        | 'typedFormats'
-      >
-    > = DEFAULT_OPEN_API_OPTIONS,
+  }: OpenAPITypesOptions = DEFAULT_OPEN_API_OPTIONS,
 ): Promise<NodeArray<Statement>> {
-  const context: OpenAPIContext = {
-    jsonSchemaOptions: {
-      baseName,
-      brandedTypes:
-        brandedTypes !== 'schemas'
-          ? brandedTypes
-          : Object.keys(rootOpenAPI?.components?.schemas || {}),
-      brandedFormats,
-      patternTypes,
-      expandPatternChars,
-      typedFormats,
-      generateRealEnums,
-      tuplesFromFixedArraysLengthLimit,
-      exportNamespaces,
-    },
-    oasOptions: {
-      baseName,
-      basePath,
-      filterStatuses,
-      generateUnusedSchemas,
-      camelizeInputs,
-      brandedTypes,
-      brandedFormats,
-      patternTypes,
-      expandPatternChars,
-      typedFormats,
-      generateRealEnums,
-      tuplesFromFixedArraysLengthLimit,
-      exportNamespaces,
-      requireCleanAPI,
-    },
+  const oasOptions: OpenAPITypesGenerationOptions = {
+    baseName,
+    basePath,
+    filterStatuses,
+    filterOperations,
+    generateUnusedSchemas,
+    generateUnusedComponents,
+    camelizeInputs,
+    brandedTypes,
+    brandedFormats,
+    patternTypes,
+    expandPatternChars,
+    typedFormats,
+    generateRealEnums,
+    tuplesFromFixedArraysLengthLimit,
+    exportNamespaces,
+    requireCleanAPI,
   };
+  const context = buildOpenAPIContext(rootOpenAPI, oasOptions);
 
   const fragments = await openAPIToFragments(context, rootOpenAPI);
 
@@ -220,6 +213,30 @@ export async function generateJSONSchemaTypes(
   const fragments = await jsonSchemaToFragments(context, rootSchema);
 
   return gatherFragments(context, fragments, rootSchema);
+}
+
+function buildOpenAPIContext(
+  rootOpenAPI: OpenAPI,
+  oasOptions: OpenAPITypesGenerationOptions,
+): OpenAPIContext {
+  return {
+    jsonSchemaOptions: {
+      baseName: oasOptions.baseName,
+      brandedTypes:
+        oasOptions.brandedTypes !== 'schemas'
+          ? oasOptions.brandedTypes
+          : Object.keys(rootOpenAPI?.components?.schemas || {}),
+      brandedFormats: oasOptions.brandedFormats,
+      patternTypes: oasOptions.patternTypes,
+      expandPatternChars: oasOptions.expandPatternChars,
+      typedFormats: oasOptions.typedFormats,
+      generateRealEnums: oasOptions.generateRealEnums,
+      tuplesFromFixedArraysLengthLimit:
+        oasOptions.tuplesFromFixedArraysLengthLimit,
+      exportNamespaces: oasOptions.exportNamespaces,
+    },
+    oasOptions,
+  };
 }
 
 export async function gatherFragments(
@@ -554,4 +571,122 @@ export function toSource(nodes: Node | NodeArray<Node>): string {
     nodes instanceof Array ? nodes : factory.createNodeArray([nodes]),
     resultFile,
   );
+}
+
+export interface GeneratedSchema {
+  path: string;
+  contents: string;
+}
+
+export interface TypeGeneratorService {
+  generateSchemas: (names: string[]) => Promise<GeneratedSchema[]>;
+  generateOpenAPISchema: (content: string) => Promise<GeneratedSchema[]>;
+}
+
+export interface TypeGeneratorServiceOptions {
+  openAPITypesOptions?: Partial<OpenAPITypesGenerationOptions>;
+  resolveSchemaPath?: (
+    name: string,
+    kind: 'operation' | 'schema',
+    reference: string,
+  ) => string;
+}
+
+export function createTypeGeneratorService({
+  openAPITypesOptions = {},
+  resolveSchemaPath = defaultResolveSchemaPath,
+}: TypeGeneratorServiceOptions = {}): TypeGeneratorService {
+  let rootOpenAPI: OpenAPI | undefined;
+  const normalizedOpenAPITypesOptions: OpenAPITypesGenerationOptions = {
+    ...DEFAULT_OPEN_API_OPTIONS,
+    ...openAPITypesOptions,
+  };
+
+  return {
+    async generateSchemas(names: string[]) {
+      if (!rootOpenAPI) {
+        throw new YError('E_OPEN_API_SCHEMA_NOT_GENERATED');
+      }
+      const loadedOpenAPI = rootOpenAPI;
+
+      return Promise.all(
+        names.map(async (name) => {
+          const operationId = name.startsWith('#/operations/')
+            ? name.slice('#/operations/'.length)
+            : name;
+          const operationNodes = await generateOpenAPITypes(loadedOpenAPI, {
+            ...normalizedOpenAPITypesOptions,
+            filterOperations: [operationId],
+          });
+
+          if (operationNodes.length) {
+            return {
+              path: resolveSchemaPath(
+                name,
+                'operation',
+                `#/operations/${operationId}`,
+              ),
+              contents: toSource(operationNodes),
+            };
+          }
+
+          if (name.startsWith('#/operations/')) {
+            throw new YError('E_SCHEMA_NOT_FOUND', [name]);
+          }
+
+          const schemaReference = name.startsWith('#/')
+            ? name
+            : `#/components/schemas/${name}`;
+
+          try {
+            await resolveNamespace(
+              loadedOpenAPI as unknown as JSONSchema,
+              relativeReferenceToNamespace(schemaReference),
+            );
+          } catch (err) {
+            throw new YError('E_SCHEMA_NOT_FOUND', [name], {
+              cause: err as Error,
+            });
+          }
+
+          return {
+            path: resolveSchemaPath(name, 'schema', schemaReference),
+            contents: toSource(
+              await gatherFragments(
+                buildOpenAPIContext(
+                  loadedOpenAPI,
+                  normalizedOpenAPITypesOptions,
+                ),
+                [{ type: 'assumed', ref: schemaReference }],
+                loadedOpenAPI,
+              ),
+            ),
+          };
+        }),
+      );
+    },
+    async generateOpenAPISchema(content: string) {
+      rootOpenAPI = JSON.parse(content) as OpenAPI;
+
+      return [
+        {
+          path: normalizedOpenAPITypesOptions.basePath,
+          contents: toSource(
+            await generateOpenAPITypes(
+              rootOpenAPI,
+              normalizedOpenAPITypesOptions,
+            ),
+          ),
+        },
+      ];
+    },
+  };
+}
+
+function defaultResolveSchemaPath(name: string): string {
+  const safeName = buildIdentifier(
+    name.split('/').slice(-1)[0].replace('#', '') || 'schema',
+  );
+
+  return `${safeName}.d.ts`;
 }
