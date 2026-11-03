@@ -20,6 +20,12 @@ export type StatementFragment = BaseFragment & {
   type: 'statement';
   statement: Statement;
 };
+export type ImportFragment = BaseFragment & {
+  type: 'import';
+  file: string;
+  innerName: string;
+  name: string;
+};
 export type DeclarationMemberFragment = BaseFragment & {
   type: 'declarationMember';
   namespace: NamespacePart[];
@@ -55,6 +61,7 @@ export type AssumedFragment = BaseFragment & {
 
 export type Fragment =
   | StatementFragment
+  | ImportFragment
   | InterfaceMemberFragment
   | DeclarationMemberFragment
   | AssumedFragment;
@@ -104,22 +111,26 @@ export function findFragments<T extends Fragment['type']>(
   fragments: Fragment[],
 ): (T extends 'statement'
   ? StatementFragment
-  : T extends 'interfaceMember'
-    ? InterfaceMemberFragment
-    : T extends 'declarationMember'
-      ? DeclarationMemberFragment
-      : T extends 'assumed'
-        ? AssumedFragment
-        : never)[] {
-  return fragments.filter(
-    ({ type }) => type === searchedType,
-  ) as (T extends 'statement'
-    ? StatementFragment
+  : T extends 'import'
+    ? ImportFragment
     : T extends 'interfaceMember'
       ? InterfaceMemberFragment
       : T extends 'declarationMember'
         ? DeclarationMemberFragment
         : T extends 'assumed'
           ? AssumedFragment
-          : never)[];
+          : never)[] {
+  return fragments.filter(
+    ({ type }) => type === searchedType,
+  ) as (T extends 'statement'
+    ? StatementFragment
+    : T extends 'import'
+      ? ImportFragment
+      : T extends 'interfaceMember'
+        ? InterfaceMemberFragment
+        : T extends 'declarationMember'
+          ? DeclarationMemberFragment
+          : T extends 'assumed'
+            ? AssumedFragment
+            : never)[];
 }

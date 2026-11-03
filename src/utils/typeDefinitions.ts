@@ -92,7 +92,7 @@ export function buildInterfaceReference(namespaceParts: string[]) {
 
 export function buildIdentifier(part: string): string {
   const identifier = part
-    .replace(/[^a-z0-9-_ ]/gi, '')
+    .replace(/[^a-z0-9-_. ]/gi, '')
     .replace(/(?:^|[^a-z0-9]+)([a-z])/gi, (_: unknown, $1: string) =>
       $1.toUpperCase(),
     )

@@ -601,6 +601,7 @@ describe('generateJSONSchemaTypes()', () => {
       ),
     ).toMatchInlineSnapshot(`
      "export type Main = Enums.Limit;
+     export type { Main as default };
      export namespace Enums {
          export enum Limit {
              User1Name = "user1name",
@@ -765,6 +766,7 @@ describe('generateJSONSchemaTypes()', () => {
       ),
     ).toMatchInlineSnapshot(`
      "export type Main = Enums.Limit;
+     export type { Main as default };
      export namespace Enums {
          export enum Limit {
              _1M = "1m",
@@ -792,6 +794,7 @@ describe('generateJSONSchemaTypes()', () => {
       ),
     ).toMatchInlineSnapshot(`
      "export type Main = Enums.Limit;
+     export type { Main as default };
      export namespace Enums {
          export enum Limit {
              User1Name = "user1name",
@@ -850,7 +853,10 @@ describe('generateJSONSchemaTypes()', () => {
           baseName: 'Limit',
         }),
       ),
-    ).toMatchInlineSnapshot(`"export type Limit = number;"`);
+    ).toMatchInlineSnapshot(`
+     "export type Limit = number;
+     export type { Limit as default };"
+    `);
   });
 
   test('should work with several literal type schema', async () => {
@@ -885,7 +891,10 @@ describe('generateJSONSchemaTypes()', () => {
           baseName: 'Limit',
         }),
       ),
-    ).toMatchInlineSnapshot(`"export type Limit = number | null;"`);
+    ).toMatchInlineSnapshot(`
+     "export type Limit = number | null;
+     export type { Limit as default };"
+    `);
   });
 
   test('should work with several literal nullable type schema', async () => {
@@ -907,7 +916,10 @@ describe('generateJSONSchemaTypes()', () => {
           baseName: 'Limit',
         }),
       ),
-    ).toMatchInlineSnapshot(`"export type Limit = number | string | null;"`);
+    ).toMatchInlineSnapshot(`
+     "export type Limit = number | string | null;
+     export type { Limit as default };"
+    `);
   });
 
   test('should work with literal enums', async () => {
@@ -930,9 +942,10 @@ describe('generateJSONSchemaTypes()', () => {
           baseName: 'Limit',
         }),
       ),
-    ).toMatchInlineSnapshot(
-      `"export type Limit = 1 | 2 | "hop" | "lol" | null;"`,
-    );
+    ).toMatchInlineSnapshot(`
+     "export type Limit = 1 | 2 | "hop" | "lol" | null;
+     export type { Limit as default };"
+    `);
   });
 
   test('should work with object schema', async () => {
@@ -969,7 +982,8 @@ describe('generateJSONSchemaTypes()', () => {
          minIncluded?: boolean;
          maxIncluded?: boolean;
          pace?: number;
-     };"
+     };
+     export type { Limit as default };"
     `);
   });
 
@@ -1018,7 +1032,8 @@ describe('generateJSONSchemaTypes()', () => {
          anything?: unknown;
          aConst?: "test";
          [pattern: string]: string | unknown;
-     } | null;"
+     } | null;
+     export type { Limit as default };"
     `);
   });
 
@@ -1059,7 +1074,8 @@ describe('generateJSONSchemaTypes()', () => {
      } | null | number | [
          number,
          string
-     ];"
+     ];
+     export type { Limit as default };"
     `);
   });
 
@@ -1110,7 +1126,8 @@ describe('generateJSONSchemaTypes()', () => {
      } | [
          number,
          string
-     ];"
+     ];
+     export type { Limit as default };"
     `);
   });
 
@@ -1161,7 +1178,8 @@ describe('generateJSONSchemaTypes()', () => {
      } | [
          number,
          string
-     ];"
+     ];
+     export type { Limit as default };"
     `);
   });
 
@@ -1302,7 +1320,8 @@ describe('generateJSONSchemaTypes()', () => {
      } & [
          number,
          string
-     ];"
+     ];
+     export type { Limit as default };"
     `);
   });
 
@@ -1350,7 +1369,8 @@ describe('generateJSONSchemaTypes()', () => {
      } & {
          min: unknown;
          max: unknown;
-     };"
+     };
+     export type { Limit as default };"
     `);
   });
 
@@ -1378,6 +1398,7 @@ describe('generateJSONSchemaTypes()', () => {
       ),
     ).toMatchInlineSnapshot(`
      "export type Limit = definitions["User"];
+     export type { Limit as default };
      export interface definitions {
          User: string;
      }"
@@ -1403,7 +1424,10 @@ describe('generateJSONSchemaTypes()', () => {
           baseName: 'Limit',
         }),
       ),
-    ).toMatchInlineSnapshot(`"export type Limit = object;"`);
+    ).toMatchInlineSnapshot(`
+     "export type Limit = object;
+     export type { Limit as default };"
+    `);
   });
 
   test('should work with direct recursive schemas', async () => {
@@ -1437,6 +1461,7 @@ describe('generateJSONSchemaTypes()', () => {
       ),
     ).toMatchInlineSnapshot(`
      "export type Tree = $defs["Node"];
+     export type { Tree as default };
      export interface $defs {
          Node: {
              child?: $defs["Node"];
@@ -1484,6 +1509,7 @@ describe('generateJSONSchemaTypes()', () => {
       ),
     ).toMatchInlineSnapshot(`
      "export type Tree = $defs["Node"];
+     export type { Tree as default };
      export interface $defs {
          Node: {
              content?: $defs["NodeContent"];
@@ -1591,10 +1617,10 @@ describe('generateJSONSchemaTypes()', () => {
         name: { type: 'string' },
         duration: { type: 'number' },
         start: {
-          $ref: '#/definitions/Date',
+          $ref: '#/$defs/Date',
         },
         end: {
-          $ref: '#/definitions/Date',
+          $ref: '#/$defs/Date',
         },
         labels: {
           type: 'array',
@@ -1619,7 +1645,7 @@ describe('generateJSONSchemaTypes()', () => {
             items: {
               anyOf: [
                 {
-                  $ref: '#/definitions/Date',
+                  $ref: '#/$defs/Date',
                 },
                 { type: 'number' },
                 { type: 'string', enum: ['first', 'bosse', 'last'] },
@@ -1629,10 +1655,10 @@ describe('generateJSONSchemaTypes()', () => {
           },
         },
         context: {
-          $ref: '#/definitions/Data',
+          $ref: '#/$defs/Data',
         },
       },
-      definitions: {
+      $defs: {
         Date: { type: 'string' },
         Data: { type: 'string' },
       },
@@ -1646,15 +1672,15 @@ describe('generateJSONSchemaTypes()', () => {
      "declare type Main = {
          name: string;
          duration: number;
-         start: definitions["Date"];
-         end: definitions["Date"];
+         start: $defs["Date"];
+         end: $defs["Date"];
          labels: ("value" | "peaks" | "startTime" | "endTime" | "peakTime")[];
          timestamp: ("startTime" | "endTime" | "peakTime")[];
-         data: (definitions["Date"] | number | ("first" | "bosse" | "last") | string)[][];
-         context: definitions["Data"];
+         data: ($defs["Date"] | number | ("first" | "bosse" | "last") | string)[][];
+         context: $defs["Data"];
          [pattern: string]: unknown;
      };
-     declare interface definitions {
+     declare interface $defs {
          Date: string;
          Data: string;
      }"
@@ -1877,6 +1903,157 @@ describe('generateJSONSchemaTypes()', () => {
          "95.0"?: number;
          "99.0"?: number;
      };"
+    `);
+  });
+
+  test('should work with named import in external files', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+      minItems: 1,
+      items: {
+        oneOf: [
+          { $ref: './a-file.schema.json#/$defs/SchemaName' },
+          { type: 'string' },
+        ],
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+     "import { type $defs as AFileSchemaJsonDefinitions } from "./a-file.schema.json";
+     export type Main = [
+         AFileSchemaJsonDefinitions["SchemaName"] | string,
+         ...(AFileSchemaJsonDefinitions["SchemaName"] | string)[]
+     ];
+     export type { Main as default };"
+    `);
+  });
+
+  test('should work with default import in external files', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+      minItems: 1,
+      items: {
+        oneOf: [{ $ref: './a-file.schema.json#' }, { type: 'string' }],
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+     "import { type default as AFileSchemaJsonDefault } from "./a-file.schema.json";
+     export type Main = [
+         AFileSchemaJsonDefault | string,
+         ...(AFileSchemaJsonDefault | string)[]
+     ];
+     export type { Main as default };"
+    `);
+  });
+
+  test('should import external aliases through local references (with existing import)', async () => {
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {
+        alias: { $ref: '#/definitions/A' },
+        direct: { $ref: './a.json#' },
+      },
+      definitions: {
+        A: { $ref: './a.json#' },
+      },
+    };
+
+    const source = toSource(
+      await generateJSONSchemaTypes(schema, {
+        ...DEFAULT_JSON_SCHEMA_OPTIONS,
+        exportNamespaces: true,
+      }),
+    );
+
+    expect(source).toMatchInlineSnapshot(`
+     "import { type default as AJsonDefault } from "./a.json";
+     export type Main = {
+         alias?: definitions["A"];
+         direct?: AJsonDefault;
+     };
+     export type { Main as default };
+     export interface definitions {
+         A: AJsonDefault;
+     }"
+    `);
+  });
+
+  test('should import external aliases through local references (with not existing import)', async () => {
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {
+        alias: { $ref: '#/definitions/A' },
+      },
+      definitions: {
+        A: { $ref: './a.json#' },
+      },
+    };
+
+    const source = toSource(
+      await generateJSONSchemaTypes(schema, {
+        ...DEFAULT_JSON_SCHEMA_OPTIONS,
+        exportNamespaces: true,
+      }),
+    );
+
+    expect(source).toMatchInlineSnapshot(`
+     "import { type default as AJsonDefault } from "./a.json";
+     export type Main = {
+         alias?: definitions["A"];
+     };
+     export type { Main as default };
+     export interface definitions {
+         A: AJsonDefault;
+     }"
+    `);
+  });
+
+  test('should work with several various imports in external files', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+      minItems: 1,
+      items: {
+        oneOf: [
+          { $ref: './a-file.schema.json#' },
+          { $ref: './a-file.schema.json#/$defs/User' },
+          { $ref: './a-file.schema.json#/$defs/Player' },
+          { type: 'string' },
+        ],
+      },
+      $defs: {
+        Test: { type: 'string' },
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+     "import { type default as AFileSchemaJsonDefault, type $defs as AFileSchemaJsonDefinitions } from "./a-file.schema.json";
+     export type Main = [
+         AFileSchemaJsonDefault | AFileSchemaJsonDefinitions["User"] | AFileSchemaJsonDefinitions["Player"] | string,
+         ...(AFileSchemaJsonDefault | AFileSchemaJsonDefinitions["User"] | AFileSchemaJsonDefinitions["Player"] | string)[]
+     ];
+     export type { Main as default };"
     `);
   });
 });

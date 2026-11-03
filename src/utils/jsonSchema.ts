@@ -21,6 +21,7 @@ import {
 } from 'ya-json-schema-types';
 import { relativeReferenceToNamespace } from 'ya-open-api-types';
 import { generateTypeFromPattern } from './patterns.js';
+import { isAbsolute } from 'node:path';
 
 export const ALL_FORMATS = 'all' as const;
 export const ALL_TYPES = 'all' as const;
@@ -36,6 +37,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   generateRealEnums: false,
   tuplesFromFixedArraysLengthLimit: 5,
   exportNamespaces: false,
+  alwaysAddDefs: false,
   strictMode: false,
 };
 export interface JSONSchemaOptions {
@@ -54,6 +56,7 @@ export interface JSONSchemaOptions {
   generateRealEnums: boolean;
   tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
+  alwaysAddDefs?: boolean;
   strictMode?: boolean;
 }
 export interface JSONSchemaContext {
@@ -97,6 +100,27 @@ export async function jsonSchemaToFragments(
         finalType,
       ),
     },
+    ...(context.jsonSchemaOptions.exportNamespaces
+      ? ([
+          {
+            ref: 'virtual://default',
+            type: 'statement',
+            statement: factory.createExportDeclaration(
+              undefined,
+              true,
+              factory.createNamedExports([
+                factory.createExportSpecifier(
+                  false,
+                  factory.createIdentifier(identifier),
+                  factory.createIdentifier('default'),
+                ),
+              ]),
+              undefined,
+              undefined,
+            ),
+          },
+        ] as Fragment[])
+      : []),
   ];
 }
 
@@ -144,12 +168,48 @@ export async function schemaToTypes(
   }
 
   if ('$ref' in schema && typeof schema.$ref === 'string') {
-    const referenceParts = relativeReferenceToNamespace(schema.$ref);
+    const [filePart, pointerPart] = schema.$ref.split('#');
 
-    return {
-      types: [buildInterfaceReference(referenceParts)],
-      fragments: [{ type: 'assumed', ref: schema.$ref }],
-    };
+    if (!filePart) {
+      const referenceParts = relativeReferenceToNamespace(schema.$ref);
+
+      return {
+        types: [buildInterfaceReference(referenceParts)],
+        fragments: [{ type: 'assumed', ref: schema.$ref }],
+      };
+    } else {
+      const referenceParts = pointerPart
+        ? relativeReferenceToNamespace(`#${pointerPart}`)
+        : [];
+
+      if (referenceParts.length && referenceParts[0] !== '$defs') {
+        throw new YError('E_UNSUPPORTED_REF', [schema.$ref]);
+      }
+
+      const isDefault = !pointerPart;
+      const baseIdentifier = buildIdentifier(
+        filePart + (isDefault ? '_default' : '_definitions'),
+      );
+
+      return {
+        types: [
+          buildInterfaceReference([baseIdentifier, ...referenceParts.slice(1)]),
+        ],
+        fragments: [
+          {
+            ref: schema.$ref,
+            type: 'import',
+            file: isAbsolute(filePart)
+              ? filePart
+              : filePart.startsWith('./') || filePart.startsWith('../')
+                ? filePart
+                : `./${filePart}`,
+            innerName: isDefault ? 'default' : '$defs',
+            name: baseIdentifier,
+          },
+        ],
+      };
+    }
   } else if ('const' in schema && 'undefined' !== typeof schema.const) {
     return {
       types: [buildLiteralType(schema.const)],
