@@ -1,3 +1,10 @@
+# [10.2.0](https://github.com/nfroidure/schema2dts/compare/v10.1.0...v10.2.0) (2026-11-03)
+
+
+### Features
+
+* **types:** allow file imports for schemas ([76b1980](https://github.com/nfroidure/schema2dts/commit/76b1980c57f223a2b0acd7009197962a07efaf5f))
+
 # [10.1.0](https://github.com/nfroidure/schema2dts/compare/v10.0.0...v10.1.0) (2026-06-30)
 
 
