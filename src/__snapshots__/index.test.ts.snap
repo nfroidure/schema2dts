@@ -22,7 +22,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with callback_e
     };
 }
 declare interface operations {
-    ComponentsCallbacksOnValidatedRequestqueryqueryUrl: {
+    ComponentsCallbacksOnValidatedRequestQueryQueryUrl: {
         responses: {
             201: {
                 headers: {
@@ -36,7 +36,7 @@ declare interface operations {
             StreamValidated: components["callbacks"]["OnValidatedClone"];
             onData: {
                 "{$request.query.callbackUrl}/data": {
-                    post: operations["OperationsPathsStreamsCallbacksOnDataRequestquerycallbackUrldata"];
+                    post: operations["OperationsPathsStreamsCallbacksOnDataRequestQueryCallbackUrldata"];
                 };
             };
         };
@@ -56,7 +56,7 @@ declare interface operations {
             };
         };
     };
-    OperationsPathsStreamsCallbacksOnDataRequestquerycallbackUrldata: {
+    OperationsPathsStreamsCallbacksOnDataRequestQueryCallbackUrldata: {
         requestBody?: {
             timestamp?: string;
             userData?: string;
@@ -71,7 +71,7 @@ declare interface components {
     callbacks: {
         OnValidated: {
             "{$request.query.queryUrl}": {
-                put: operations["ComponentsCallbacksOnValidatedRequestqueryqueryUrl"];
+                put: operations["ComponentsCallbacksOnValidatedRequestQueryQueryUrl"];
             };
         };
         OnValidatedClone: components["callbacks"]["OnValidated"];
@@ -89,7 +89,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with callback_e
     };
 }
 declare interface operations {
-    ComponentsCallbacksOnValidatedRequestqueryqueryUrl: {
+    ComponentsCallbacksOnValidatedRequestQueryQueryUrl: {
         responses: {
             201: {
                 headers: {
@@ -103,7 +103,7 @@ declare interface operations {
             StreamValidated: components["callbacks"]["OnValidatedClone"];
             onData: {
                 "{$request.query.callbackUrl}/data": {
-                    post: operations["OperationsPathsStreamsCallbacksOnDataRequestquerycallbackUrldata"];
+                    post: operations["OperationsPathsStreamsCallbacksOnDataRequestQueryCallbackUrldata"];
                 };
             };
         };
@@ -123,7 +123,7 @@ declare interface operations {
             };
         };
     };
-    OperationsPathsStreamsCallbacksOnDataRequestquerycallbackUrldata: {
+    OperationsPathsStreamsCallbacksOnDataRequestQueryCallbackUrldata: {
         requestBody?: {
             timestamp?: string;
             userData?: string;
@@ -137,7 +137,7 @@ declare interface components {
     callbacks: {
         OnValidated: {
             "{$request.query.queryUrl}": {
-                put: operations["ComponentsCallbacksOnValidatedRequestqueryqueryUrl"];
+                put: operations["ComponentsCallbacksOnValidatedRequestQueryQueryUrl"];
             };
         };
         OnValidatedClone: components["callbacks"]["OnValidated"];
@@ -155,7 +155,7 @@ exports[`generateOpenAPITypes() with OpenAPI samples should work with callback_e
     };
 }
 export interface operations {
-    ComponentsCallbacksOnValidatedRequestqueryqueryUrl: {
+    ComponentsCallbacksOnValidatedRequestQueryQueryUrl: {
         responses: {
             201: {
                 headers: {
@@ -169,7 +169,7 @@ export interface operations {
             StreamValidated: components["callbacks"]["OnValidatedClone"];
             onData: {
                 "{$request.query.callbackUrl}/data": {
-                    post: operations["OperationsPathsStreamsCallbacksOnDataRequestquerycallbackUrldata"];
+                    post: operations["OperationsPathsStreamsCallbacksOnDataRequestQueryCallbackUrldata"];
                 };
             };
         };
@@ -189,7 +189,7 @@ export interface operations {
             };
         };
     };
-    OperationsPathsStreamsCallbacksOnDataRequestquerycallbackUrldata: {
+    OperationsPathsStreamsCallbacksOnDataRequestQueryCallbackUrldata: {
         requestBody?: {
             timestamp?: string;
             userData?: string;
@@ -204,7 +204,7 @@ export interface components {
     callbacks: {
         OnValidated: {
             "{$request.query.queryUrl}": {
-                put: operations["ComponentsCallbacksOnValidatedRequestqueryqueryUrl"];
+                put: operations["ComponentsCallbacksOnValidatedRequestQueryQueryUrl"];
             };
         };
         OnValidatedClone: components["callbacks"]["OnValidated"];

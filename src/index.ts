@@ -219,6 +219,20 @@ export async function generateJSONSchemaTypes(
 
   const fragments = await jsonSchemaToFragments(context, rootSchema);
 
+  if (
+    context.jsonSchemaOptions.alwaysAddDefs &&
+    typeof rootSchema === 'object' &&
+    '$defs' in rootSchema &&
+    rootSchema.$defs
+  ) {
+    for (const key of Object.keys(rootSchema.$defs)) {
+      fragments.push({
+        type: 'assumed',
+        ref: `#/$defs/${key}`,
+      });
+    }
+  }
+
   return gatherFragments(context, fragments, rootSchema);
 }
 
@@ -240,7 +254,7 @@ export async function gatherFragments(
             statement: factory.createImportDeclaration(
               undefined,
               factory.createImportClause(
-                false,
+                undefined,
                 undefined,
                 factory.createNamedImports([
                   factory.createImportSpecifier(
@@ -269,18 +283,19 @@ export async function gatherFragments(
       if (
         typeof subSchema === 'object' &&
         '$ref' in subSchema &&
-        subSchema.$ref
+        typeof subSchema.$ref === 'string' &&
+        subSchema.$ref.startsWith('#')
       ) {
         allFragments = combineFragments(allFragments, [
           {
             ref: assumedFragmentToBuild.ref,
             type: 'interfaceMember',
             namespace,
-            destination: subSchema.$ref as string,
+            destination: subSchema.$ref,
           },
           {
             type: 'assumed',
-            ref: subSchema.$ref as string,
+            ref: subSchema.$ref,
           },
         ]);
         continue;
@@ -523,7 +538,85 @@ export async function gatherFragments(
     return statements;
   }, [] as ModuleDeclaration[]);
 
+  const summarizedImportStatements = findFragments(
+    'import',
+    allFragments,
+  ).reduce(
+    (importsMap, fragment) => {
+      if (
+        Object.entries(importsMap).some(
+          ([file, { names }]) =>
+            file !== fragment.file &&
+            names.some(({ name }) => name === fragment.name),
+        )
+      ) {
+        throw new YError('E_UNEXPECTED_NAMING_CLASH', [importsMap, fragment]);
+      }
+
+      const names = importsMap[fragment.file]?.names || [];
+
+      if (names.some(({ name }) => fragment.name === name)) {
+        if (
+          names.some(
+            ({ name, innerName }) =>
+              fragment.name === name && fragment.innerName !== innerName,
+          )
+        ) {
+          throw new YError('E_UNEXPECTED_NAMING_CLASH', [importsMap, fragment]);
+        }
+        return importsMap;
+      }
+
+      return {
+        ...importsMap,
+        [fragment.file]: {
+          names: names.concat([
+            {
+              innerName: fragment.innerName,
+              name: fragment.name,
+            },
+          ]),
+        },
+      };
+    },
+    {} as Record<
+      string,
+      {
+        names: { innerName: string; name: string }[];
+      }
+    >,
+  );
+  const importStatements = Object.keys(summarizedImportStatements).map(
+    (importStatementFile) => {
+      const importStatement = summarizedImportStatements[importStatementFile];
+
+      return factory.createImportDeclaration(
+        undefined,
+        factory.createImportClause(
+          undefined,
+          undefined,
+          factory.createNamedImports(
+            importStatement.names.map(({ innerName, name }) =>
+              factory.createImportSpecifier(
+                true,
+                factory.createIdentifier(innerName),
+                factory.createIdentifier(name),
+              ),
+            ),
+          ),
+        ),
+        factory.createStringLiteral(importStatementFile),
+        undefined,
+      );
+    },
+  );
+
+  if (importStatements.length && !context.jsonSchemaOptions.exportNamespaces) {
+    throw new YError('E_NO_IMPORT_IN_AMBIENT_MODULES');
+  }
+
   return factory.createNodeArray([
+    ...importStatements,
     ...statements,
     ...findFragments('statement', allFragments).map(
       (fragment) => fragment.statement,
