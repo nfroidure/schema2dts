@@ -224,7 +224,6 @@ export async function generateJSONSchemaTypes(
       strictMode,
     },
   };
-
   const fragments = await jsonSchemaToFragments(context, rootSchema);
 
   if (

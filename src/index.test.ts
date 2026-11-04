@@ -2057,4 +2057,85 @@ describe('generateJSONSchemaTypes()', () => {
      export type { Main as default };"
     `);
   });
+
+  test('should add all defs when required', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+      minItems: 1,
+      items: {
+        oneOf: [
+          { $ref: './a-file.schema.json#' },
+          { $ref: './a-file.schema.json#/$defs/User' },
+          { $ref: '#/$defs/Test' },
+          { type: 'string' },
+        ],
+      },
+      $defs: {
+        Test: { type: 'string' },
+        Test2: { type: 'string' },
+        Test3: { type: 'string' },
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          exportNamespaces: true,
+          alwaysAddDefs: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+     "import { type default as AFileSchemaJsonDefault, type $defs as AFileSchemaJsonDefinitions } from "./a-file.schema.json";
+     export type Main = [
+         AFileSchemaJsonDefault | AFileSchemaJsonDefinitions["User"] | $defs["Test"] | string,
+         ...(AFileSchemaJsonDefault | AFileSchemaJsonDefinitions["User"] | $defs["Test"] | string)[]
+     ];
+     export type { Main as default };
+     export interface $defs {
+         Test: string;
+         Test2: string;
+         Test3: string;
+     }"
+    `);
+  });
+
+  test('should not add all defs when not required', async () => {
+    const schema: JSONSchema = {
+      type: 'array',
+      minItems: 1,
+      items: {
+        oneOf: [
+          { $ref: './a-file.schema.json#' },
+          { $ref: './a-file.schema.json#/$defs/User' },
+          { $ref: '#/$defs/Test' },
+          { type: 'string' },
+        ],
+      },
+      $defs: {
+        Test: { type: 'string' },
+        Test2: { type: 'string' },
+        Test3: { type: 'string' },
+      },
+    };
+
+    expect(
+      toSource(
+        await generateJSONSchemaTypes(schema, {
+          ...DEFAULT_JSON_SCHEMA_OPTIONS,
+          exportNamespaces: true,
+        }),
+      ),
+    ).toMatchInlineSnapshot(`
+     "import { type default as AFileSchemaJsonDefault, type $defs as AFileSchemaJsonDefinitions } from "./a-file.schema.json";
+     export type Main = [
+         AFileSchemaJsonDefault | AFileSchemaJsonDefinitions["User"] | $defs["Test"] | string,
+         ...(AFileSchemaJsonDefault | AFileSchemaJsonDefinitions["User"] | $defs["Test"] | string)[]
+     ];
+     export type { Main as default };
+     export interface $defs {
+         Test: string;
+     }"
+    `);
+  });
 });
