@@ -1,3 +1,10 @@
+# [10.3.0](https://github.com/nfroidure/schema2dts/compare/v10.2.0...v10.3.0) (2026-11-04)
+
+
+### Features
+
+* **jsonschema:** more granularity on main type name ([865b241](https://github.com/nfroidure/schema2dts/commit/865b241e41e4cfb165ff62910db9b6bee5ceb514))
+
 # [10.2.0](https://github.com/nfroidure/schema2dts/compare/v10.1.0...v10.2.0) (2026-11-03)
 
 
