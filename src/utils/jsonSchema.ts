@@ -39,6 +39,7 @@ export const DEFAULT_JSON_SCHEMA_OPTIONS: Required<JSONSchemaOptions> = {
   exportNamespaces: false,
   alwaysAddDefs: false,
   strictMode: false,
+  rootNameMode: 'preferBaseName',
 };
 export interface JSONSchemaOptions {
   baseName?: string;
@@ -57,6 +58,7 @@ export interface JSONSchemaOptions {
   tuplesFromFixedArraysLengthLimit: number;
   exportNamespaces: boolean;
   alwaysAddDefs?: boolean;
+  rootNameMode?: 'preferSchemaTitle' | 'preferBaseName';
   strictMode?: boolean;
 }
 export interface JSONSchemaContext {
@@ -76,9 +78,17 @@ export async function jsonSchemaToFragments(
   schema: JSONSchema,
 ): Promise<Fragment[]> {
   const { type: typeNode, fragments } = await schemaToTypeNode(context, schema);
+  const schemaTitle =
+    typeof schema === 'object' && 'title' in schema ? schema.title : undefined;
+  const baseName = context.jsonSchemaOptions.baseName;
   const identifier = buildIdentifier(
-    context.jsonSchemaOptions.baseName ||
-      (typeof schema === 'object' && schema?.title) ||
+    (context.jsonSchemaOptions.rootNameMode === 'preferBaseName' && baseName
+      ? baseName
+      : context.jsonSchemaOptions.rootNameMode === 'preferSchemaTitle'
+        ? schemaTitle
+        : undefined) ||
+      baseName ||
+      schemaTitle ||
       'Unknown',
   );
   const finalSchema = eventuallyIdentifySchema(schema, identifier);

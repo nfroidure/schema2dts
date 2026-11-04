@@ -193,6 +193,7 @@ export async function generateJSONSchemaTypes(
   rootSchema: JSONSchema,
   {
     baseName = DEFAULT_JSON_SCHEMA_OPTIONS.baseName,
+    basePath = DEFAULT_JSON_SCHEMA_OPTIONS.basePath,
     brandedTypes = DEFAULT_JSON_SCHEMA_OPTIONS.brandedTypes,
     brandedFormats = DEFAULT_JSON_SCHEMA_OPTIONS.brandedFormats,
     patternTypes = DEFAULT_JSON_SCHEMA_OPTIONS.patternTypes,
@@ -201,11 +202,15 @@ export async function generateJSONSchemaTypes(
     generateRealEnums = DEFAULT_JSON_SCHEMA_OPTIONS.generateRealEnums,
     tuplesFromFixedArraysLengthLimit = DEFAULT_JSON_SCHEMA_OPTIONS.tuplesFromFixedArraysLengthLimit,
     exportNamespaces = DEFAULT_JSON_SCHEMA_OPTIONS.exportNamespaces,
+    alwaysAddDefs = DEFAULT_JSON_SCHEMA_OPTIONS.alwaysAddDefs,
+    rootNameMode = DEFAULT_JSON_SCHEMA_OPTIONS.rootNameMode,
+    strictMode = DEFAULT_JSON_SCHEMA_OPTIONS.strictMode,
   }: JSONSchemaOptions = DEFAULT_JSON_SCHEMA_OPTIONS,
 ): Promise<NodeArray<Statement>> {
   const context: JSONSchemaContext = {
     jsonSchemaOptions: {
       baseName,
+      basePath,
       brandedTypes,
       brandedFormats,
       patternTypes,
@@ -214,6 +219,9 @@ export async function generateJSONSchemaTypes(
       generateRealEnums,
       tuplesFromFixedArraysLengthLimit,
       exportNamespaces,
+      alwaysAddDefs,
+      rootNameMode,
+      strictMode,
     },
   };
 

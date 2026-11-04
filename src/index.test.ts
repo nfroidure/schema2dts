@@ -1131,7 +1131,7 @@ describe('generateJSONSchemaTypes()', () => {
     `);
   });
 
-  test('should work with oneOf schemas', async () => {
+  test('should work with oneOf schemas adn prefered title', async () => {
     const schema: JSONSchema = {
       title: 'Limit',
       oneOf: [
@@ -1165,7 +1165,8 @@ describe('generateJSONSchemaTypes()', () => {
           generateRealEnums: true,
           tuplesFromFixedArraysLengthLimit: 5,
           exportNamespaces: true,
-          baseName: 'Limit',
+          baseName: 'NotUsed',
+          rootNameMode: 'preferSchemaTitle',
         }),
       ),
     ).toMatchInlineSnapshot(`
