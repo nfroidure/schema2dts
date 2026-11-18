@@ -26,7 +26,14 @@ export function canBePropertySignature(str: string) {
 export function buildLiteralType(value: JSONSchemaValue): TypeNode {
   switch (typeof value) {
     case 'number':
-      return factory.createLiteralTypeNode(factory.createNumericLiteral(value));
+      return factory.createLiteralTypeNode(
+        value >= 0
+          ? factory.createNumericLiteral(value)
+          : factory.createPrefixUnaryExpression(
+              SyntaxKind.MinusToken,
+              factory.createNumericLiteral(Math.abs(value)),
+            ),
+      );
     case 'string':
       return factory.createLiteralTypeNode(factory.createStringLiteral(value));
     case 'boolean':
