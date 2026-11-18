@@ -926,7 +926,7 @@ describe('generateJSONSchemaTypes()', () => {
     const schema: JSONSchema = {
       title: 'Limit',
       type: ['number', 'string', 'null'],
-      enum: [1, 2, 'hop', 'lol', null],
+      enum: [-1, 0, 1, 2, 'hop', 'lol', null],
     };
 
     expect(
@@ -943,7 +943,7 @@ describe('generateJSONSchemaTypes()', () => {
         }),
       ),
     ).toMatchInlineSnapshot(`
-     "export type Limit = 1 | 2 | "hop" | "lol" | null;
+     "export type Limit = -1 | 0 | 1 | 2 | "hop" | "lol" | null;
      export type { Limit as default };"
     `);
   });
